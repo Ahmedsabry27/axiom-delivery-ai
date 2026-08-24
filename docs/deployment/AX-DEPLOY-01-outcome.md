@@ -6,14 +6,14 @@ AX-DEPLOY-01 IN PROGRESS — STAGING FOUNDATION DEPLOYED
 
 ## Executive summary
 
-Approval Gate 1 was explicitly approved. Encrypted, versioned, publicly blocked remote state and the staging AWS foundation were deployed. Application deployment remains pending the first honest Git commit, immutable backend image, migration task, ECS service, and frontend upload.
+Approval Gate 1 was explicitly approved. Encrypted, versioned, publicly blocked remote state and the staging AWS foundation were deployed. The repository baseline is pushed. Debian-based images failed the mandatory critical/high vulnerability gate and were not deployed; an Alpine ARM64 candidate subsequently passed the AWS ECR scan with zero findings. Application activation remains pending a reviewed zero-destroy plan, migration task, ECS service, and frontend upload.
 
 ## Evidence
 
 - Branch: `main`
-- Commit SHA: pending; repository still has no commit history at this evidence update
-- Remote: `https://github.com/Ahmedsabry27/axiom-delivery-ai.git`; verified empty
-- Pull request: unavailable; no baseline commit or branch has been pushed
+- Current pushed commit SHA: `6f90be1a3ad1e1ba8750a6c17a21971518bf92f1`
+- Remote: `https://github.com/Ahmedsabry27/axiom-delivery-ai.git`
+- Branch: `main`; pushed successfully
 - AWS account: `594677690649`
 - AWS profile: `default`
 - AWS region: `eu-west-2`
@@ -24,14 +24,16 @@ Approval Gate 1 was explicitly approved. Encrypted, versioned, publicly blocked 
 - Approved staging plan: `41 to add / 0 to change / 0 to destroy`
 - Remote-state bootstrap applied: `4 added / 0 changed / 0 destroyed`
 - Staging foundation applied: `41 managed resources created`; final CloudFront TLS reconciliation was `0 added / 1 changed / 0 destroyed`
-- URLs, image digest, artifact hash: unavailable because nothing was deployed
+- Clean Alpine candidate digest: `sha256:c148603944ec4ebfa5c7844104c6843f5849e62c37db686cf29bc807da95292d`
+- Candidate ECR scan: complete, zero findings at all severities
+- Rejected Bookworm image digest: `sha256:30ad99682fae47564abf7042ca31ffd56d358c37d6c248a6daeff616a778cc26` (`3 critical / 6 high`; not deployed)
 - Secret scan: Gitleaks directory scan passed with no findings
 - Terraform: `1.15.8`; configuration formatted and validated
 - Terraform provider: `hashicorp/aws 6.61.0`, locked in `.terraform.lock.hcl`
 - State: S3 backend with AES-256 encryption, versioning, public-access blocking, separate `staging/terraform.tfstate` key, and native S3 lockfile
 - Plan scope: VPC/subnets/routes/NAT, security groups, private S3 with CloudFront OAC and security headers, immutable ECR, private encrypted RDS PostgreSQL, ECS cluster/task definition and roles, ALB, logs
 - Runtime safety fix: the least-privilege ECS task role can read only the RDS-managed database secret
-- ECS service: intentionally deferred until the SHA-tagged backend image exists in ECR
+- ECS service: intentionally deferred until the clean image is tagged with the remediation commit SHA and the activation plan is reviewed
 - Frontend URL: `https://d18zu5xein60s4.cloudfront.net`
 - API URL: `http://axiom-delivery-ai-staging-api-276330216.eu-west-2.elb.amazonaws.com`
 - ECR: `594677690649.dkr.ecr.eu-west-2.amazonaws.com/axiom-delivery-ai-staging-backend`
@@ -59,10 +61,10 @@ Recurring staging costs include NAT, ALB, RDS, CloudFront/S3, ECR, Secrets Manag
 
 ## Known blockers and next action
 
-1. Create and push the honest first baseline after final staged secret and file checks.
-2. Build and push a SHA-tagged backend image, then verify its registry scan.
+1. Commit and push the Alpine/ARM64 remediation and attach the immutable commit-SHA image tag.
+2. Produce and review the zero-destroy task-definition/service activation plan.
 3. Run the one-off Alembic migration and confirm the migration head.
-4. Enable the ECS service in a second reviewed zero-destroy plan.
+4. Enable the ECS service from the reviewed plan.
 5. Upload the production frontend build, invalidate CloudFront, and execute browser/security journeys.
 
 ## Known staging limitation

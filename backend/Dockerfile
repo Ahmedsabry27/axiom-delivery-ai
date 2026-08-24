@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.12-alpine
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     APP_ENV=production \
     PORT=8080
 
-RUN groupadd --system app && useradd --system --gid app --home-dir /app app
+RUN addgroup -S app && adduser -S -G app -h /app app
 
 COPY requirements.txt requirements-prod.txt ./
 
