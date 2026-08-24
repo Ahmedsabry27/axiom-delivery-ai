@@ -34,11 +34,11 @@ variable "environment" {
 }
 variable "backend_image_tag" {
   type    = string
-  default = "bootstrap"
+  default = "5dde90e04f19b9a17c0354c6862467a8e75ba0a5"
 }
 variable "create_ecs_service" {
   type    = bool
-  default = false
+  default = true
 }
 data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" {

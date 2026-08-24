@@ -2,7 +2,7 @@
 
 ## Completion decision
 
-AX-DEPLOY-01 IN PROGRESS — STAGING FOUNDATION DEPLOYED
+AX-DEPLOY-01 IN PROGRESS — STAGING BACKEND DEPLOYED
 
 ## Executive summary
 
@@ -36,6 +36,8 @@ Approval Gate 1 was explicitly approved. Encrypted, versioned, publicly blocked 
 - ECS service: intentionally deferred until the migration-readiness plan is approved and the one-off migration succeeds
 - Migration-readiness plan: `5 to add / 0 to change / 1 to destroy`; the destroy is deregistration of the unused bootstrap ECS task-definition revision, not deletion of running application capacity
 - Authentication readiness: plan creates a real email-based Cognito user pool, public OAuth client, and hosted domain because no existing pool was present in `eu-west-2`
+- Migration: one-off ECS task exited `0` and applied Alembic head `d2f4a6c8e0b3`
+- Service activation: `1 added / 0 changed / 0 destroyed`; ECS is stable at `1/1`, the ALB target is healthy, `/health` is healthy, and `/ready` is ready
 - Frontend URL: `https://d18zu5xein60s4.cloudfront.net`
 - API URL: `http://axiom-delivery-ai-staging-api-276330216.eu-west-2.elb.amazonaws.com`
 - ECR: `594677690649.dkr.ecr.eu-west-2.amazonaws.com/axiom-delivery-ai-staging-backend`
