@@ -11,7 +11,7 @@ Approval Gate 1 was explicitly approved. Encrypted, versioned, publicly blocked 
 ## Evidence
 
 - Branch: `main`
-- Current pushed commit SHA: `6f90be1a3ad1e1ba8750a6c17a21971518bf92f1`
+- Clean image source commit SHA: `5dde90e04f19b9a17c0354c6862467a8e75ba0a5`
 - Remote: `https://github.com/Ahmedsabry27/axiom-delivery-ai.git`
 - Branch: `main`; pushed successfully
 - AWS account: `594677690649`
@@ -33,7 +33,9 @@ Approval Gate 1 was explicitly approved. Encrypted, versioned, publicly blocked 
 - State: S3 backend with AES-256 encryption, versioning, public-access blocking, separate `staging/terraform.tfstate` key, and native S3 lockfile
 - Plan scope: VPC/subnets/routes/NAT, security groups, private S3 with CloudFront OAC and security headers, immutable ECR, private encrypted RDS PostgreSQL, ECS cluster/task definition and roles, ALB, logs
 - Runtime safety fix: the least-privilege ECS task role can read only the RDS-managed database secret
-- ECS service: intentionally deferred until the clean image is tagged with the remediation commit SHA and the activation plan is reviewed
+- ECS service: intentionally deferred until the migration-readiness plan is approved and the one-off migration succeeds
+- Migration-readiness plan: `5 to add / 0 to change / 1 to destroy`; the destroy is deregistration of the unused bootstrap ECS task-definition revision, not deletion of running application capacity
+- Authentication readiness: plan creates a real email-based Cognito user pool, public OAuth client, and hosted domain because no existing pool was present in `eu-west-2`
 - Frontend URL: `https://d18zu5xein60s4.cloudfront.net`
 - API URL: `http://axiom-delivery-ai-staging-api-276330216.eu-west-2.elb.amazonaws.com`
 - ECR: `594677690649.dkr.ecr.eu-west-2.amazonaws.com/axiom-delivery-ai-staging-backend`

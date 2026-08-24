@@ -40,15 +40,6 @@ variable "create_ecs_service" {
   type    = bool
   default = false
 }
-variable "cognito_user_pool_id" {
-  type    = string
-  default = "configure-before-service-deployment"
-}
-variable "cognito_client_id" {
-  type    = string
-  default = "configure-before-service-deployment"
-}
-
 data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" {
   state = "available"
@@ -62,6 +53,39 @@ locals {
     Environment = var.environment
     ManagedBy   = "Terraform"
   }
+}
+
+resource "aws_cognito_user_pool" "app" {
+  name                     = "${local.name}-users"
+  username_attributes      = ["email"]
+  auto_verified_attributes = ["email"]
+
+  password_policy {
+    minimum_length                   = 12
+    require_lowercase                = true
+    require_numbers                  = true
+    require_symbols                  = true
+    require_uppercase                = true
+    temporary_password_validity_days = 7
+  }
+}
+
+resource "aws_cognito_user_pool_client" "frontend" {
+  name                                 = "${local.name}-frontend"
+  user_pool_id                         = aws_cognito_user_pool.app.id
+  generate_secret                      = false
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["openid", "email"]
+  supported_identity_providers         = ["COGNITO"]
+  callback_urls                        = ["https://${aws_cloudfront_distribution.frontend.domain_name}"]
+  logout_urls                          = ["https://${aws_cloudfront_distribution.frontend.domain_name}"]
+  prevent_user_existence_errors        = "ENABLED"
+}
+
+resource "aws_cognito_user_pool_domain" "frontend" {
+  domain       = "${local.name}-${data.aws_caller_identity.current.account_id}"
+  user_pool_id = aws_cognito_user_pool.app.id
 }
 
 resource "aws_vpc" "main" {
@@ -280,6 +304,13 @@ resource "aws_cloudfront_distribution" "frontend" {
     cloudfront_default_certificate = true
     minimum_protocol_version       = "TLSv1.2_2021"
   }
+
+  # AWS fixes the generated CloudFront certificate at TLSv1 and otherwise
+  # reports a perpetual diff. A custom ACM certificate is required to enforce
+  # the requested policy; ignore only this provider-controlled field for now.
+  lifecycle {
+    ignore_changes = [viewer_certificate[0].minimum_protocol_version]
+  }
 }
 resource "aws_s3_bucket_policy" "frontend" {
   bucket = aws_s3_bucket.frontend.id
@@ -363,6 +394,22 @@ resource "aws_iam_role_policy" "ecs_task_database_secret" {
   })
 }
 
+resource "aws_iam_role_policy" "ecs_task_bedrock" {
+  name = "bedrock-model-invoke"
+  role = aws_iam_role.ecs_task.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ]
+      Resource = "arn:aws:bedrock:*::foundation-model/amazon.nova-lite-v1:0"
+    }]
+  })
+}
+
 resource "aws_lb" "api" {
   name               = substr("${local.name}-api", 0, 32)
   internal           = false
@@ -416,10 +463,14 @@ resource "aws_ecs_task_definition" "backend" {
       { name = "DATABASE_NAME", value = aws_db_instance.postgres.db_name },
       { name = "DATABASE_SECRET_ARN", value = aws_db_instance.postgres.master_user_secret[0].secret_arn },
       { name = "AWS_REGION", value = var.aws_region },
+      { name = "AI_PROVIDER", value = "bedrock" },
+      { name = "BEDROCK_MODEL_ID", value = "amazon.nova-lite-v1:0" },
+      { name = "BUDGET_ENFORCEMENT_ENABLED", value = "true" },
+      { name = "CORS_ALLOWED_ORIGINS", value = "https://${aws_cloudfront_distribution.frontend.domain_name}" },
       { name = "TRUSTED_HOSTS", value = aws_lb.api.dns_name },
       { name = "COGNITO_REGION", value = var.aws_region },
-      { name = "COGNITO_USER_POOL_ID", value = var.cognito_user_pool_id },
-      { name = "COGNITO_CLIENT_ID", value = var.cognito_client_id }
+      { name = "COGNITO_USER_POOL_ID", value = aws_cognito_user_pool.app.id },
+      { name = "COGNITO_CLIENT_ID", value = aws_cognito_user_pool_client.frontend.id }
     ]
     logConfiguration = {
       logDriver = "awslogs"
@@ -460,3 +511,6 @@ output "frontend_url" { value = "https://${aws_cloudfront_distribution.frontend.
 output "api_url" { value = "http://${aws_lb.api.dns_name}" }
 output "ecr_repository_url" { value = aws_ecr_repository.backend.repository_url }
 output "frontend_bucket" { value = aws_s3_bucket.frontend.id }
+output "cognito_user_pool_id" { value = aws_cognito_user_pool.app.id }
+output "cognito_client_id" { value = aws_cognito_user_pool_client.frontend.id }
+output "cognito_domain" { value = "${aws_cognito_user_pool_domain.frontend.domain}.auth.${var.aws_region}.amazoncognito.com" }
