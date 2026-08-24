@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1900" viewBox="0 0 3200 1900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/></marker><filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-opacity=".3"/></filter></defs>
+<rect width="100%" height="100%" fill="#06111f"/><text x="80" y="90" fill="#f8fafc" font-family="Arial" font-size="48" font-weight="700">Implementation Status Map</text>
+<text x="80" y="140" fill="#94a3b8" font-family="Arial" font-size="22">ACTUAL REPOSITORY • generated 2026-08-08</text>
+<rect x="80.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="108.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Implemented</text>
+<rect x="108.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#16a34a" stroke-width="4" filter="url(#shadow)"/>
+<text x="132.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Conversation persistence; durable</text>
+<text x="132.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">runtime events/SSE replay</text>
+<rect x="132.0" y="389" width="15" height="15" rx="3" fill="#16a34a"/><text x="156.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">IMPLEMENTED</text>
+<rect x="108.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#16a34a" stroke-width="4" filter="url(#shadow)"/>
+<text x="132.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">OpenAI + Bedrock providers; agent</text>
+<text x="132.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">CRUD/lifecycle</text>
+<rect x="132.0" y="619" width="15" height="15" rx="3" fill="#16a34a"/><text x="156.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">IMPLEMENTED</text>
+<rect x="108.0" y="725" width="680.0" height="155" rx="18" fill="#10243b" stroke="#16a34a" stroke-width="4" filter="url(#shadow)"/>
+<text x="132.0" y="767" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Tool SDK/catalog/discovery/MCP;</text>
+<text x="132.0" y="797" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">audit/metrics</text>
+<rect x="132.0" y="849" width="15" height="15" rx="3" fill="#16a34a"/><text x="156.0" y="862" fill="#94a3b8" font-family="Arial" font-size="16">IMPLEMENTED</text>
+<rect x="840.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="868.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Partial</text>
+<rect x="868.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="892.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Agent selection scoring + planner</text>
+<text x="892.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">are heuristic/hardcoded</text>
+<rect x="892.0" y="389" width="15" height="15" rx="3" fill="#ca8a04"/><text x="916.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="868.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="892.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Actions split across DB management</text>
+<text x="892.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">and in-memory runtime</text>
+<rect x="892.0" y="619" width="15" height="15" rx="3" fill="#ca8a04"/><text x="916.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="868.0" y="725" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="892.0" y="767" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Governance/continuations have</text>
+<text x="892.0" y="797" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">parallel implementations</text>
+<rect x="892.0" y="849" width="15" height="15" rx="3" fill="#ca8a04"/><text x="916.0" y="862" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="868.0" y="955" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="892.0" y="997" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Dashboard/admin UI functionality</text>
+<text x="892.0" y="1027" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">varies by page</text>
+<rect x="892.0" y="1079" width="15" height="15" rx="3" fill="#ca8a04"/><text x="916.0" y="1092" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="1600.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="1628.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Broken / gaps</text>
+<rect x="1628.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#dc2626" stroke-width="4" filter="url(#shadow)"/>
+<text x="1652.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Knowledge has no ingestion,</text>
+<text x="1652.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">chunks, embeddings, vector</text>
+<text x="1652.0" y="367" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">retrieval</text>
+<rect x="1652.0" y="389" width="15" height="15" rx="3" fill="#dc2626"/><text x="1676.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">BROKEN</text>
+<rect x="1628.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#dc2626" stroke-width="4" filter="url(#shadow)"/>
+<text x="1652.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">SSE has no Last-Event-ID cursor;</text>
+<text x="1652.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">multi-process live fanout absent</text>
+<rect x="1652.0" y="619" width="15" height="15" rx="3" fill="#dc2626"/><text x="1676.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">BROKEN</text>
+<rect x="2360.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="2388.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Placeholder/legacy</text>
+<rect x="2388.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#9333ea" stroke-width="4" filter="url(#shadow)"/>
+<text x="2412.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">app/api/main.py, backend-deploy,</text>
+<text x="2412.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">root src duplicate</text>
+<rect x="2412.0" y="389" width="15" height="15" rx="3" fill="#9333ea"/><text x="2436.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">LEGACY</text>
+<rect x="2388.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#64748b" stroke-width="4" filter="url(#shadow)"/>
+<text x="2412.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">AWS networking/IaC and centralized</text>
+<text x="2412.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">log sink undefined</text>
+<rect x="2412.0" y="619" width="15" height="15" rx="3" fill="#64748b"/><text x="2436.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">PLACEHOLDER</text>
+<rect x="90" y="1795" width="20" height="20" rx="4" fill="#16a34a"/><text x="122" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Implemented</text>
+<rect x="400" y="1795" width="20" height="20" rx="4" fill="#ca8a04"/><text x="432" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Partial</text>
+<rect x="710" y="1795" width="20" height="20" rx="4" fill="#dc2626"/><text x="742" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Broken/gap</text>
+<rect x="1020" y="1795" width="20" height="20" rx="4" fill="#64748b"/><text x="1052" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Placeholder</text>
+<rect x="1330" y="1795" width="20" height="20" rx="4" fill="#9333ea"/><text x="1362" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Legacy/unused</text>
+<text x="3120" y="1858" text-anchor="end" fill="#94a3b8" font-family="Arial" font-size="17">Status is based on current source, wiring, migrations, and frontend consumers</text>
+</svg>

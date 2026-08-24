@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1900" viewBox="0 0 3200 1900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/></marker><filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-opacity=".3"/></filter></defs>
+<rect width="100%" height="100%" fill="#06111f"/><text x="80" y="90" fill="#f8fafc" font-family="Arial" font-size="48" font-weight="700">Planner and Agent Selection</text>
+<text x="80" y="140" fill="#94a3b8" font-family="Arial" font-size="22">ACTUAL REPOSITORY • generated 2026-08-08</text>
+<rect x="80.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="108.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Goal</text>
+<rect x="108.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#2563eb" stroke-width="4" filter="url(#shadow)"/>
+<text x="132.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">User goal + identity + tenant</text>
+<rect x="132.0" y="389" width="15" height="15" rx="3" fill="#2563eb"/><text x="156.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">FRONTEND</text>
+<rect x="108.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="132.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Rule-based intent classification</text>
+<rect x="132.0" y="619" width="15" height="15" rx="3" fill="#ca8a04"/><text x="156.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="840.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="868.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Candidates</text>
+<rect x="868.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#16a34a" stroke-width="4" filter="url(#shadow)"/>
+<text x="892.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Enabled published tenant agents +</text>
+<text x="892.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">authorization</text>
+<rect x="892.0" y="389" width="15" height="15" rx="3" fill="#16a34a"/><text x="916.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">IMPLEMENTED</text>
+<rect x="868.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="892.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Lexical capability/tool match +</text>
+<text x="892.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">confidence threshold</text>
+<rect x="892.0" y="619" width="15" height="15" rx="3" fill="#ca8a04"/><text x="916.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="1600.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="1628.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Planning</text>
+<rect x="1628.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="1652.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">DefaultPlanner hardcodes</text>
+<text x="1652.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">general-execution fallback</text>
+<rect x="1652.0" y="389" width="15" height="15" rx="3" fill="#ca8a04"/><text x="1676.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="1628.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#16a34a" stroke-width="4" filter="url(#shadow)"/>
+<text x="1652.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">ToolDiscoveryEngine</text>
+<text x="1652.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">semantic/lexical index</text>
+<rect x="1652.0" y="619" width="15" height="15" rx="3" fill="#16a34a"/><text x="1676.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">IMPLEMENTED</text>
+<rect x="1628.0" y="725" width="680.0" height="155" rx="18" fill="#10243b" stroke="#ca8a04" stroke-width="4" filter="url(#shadow)"/>
+<text x="1652.0" y="767" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">ExecutionPlan tasks</text>
+<rect x="1652.0" y="849" width="15" height="15" rx="3" fill="#ca8a04"/><text x="1676.0" y="862" fill="#94a3b8" font-family="Arial" font-size="16">PARTIAL</text>
+<rect x="2360.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="2388.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Execute</text>
+<rect x="2388.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="2412.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Managed agent OR default fallback</text>
+<rect x="2412.0" y="389" width="15" height="15" rx="3" fill="#7c3aed"/><text x="2436.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">RUNTIME</text>
+<rect x="2388.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#d97706" stroke-width="4" filter="url(#shadow)"/>
+<text x="2412.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Resolved authorized tool</text>
+<rect x="2412.0" y="619" width="15" height="15" rx="3" fill="#d97706"/><text x="2436.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">CAPABILITY</text>
+<path d="M788.0,342.5 H448.0 V572.5 H108.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="383.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="448.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">classify</text>
+<path d="M788.0,572.5 H828.0 V342.5 H868.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="763.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="828.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">filter</text>
+<path d="M1548.0,342.5 H1208.0 V572.5 H868.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1143.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="1208.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">score</text>
+<path d="M1548.0,572.5 H1968.0 V342.5 H2388.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1903.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="1968.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">select</text>
+<path d="M788.0,342.5 H1208.0 V342.5 H1628.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1143.0" y="324.5" width="130" height="30" rx="8" fill="#06111f"/><text x="1208.0" y="346.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">plan</text>
+<path d="M2308.0,342.5 H1968.0 V572.5 H1628.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1903.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="1968.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">query</text>
+<path d="M2308.0,572.5 H1968.0 V802.5 H1628.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1903.0" y="669.5" width="130" height="30" rx="8" fill="#06111f"/><text x="1968.0" y="691.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">selected tool</text>
+<path d="M2308.0,802.5 H2348.0 V572.5 H2388.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="2283.0" y="669.5" width="130" height="30" rx="8" fill="#06111f"/><text x="2348.0" y="691.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">task</text>
+<rect x="90" y="1795" width="20" height="20" rx="4" fill="#16a34a"/><text x="122" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Implemented</text>
+<rect x="400" y="1795" width="20" height="20" rx="4" fill="#ca8a04"/><text x="432" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Partial</text>
+<rect x="710" y="1795" width="20" height="20" rx="4" fill="#dc2626"/><text x="742" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Broken/gap</text>
+<rect x="1020" y="1795" width="20" height="20" rx="4" fill="#64748b"/><text x="1052" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Placeholder</text>
+<rect x="1330" y="1795" width="20" height="20" rx="4" fill="#9333ea"/><text x="1362" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Legacy/unused</text>
+<text x="3120" y="1858" text-anchor="end" fill="#94a3b8" font-family="Arial" font-size="17">DefaultPlanner is used by legacy runtime; chat runtime has additional inline planning</text>
+</svg>

@@ -1,0 +1,1 @@
+export default function IntegrationHealthBadge({health="unknown"}){const normalized=String(health).toLowerCase();const label=normalized.replaceAll("_"," ").replace(/\b\w/g,letter=>letter.toUpperCase());return <span className={`integration-badge health-${normalized}`}>{label}</span>}

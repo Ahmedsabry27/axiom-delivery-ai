@@ -1,0 +1,199 @@
+{
+  "generated_at": "2026-08-08T15:58:47.780137+00:00",
+  "repository": "enterprise-ai-copilot",
+  "diagrams": [
+    {
+      "png": "architecture_actions.png",
+      "source": "architecture_actions.svg"
+    },
+    {
+      "png": "architecture_agents.png",
+      "source": "architecture_agents.svg"
+    },
+    {
+      "png": "architecture_ai_providers.png",
+      "source": "architecture_ai_providers.svg"
+    },
+    {
+      "png": "architecture_api.png",
+      "source": "architecture_api.svg"
+    },
+    {
+      "png": "architecture_aws.png",
+      "source": "architecture_aws.svg"
+    },
+    {
+      "png": "architecture_backend.png",
+      "source": "architecture_backend.svg"
+    },
+    {
+      "png": "architecture_chat_runtime.png",
+      "source": "architecture_chat_runtime.svg"
+    },
+    {
+      "png": "architecture_code_dependencies.png",
+      "source": "architecture_code_dependencies.svg"
+    },
+    {
+      "png": "architecture_configuration.png",
+      "source": "architecture_configuration.svg"
+    },
+    {
+      "png": "architecture_database.png",
+      "source": "architecture_database.svg"
+    },
+    {
+      "png": "architecture_discovery.png",
+      "source": "architecture_discovery.svg"
+    },
+    {
+      "png": "architecture_frontend.png",
+      "source": "architecture_frontend.svg"
+    },
+    {
+      "png": "architecture_governance.png",
+      "source": "architecture_governance.svg"
+    },
+    {
+      "png": "architecture_implementation_status.png",
+      "source": "architecture_implementation_status.svg"
+    },
+    {
+      "png": "architecture_knowledge.png",
+      "source": "architecture_knowledge.svg"
+    },
+    {
+      "png": "architecture_master.png",
+      "source": "architecture_master.svg"
+    },
+    {
+      "png": "architecture_mcp.png",
+      "source": "architecture_mcp.svg"
+    },
+    {
+      "png": "architecture_observability.png",
+      "source": "architecture_observability.svg"
+    },
+    {
+      "png": "architecture_planner_agent_selection.png",
+      "source": "architecture_planner_agent_selection.svg"
+    },
+    {
+      "png": "architecture_security_auth.png",
+      "source": "architecture_security_auth.svg"
+    },
+    {
+      "png": "architecture_sequence_chat.png",
+      "source": "architecture_sequence_chat.svg"
+    },
+    {
+      "png": "architecture_sse_events.png",
+      "source": "architecture_sse_events.svg"
+    },
+    {
+      "png": "architecture_tools.png",
+      "source": "architecture_tools.svg"
+    }
+  ],
+  "critical_frontend_files": [
+    "frontend/src/main.jsx",
+    "frontend/src/App.jsx",
+    "frontend/src/app/router.jsx",
+    "frontend/src/pages/ChatPage.jsx",
+    "frontend/src/hooks/useChat.js",
+    "frontend/src/services/runtime.service.ts",
+    "frontend/src/store/runtime.reducer.ts"
+  ],
+  "critical_backend_files": [
+    "backend/app/main.py",
+    "backend/app/api/chat.py",
+    "backend/app/api/runtime.py",
+    "backend/app/services/runtime_execution_service.py",
+    "backend/app/agents/execution_service.py",
+    "backend/app/ai/factory.py",
+    "backend/app/tool_discovery/engine.py",
+    "backend/app/tool_sdk/executor.py"
+  ],
+  "critical_database_models": [
+    "actions",
+    "agent_access_assignments",
+    "agent_activity_events",
+    "agent_continuations",
+    "agent_execution_settings",
+    "agent_executions",
+    "agent_knowledge_assignments",
+    "agent_tool_assignments",
+    "agent_versions",
+    "agents",
+    "approval_requests",
+    "audit_logs",
+    "clarification_requests",
+    "conversations",
+    "integration_configurations",
+    "knowledge_sources",
+    "mcp_capabilities",
+    "mcp_servers",
+    "mcp_sync_runs",
+    "messages",
+    "native_connections",
+    "native_file_contents",
+    "native_files",
+    "native_notifications",
+    "runtime_continuations",
+    "runtime_execution_events",
+    "runtime_executions",
+    "tasks",
+    "tool_assignments",
+    "tool_candidate_decisions",
+    "tool_definitions",
+    "tool_discovery_events",
+    "tool_discovery_feedback",
+    "tool_executions",
+    "tool_governance_policies",
+    "tool_marketplace_profiles",
+    "tool_search_index",
+    "users",
+    "workflows"
+  ],
+  "api_groups": [
+    "agent_executions",
+    "agents_v1",
+    "audit",
+    "auth",
+    "chat",
+    "conversation",
+    "conversations",
+    "dashboard",
+    "governance_workflows",
+    "main",
+    "management",
+    "mcp",
+    "native_tools",
+    "operations",
+    "runtime",
+    "tool_discovery",
+    "tools",
+    "workflows"
+  ],
+  "known_gaps": [
+    "Knowledge lacks ingestion/chunks/embeddings/vector retrieval",
+    "SSE lacks cursor and cross-process live fanout",
+    "Action persistence and contract executor are not unified",
+    "AWS application networking/IaC is not defined",
+    "Duplicate legacy source/entrypoint trees remain"
+  ],
+  "known_broken_flows": [
+    "Knowledge upload creates metadata only",
+    "Live SSE is process-local after replay",
+    "DB action execution is separate from ActionRegistry"
+  ],
+  "partially_implemented": [
+    "planner",
+    "automatic agent selection",
+    "actions",
+    "unified approvals",
+    "knowledge/RAG",
+    "multi-process SSE",
+    "AWS deployment topology"
+  ]
+}

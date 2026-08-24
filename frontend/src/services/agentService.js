@@ -1,0 +1,25 @@
+import api from "./api";
+
+const base="/api/v1/agents";
+export const getAgents=(params={})=>api.get(base,{params}).then(({data})=>data);
+export const getAgent=(id)=>api.get(`${base}/${id}`).then(({data})=>data);
+export const getAgentOptions=()=>api.get(`${base}/capabilities/options`).then(({data})=>data);
+export const createAgent=(payload)=>api.post(base,payload).then(({data})=>data);
+export const updateAgent=(id,payload,lockVersion)=>api.patch(`${base}/${id}`,payload,{headers:{"If-Match":String(lockVersion)}}).then(({data})=>data);
+export const lifecycleAgent=(id,action,lockVersion,payload={})=>api.post(`${base}/${id}/${action}`,payload,{headers:{"If-Match":String(lockVersion)}}).then(({data})=>data);
+export const deleteAgent=(id)=>lifecycleAgent(id,"archive",1,{confirmed:true});
+export const getAssignments=(id,kind)=>api.get(`${base}/${id}/${kind}`).then(({data})=>data);
+export const getEffectiveAccess=(id,action="view")=>api.get(`${base}/${id}/effective-access`,{params:{action}}).then(({data})=>data);
+export const saveAssignments=(id,kind,assignments)=>api.put(`${base}/${id}/${kind}`,{assignments}).then(({data})=>data);
+export const removeAssignment=(id,kind,assignmentId)=>api.delete(`${base}/${id}/${kind}/${assignmentId}`);
+export const getVersions=(id)=>api.get(`${base}/${id}/versions`).then(({data})=>data);
+export const getActivity=(id,params={})=>api.get(`${base}/${id}/activity`,{params}).then(({data})=>data);
+export const getAgentExecutions=(id,params={})=>api.get(`${base}/${id}/executions`,{params}).then(({data})=>data);
+export const getAgentExecution=(id,executionId)=>api.get(`${base}/${id}/executions/${executionId}`).then(({data})=>data);
+export const getAgentAnalytics=(id,params={})=>api.get(`${base}/${id}/analytics`,{params}).then(({data})=>data);
+export const getAgentEvaluations=(id,params={})=>api.get(`${base}/${id}/evaluations`,{params}).then(({data})=>data);
+export const runAgentEvaluation=(id,payload)=>api.post(`${base}/${id}/evaluations`,payload).then(({data})=>data);
+export const testAgent=(id,payload)=>api.post(`${base}/${id}/test`,payload).then(({data})=>data);
+export const resumeAgent=(executionId,kind,payload)=>api.post(`/api/v1/agent-executions/${executionId}/${kind}`,payload).then(({data})=>data);
+export const cancelAgentExecution=(agentId,executionId)=>api.post(`${base}/${agentId}/executions/${executionId}/cancel`).then(({data})=>data);
+export const getAuthorizedAgents=()=>getAgents({status:"enabled",page_size:100}).then(data=>data.items||[]);

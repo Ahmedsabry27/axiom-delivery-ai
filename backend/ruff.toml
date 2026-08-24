@@ -1,0 +1,23 @@
+target-version = "py311"
+exclude = [
+  ".venv",
+  ".pytest_cache",
+  ".ruff_cache",
+  "backend-deploy",
+  "alembic/versions",
+]
+
+[lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "BLE", "S110", "S112", "TRY002", "DTZ003", "DTZ011", "PIE790", "UP007", "UP035", "UP045", "RUF012", "RUF022"]
+ignore = [
+  # FastAPI intentionally evaluates Depends/Query/Field in signature defaults.
+  "B008",
+]
+
+[lint.per-file-ignores]
+"tests/**" = [
+  "B017",   # Tests deliberately verify generic exception boundaries.
+  "DTZ011", # Business-date fixtures use local date semantics.
+  "TRY002", # Minimal test doubles intentionally raise Exception.
+]
+"test_*.py" = ["BLE001"]

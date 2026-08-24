@@ -1,0 +1,24 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getAgentExecutions } from "../../services/agentService";
+
+const control = "rounded-lg border border-white/15 bg-slate-950/60 p-2 text-sm";
+
+export default function AgentExecutionHistory({ agent, navigate }) {
+  const [filters, setFilters] = useState({status:"",mode:"",actor:"",tool:"",version:"",started_from:"",started_to:"",sort:"started_at",direction:"desc",page:1,page_size:25});
+  const request = Object.fromEntries(Object.entries(filters).filter(([, value]) => value !== ""));
+  const query = useQuery({queryKey:["agent",agent.id,"executions",request],queryFn:()=>getAgentExecutions(agent.id,request)});
+  const update = (name, value) => setFilters((current) => ({...current,[name]:value,page:1}));
+  return <article className="rounded-xl border border-white/10 bg-white/5 p-5">
+    <h2 className="font-semibold">Execution history</h2>
+    <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      <Filter label="From" type="datetime-local" value={filters.started_from} onChange={value=>update("started_from",value)}/><Filter label="To" type="datetime-local" value={filters.started_to} onChange={value=>update("started_to",value)}/><Filter label="Actor" value={filters.actor} onChange={value=>update("actor",value)}/><Filter label="Tool" value={filters.tool} onChange={value=>update("tool",value)}/><Filter label="Version" type="number" min="1" value={filters.version} onChange={value=>update("version",value)}/>
+      <Select label="Status" value={filters.status} values={["running","waiting_for_input","waiting_for_clarification","waiting_for_approval","succeeded","failed","cancelled","timed_out"]} onChange={value=>update("status",value)}/><Select label="Mode" value={filters.mode} values={["test","production"]} onChange={value=>update("mode",value)}/><Select label="Sort" value={filters.sort} values={["started_at","duration_ms","status","agent_version"]} onChange={value=>update("sort",value)} includeAll={false}/><Select label="Direction" value={filters.direction} values={["desc","asc"]} onChange={value=>update("direction",value)} includeAll={false}/><Select label="Page size" value={String(filters.page_size)} values={["10","25","50","100"]} onChange={value=>update("page_size",Number(value))} includeAll={false}/>
+    </div>
+    {query.isLoading&&<p aria-live="polite" className="mt-4">Loading executions…</p>}{query.error&&<p role="alert" className="mt-4">Execution history unavailable. <button onClick={()=>query.refetch()} className="underline">Retry</button></p>}{query.data&&<ExecutionTable items={query.data.items} agent={agent} navigate={navigate}/>} {query.data&&<nav aria-label="Execution pages" className="mt-4 flex items-center gap-3"><button className={control} disabled={filters.page<=1} onClick={()=>setFilters({...filters,page:filters.page-1})}>Previous</button><span>Page {filters.page} of {query.data.pages}</span><button className={control} disabled={filters.page>=query.data.pages} onClick={()=>setFilters({...filters,page:filters.page+1})}>Next</button></nav>}
+  </article>;
+}
+
+function Filter({label,onChange,...props}){return <label className="text-sm">{label}<input aria-label={`Execution ${label.toLowerCase()}`} className={`${control} mt-1 w-full`} onChange={event=>onChange(event.target.value)} {...props}/></label>}
+function Select({label,values,onChange,includeAll=true,...props}){return <label className="text-sm">{label}<select aria-label={`Execution ${label.toLowerCase()}`} className={`${control} mt-1 w-full`} onChange={event=>onChange(event.target.value)} {...props}>{includeAll&&<option value="">All</option>}{values.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}</select></label>}
+function ExecutionTable({items,agent,navigate}){if(!items.length)return <p className="mt-4">No executions match these filters.</p>;return <div className="mt-4 overflow-x-auto" tabIndex="0" role="region" aria-label="Execution history table"><table className="min-w-[900px] w-full text-sm"><thead><tr>{["Status","Execution","Version","Actor","Mode","Tools","Started","Duration","Cost","Correlation"].map(item=><th className="p-2 text-left" key={item}>{item}</th>)}</tr></thead><tbody>{items.map(item=><tr className="border-t border-white/10" key={item.execution_id}><td className="p-2">{item.status}</td><td className="p-2"><button className="text-violet-300" onClick={()=>navigate(`/agents/${agent.id}/executions/${item.execution_id}`)}>{item.execution_id.slice(0,8)}</button></td><td>{item.agent_version}</td><td>{item.actor_id}</td><td>{item.test_mode?"test":"production"}</td><td>{item.selected_tools.map(tool=>tool.name).join(", ")||"—"}</td><td>{new Date(item.started_at).toLocaleString()}</td><td>{item.duration_ms??"—"}</td><td>{item.actual_cost??item.estimated_cost??"—"}</td><td>{item.correlation_id.slice(0,8)}</td></tr>)}</tbody></table></div>}

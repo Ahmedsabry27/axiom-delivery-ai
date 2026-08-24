@@ -1,0 +1,7 @@
+[
+  {"query":"search files for an agreement","permissions":["files.search"],"expected":"file_search"},
+  {"query":"search ServiceNow production incidents","permissions":["servicenow.incidents.read"],"expected":"servicenow_incident_search"},
+  {"query":"send notification email","permissions":["notifications.email.send"],"risk_tolerance":"write","expected":"notification_email_send"},
+  {"query":"search ServiceNow incidents","permissions":[],"expected":null},
+  {"query":"use a quantum payroll optimizer","permissions":["files.read"],"expected":null}
+]

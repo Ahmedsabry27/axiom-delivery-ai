@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title id="title">Axiom monogram</title>
+  <rect width="48" height="48" rx="5" fill="#202020"/>
+  <path d="M12 38 22 10h5l10 28h-7l-2-7H18l-2 7h-4Zm8-13h6l-3-10-3 10Z" fill="#fff"/>
+  <rect x="30" y="35" width="12" height="5" fill="#ffb600"/>
+  <rect x="36" y="8" width="6" height="18" fill="#e0301e"/>
+</svg>

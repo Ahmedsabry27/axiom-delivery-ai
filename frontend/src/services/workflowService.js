@@ -1,0 +1,12 @@
+import api from "./api";
+export const getWorkflows=()=>api.get("/api/workflows").then(({data})=>data);
+export const createWorkflow=(payload)=>api.post("/api/workflows",payload).then(({data})=>data);
+export const executeWorkflow=(id)=>api.post(`/api/workflows/${id}/execute`).then(({data})=>data);
+export const deleteWorkflow=(id)=>api.delete(`/api/workflows/${id}`);
+export const getWorkflow=(id)=>api.get(`/api/workflows/${id}`).then(({data})=>data);
+export const updateWorkflow=(id,payload,lockVersion)=>api.put(`/api/workflows/${id}`,payload,{headers:{"If-Match":String(lockVersion)}}).then(({data})=>data);
+export const validateWorkflow=(id)=>api.post(`/api/workflows/${id}/validate`).then(({data})=>data);
+export const testWorkflow=(id)=>api.post(`/api/workflows/${id}/test`).then(({data})=>data);
+export const getWorkflowVersions=(id)=>api.get(`/api/workflows/${id}/versions`).then(({data})=>data);
+export const getWorkflowActivity=(id)=>api.get(`/api/workflows/${id}/activity`).then(({data})=>data);
+export const retireWorkflow=(id)=>api.post(`/api/workflows/${id}/retire`).then(({data})=>data);

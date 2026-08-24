@@ -1,0 +1,37 @@
+class Planner:
+
+
+    def create_plan(
+        self,
+        message: str
+    ):
+
+        plan = []
+
+
+        if "report" in message.lower():
+
+            plan.append(
+                {
+                    "agent":
+                    "ReportingAgent",
+
+                    "action":
+                    "GenerateReport"
+                }
+            )
+
+        else:
+
+            plan.append(
+                {
+                    "agent":
+                    "GeneralAssistantAgent",
+
+                    "action":
+                    "AnswerQuestion"
+                }
+            )
+
+
+        return plan

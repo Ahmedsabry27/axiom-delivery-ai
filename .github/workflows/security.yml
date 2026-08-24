@@ -1,0 +1,31 @@
+name: Security checks
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Scan the current repository contents with gitleaks
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.0 dir /repo --config /repo/.gitleaks.toml --redact --report-format json --report-path /repo/gitleaks-current.json
+      - name: Scan Git history with gitleaks
+        if: always()
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.0 git /repo --config /repo/.gitleaks.toml --redact --report-format json --report-path /repo/gitleaks-history.json
+      - name: Upload redacted secret-scan reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: redacted-gitleaks-reports
+          path: |
+            gitleaks-current.json
+            gitleaks-history.json
+          retention-days: 14
+          if-no-files-found: warn

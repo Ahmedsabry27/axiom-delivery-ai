@@ -1,0 +1,11 @@
+import api from "./api";
+export const getNativeTools=()=>api.get("/api/v1/native-tools").then(r=>r.data);
+export const getFiles=()=>api.get("/api/v1/files").then(r=>r.data);
+export const uploadFile=(file:File)=>{const form=new FormData();form.append("file",file);return api.post("/api/v1/files",form,{headers:{"Content-Type":"multipart/form-data"}}).then(r=>r.data)};
+export const getFileContent=(id:string)=>api.get(`/api/v1/files/${id}/content`).then(r=>r.data);
+export const summarizeFile=(id:string)=>api.post(`/api/v1/files/${id}/summarize`,{}).then(r=>r.data);
+export const getDatabaseConnections=()=>api.get("/api/v1/database-connections").then(r=>r.data);
+export const runDatabaseQuery=(input:Record<string,unknown>)=>api.post("/api/v1/database/query/execute",input).then(r=>r.data);
+export const getApiConnections=()=>api.get("/api/v1/api-connections").then(r=>r.data);
+export const runApiRequest=(id:string,input:Record<string,unknown>)=>api.post(`/api/v1/api-connections/${id}/request`,input).then(r=>r.data);
+export const sendNotification=(channel:string,input:Record<string,unknown>)=>api.post(`/api/v1/notifications/${channel}`,input).then(r=>r.data);

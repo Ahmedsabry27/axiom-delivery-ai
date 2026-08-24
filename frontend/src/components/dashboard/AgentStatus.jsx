@@ -1,0 +1,3 @@
+import { Bot } from "lucide-react";
+const statusColor={ready:'text-emerald-400',executing:'text-amber-400',failed:'text-red-400',created:'text-blue-400'};
+export default function AgentStatus({ agents }) { return <section className="rounded-2xl border border-white/10 bg-white/5 p-6"><h2 className="text-lg font-semibold">Agent Status</h2><div className="mt-4 space-y-4">{agents.map(agent=><div key={agent.name} className="flex items-center justify-between"><div className="flex items-center gap-3"><span className="rounded-xl bg-violet-500/15 p-2 text-violet-300"><Bot size={17}/></span><span>{agent.name}</span></div><span className={`text-sm capitalize ${statusColor[agent.status]||'text-slate-400'}`}>● {agent.status}</span></div>)}</div></section>; }

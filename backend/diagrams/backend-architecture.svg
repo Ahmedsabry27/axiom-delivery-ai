@@ -1,0 +1,112 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1400' height='950' viewBox='0 0 1400 950'>
+  <style>
+    .box { fill:#fff; stroke:#222; stroke-width:2 }
+    .label { font-family: Arial, Helvetica, sans-serif; font-size:14px; fill:#111 }
+    .title { font-size:16px; font-weight:700 }
+    .subtitle { font-size:13px; fill:#333 }
+    .arrow { stroke:#222; stroke-width:2; fill:none; marker-end:url(#arrowhead) }
+    .dashed { stroke-dasharray:6 6 }
+  </style>
+  <defs>
+    <marker id='arrowhead' markerWidth='10' markerHeight='7' refX='10' refY='3.5' orient='auto'>
+      <polygon points='0 0, 10 3.5, 0 7' fill='#222'/>
+    </marker>
+  </defs>
+
+  <!-- External clients and providers -->
+  <rect class='box' x='40' y='40' width='260' height='80' rx='10' ry='10'/>
+  <text class='label title' x='60' y='68'>Client</text>
+  <text class='label' x='60' y='92'>Browser UI / SDK / CLI</text>
+
+  <rect class='box' x='40' y='160' width='260' height='80' rx='10' ry='10'/>
+  <text class='label title' x='60' y='188'>Auth Provider</text>
+  <text class='label' x='60' y='212'>Cognito / JWT / OIDC</text>
+
+  <rect class='box' x='40' y='280' width='260' height='80' rx='10' ry='10'/>
+  <text class='label title' x='60' y='308'>External AI Provider</text>
+  <text class='label' x='60' y='332'>OpenAI / Bedrock</text>
+
+  <rect class='box' x='40' y='400' width='260' height='100' rx='10' ry='10'/>
+  <text class='label title' x='60' y='428'>External Tools / APIs</text>
+  <text class='label' x='60' y='452'>MCP tools, enterprise APIs, connectors</text>
+  <text class='label' x='60' y='476'>Actions, tool executions, enrichments</text>
+
+  <!-- FastAPI app -->
+  <rect class='box' x='360' y='30' width='320' height='160' rx='12' ry='12'/>
+  <text class='label title' x='380' y='62'>FastAPI App</text>
+  <text class='label' x='380' y='86'>backend/app/main.py</text>
+  <text class='label' x='380' y='110'>Routers: auth, chat, runtime, tools, governance, agents, audit</text>
+  <text class='label' x='380' y='134'>Middleware: CORS, TrustedHost, Logging, SecurityHeaders</text>
+
+  <rect class='box' x='360' y='210' width='180' height='70' rx='10' ry='10'/>
+  <text class='label title' x='380' y='242'>Auth / Claims</text>
+  <text class='label' x='380' y='266'>get_current_user</text>
+
+  <rect class='box' x='360' y='310' width='200' height='70' rx='10' ry='10'/>
+  <text class='label title' x='380' y='342'>DB Session</text>
+  <text class='label' x='380' y='366'>get_db / SessionLocal</text>
+
+  <rect class='box' x='360' y='420' width='240' height='90' rx='10' ry='10'/>
+  <text class='label title' x='380' y='458'>Startup &amp; Runtime Loading</text>
+  <text class='label' x='380' y='482'>Tool catalog sync, MCP tool load, DB health, metrics init</text>
+  <text class='label' x='380' y='506'>app.tool_sdk.service, app.mcp_integration.service</text>
+
+  <!-- Chat path -->
+  <rect class='box' x='720' y='40' width='320' height='140' rx='12' ry='12'/>
+  <text class='label title' x='740' y='70'>Synchronous Chat Path</text>
+  <text class='label' x='740' y='96'>app/api/chat.py → chat()</text>
+  <text class='label' x='740' y='118'>ChatService.ask()</text>
+  <text class='label' x='740' y='142'>ConversationService → AIProviderFactory → save response</text>
+
+  <!-- Runtime path -->
+  <rect class='box' x='720' y='220' width='320' height='220' rx='12' ry='12'/>
+  <text class='label title' x='740' y='250'>Runtime Execution Path</text>
+  <text class='label' x='740' y='276'>app/api/chat.py → /api/chat/start</text>
+  <text class='label' x='740' y='298'>RuntimeExecutionService.start()</text>
+  <text class='label' x='740' y='320'>Async background task + RuntimeOrchestrator.run()</text>
+  <text class='label' x='740' y='342'>Planner → Workflow → DefaultWorkflowEngine</text>
+  <text class='label' x='740' y='364'>AgentRegistry / DefaultAgent</text>
+  <text class='label' x='740' y='386'>ActionExecutor / generate-deployment-report</text>
+  <text class='label' x='740' y='410'>SSE / api/runtime/events streams progress</text>
+
+  <rect class='box' x='720' y='460' width='320' height='140' rx='12' ry='12'/>
+  <text class='label title' x='740' y='492'>Tool Execution &amp; Governance</text>
+  <text class='label' x='740' y='516'>app/tool_sdk/executor.py</text>
+  <text class='label' x='740' y='538'>Permission checks, idempotency, retries, audit</text>
+  <text class='label' x='740' y='560'>ToolMarketplaceProfile, assignments, governance policies</text>
+  <text class='label' x='740' y='582'>Approval workflows via app.governance.workflows</text>
+
+  <rect class='box' x='720' y='640' width='320' height='120' rx='12' ry='12'/>
+  <text class='label title' x='740' y='670'>Execution Events</text>
+  <text class='label' x='740' y='694'>EventBus publishes planning, task, workflow lifecycle events</text>
+  <text class='label' x='740' y='718'>ExecutionTracker persists SSE steps</text>
+  <text class='label' x='740' y='742'>RuntimeExecutionService.stream() → text/event-stream</text>
+
+  <!-- Persistence / datastore -->
+  <rect class='box' x='1160' y='60' width='220' height='220' rx='12' ry='12'/>
+  <text class='label title' x='1180' y='92'>Persistence Layer</text>
+  <text class='label' x='1180' y='118'>SQLAlchemy Models</text>
+  <text class='label' x='1180' y='142'>Conversation, Message, RuntimeExecution</text>
+  <text class='label' x='1180' y='166'>ToolExecution, AuditEvent, GovernanceWorkflow</text>
+  <text class='label' x='1180' y='190'>KnowledgeSource, Agent, Workflow</text>
+
+  <rect class='box' x='1160' y='310' width='220' height='120' rx='12' ry='12'/>
+  <text class='label title' x='1180' y='342'>AI / Tool Providers</text>
+  <text class='label' x='1180' y='366'>OpenAIProvider / BedrockProvider</text>
+  <text class='label' x='1180' y='390'>MCP tool registry / user-defined tools</text>
+  <text class='label' x='1180' y='414'>External APIs, enterprise connectors</text>
+
+  <!-- Arrows -->
+  <path class='arrow' d='M300 80 L360 80' />
+  <path class='arrow' d='M300 200 L360 200' />
+  <path class='arrow' d='M300 320 L360 320' />
+  <path class='arrow' d='M300 450 L360 450' />
+  <path class='arrow' d='M440 255 L720 255' />
+  <path class='arrow' d='M440 355 L720 355' />
+  <path class='arrow' d='M440 470 L720 470' />
+  <path class='arrow' d='M1040 90 L1160 90' />
+  <path class='arrow' d='M1040 250 L1160 250' />
+  <path class='arrow' d='M1040 560 L1040 360 L1160 360' />
+
+  <text class='label subtitle' x='60' y='920'>Generated diagram — backend/diagrams/backend-architecture.svg</text>
+</svg>

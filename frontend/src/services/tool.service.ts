@@ -1,0 +1,10 @@
+import api from "./api";
+export const getTools=(params={})=>api.get("/api/v1/tools",{params}).then(({data})=>data);
+export const getTool=(name:string)=>api.get(`/api/v1/tools/${name}`).then(({data})=>data);
+export const executeTool=(name:string,input:Record<string,unknown>)=>api.post(`/api/v1/tools/${name}/execute`,{input},{headers:{"X-Correlation-ID":crypto.randomUUID()}}).then(({data})=>data);
+export const setToolEnabled=(name:string,version:string,enabled:boolean)=>api.patch(`/api/v1/tools/${name}/${version}/enabled`,null,{params:{enabled}}).then(({data})=>data);
+export const getIntegrations=()=>api.get("/api/v1/integrations").then(({data})=>data);
+export const saveIntegration=(provider:string,payload:Record<string,unknown>)=>api.put(`/api/v1/integrations/${provider}`,payload).then(({data})=>data);
+export const verifyIntegration=(provider:string)=>api.post(`/api/v1/integrations/${provider}/verify`).then(({data})=>data);
+export const getToolExecutions=(params={})=>api.get("/api/v1/tool-executions",{params}).then(({data})=>data);
+export const getToolExecution=(id:string)=>api.get(`/api/v1/tool-executions/${id}`).then(({data})=>data);

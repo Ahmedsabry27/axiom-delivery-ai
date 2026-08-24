@@ -1,0 +1,12 @@
+.env
+.venv
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+tests
+reports
+*.db
+*.sqlite
+*.sqlite3
+alembic/env.py.save

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1900" viewBox="0 0 3200 1900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/></marker><filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-opacity=".3"/></filter></defs>
+<rect width="100%" height="100%" fill="#06111f"/><text x="80" y="90" fill="#f8fafc" font-family="Arial" font-size="48" font-weight="700">Tool Discovery</text>
+<text x="80" y="140" fill="#94a3b8" font-family="Arial" font-size="22">ACTUAL REPOSITORY • generated 2026-08-08</text>
+<rect x="80.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="108.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Request</text>
+<rect x="108.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#0891b2" stroke-width="4" filter="url(#shadow)"/>
+<text x="132.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Discovery search/simulate</text>
+<text x="132.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">endpoints</text>
+<rect x="132.0" y="389" width="15" height="15" rx="3" fill="#0891b2"/><text x="156.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">API</text>
+<rect x="108.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#d97706" stroke-width="4" filter="url(#shadow)"/>
+<text x="132.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Intent parser + embeddings</text>
+<text x="132.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">abstraction</text>
+<rect x="132.0" y="619" width="15" height="15" rx="3" fill="#d97706"/><text x="156.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">CAPABILITY</text>
+<rect x="840.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="868.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Index</text>
+<rect x="868.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#059669" stroke-width="4" filter="url(#shadow)"/>
+<text x="892.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">tool_search_index built from</text>
+<text x="892.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">registry/catalog/MCP</text>
+<rect x="892.0" y="389" width="15" height="15" rx="3" fill="#059669"/><text x="916.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">DATA</text>
+<rect x="1600.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="1628.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Decision</text>
+<rect x="1628.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#dc2626" stroke-width="4" filter="url(#shadow)"/>
+<text x="1652.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Permission, health, environment,</text>
+<text x="1652.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">governance filters</text>
+<rect x="1652.0" y="389" width="15" height="15" rx="3" fill="#dc2626"/><text x="1676.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">SECURITY</text>
+<rect x="1628.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#16a34a" stroke-width="4" filter="url(#shadow)"/>
+<text x="1652.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Candidate ranking +</text>
+<text x="1652.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">confidence/clarification</text>
+<rect x="1652.0" y="619" width="15" height="15" rx="3" fill="#16a34a"/><text x="1676.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">IMPLEMENTED</text>
+<rect x="2360.0" y="180" width="736.0" height="1570" rx="22" fill="#0b1b2e" stroke="#1e3a5f"/>
+<text x="2388.0" y="225" fill="#cbd5e1" font-family="Arial" font-size="25" font-weight="700">Results</text>
+<rect x="2388.0" y="265" width="680.0" height="155" rx="18" fill="#10243b" stroke="#059669" stroke-width="4" filter="url(#shadow)"/>
+<text x="2412.0" y="307" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">discovery events, decisions,</text>
+<text x="2412.0" y="337" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">feedback</text>
+<rect x="2412.0" y="389" width="15" height="15" rx="3" fill="#059669"/><text x="2436.0" y="402" fill="#94a3b8" font-family="Arial" font-size="16">DATA</text>
+<rect x="2388.0" y="495" width="680.0" height="155" rx="18" fill="#10243b" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="2412.0" y="537" fill="#f8fafc" font-family="Arial" font-size="25" font-weight="700">Planner/agent execution +</text>
+<text x="2412.0" y="567" fill="#f8fafc" font-family="Arial" font-size="19" font-weight="400">marketplace UI</text>
+<rect x="2412.0" y="619" width="15" height="15" rx="3" fill="#7c3aed"/><text x="2436.0" y="632" fill="#94a3b8" font-family="Arial" font-size="16">RUNTIME</text>
+<path d="M788.0,342.5 H448.0 V572.5 H108.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="383.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="448.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">parse</text>
+<path d="M788.0,572.5 H828.0 V342.5 H868.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="763.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="828.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">search</text>
+<path d="M1548.0,342.5 H1588.0 V342.5 H1628.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1523.0" y="324.5" width="130" height="30" rx="8" fill="#06111f"/><text x="1588.0" y="346.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">candidates</text>
+<path d="M2308.0,342.5 H1968.0 V572.5 H1628.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1903.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="1968.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">eligible</text>
+<path d="M2308.0,572.5 H2348.0 V342.5 H2388.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="2283.0" y="439.5" width="130" height="30" rx="8" fill="#06111f"/><text x="2348.0" y="461.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">persist</text>
+<path d="M2308.0,572.5 H2348.0 V572.5 H2388.0" fill="none" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="2283.0" y="554.5" width="130" height="30" rx="8" fill="#06111f"/><text x="2348.0" y="576.5" text-anchor="middle" fill="#cbd5e1" font-family="Arial" font-size="15">selection</text>
+<rect x="90" y="1795" width="20" height="20" rx="4" fill="#16a34a"/><text x="122" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Implemented</text>
+<rect x="400" y="1795" width="20" height="20" rx="4" fill="#ca8a04"/><text x="432" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Partial</text>
+<rect x="710" y="1795" width="20" height="20" rx="4" fill="#dc2626"/><text x="742" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Broken/gap</text>
+<rect x="1020" y="1795" width="20" height="20" rx="4" fill="#64748b"/><text x="1052" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Placeholder</text>
+<rect x="1330" y="1795" width="20" height="20" rx="4" fill="#9333ea"/><text x="1362" y="1813" fill="#cbd5e1" font-family="Arial" font-size="18">Legacy/unused</text>
+<text x="3120" y="1858" text-anchor="end" fill="#94a3b8" font-family="Arial" font-size="17">Discovery feeds tool execution; it does not ingest knowledge or create agents/actions</text>
+</svg>

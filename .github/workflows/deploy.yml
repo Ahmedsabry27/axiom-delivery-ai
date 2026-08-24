@@ -1,0 +1,327 @@
+name: Deploy Backend to ECS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy.yml"
+
+concurrency:
+  group: deploy-backend-production
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
+  ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
+  CONTAINER_NAME: ${{ secrets.ECS_CONTAINER_NAME }}
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    name: Build and Deploy Backend
+    if: ${{ vars.AWS_DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - name: Backend quality gate
+        run: |
+          python -m pip install -r backend/requirements-dev.txt
+          cd backend
+          ruff check \
+            app/core/config.py \
+            app/database/config.py \
+            app/database/session.py \
+            app/database/migrations.py \
+            app/main.py \
+            app/security \
+            scripts/initialize_catalog.py \
+            tests/test_production_runtime.py \
+            tests/test_main_runtime.py
+          mypy --follow-imports=skip \
+            app/core/config.py \
+            app/database/config.py \
+            app/database/session.py \
+            app/database/migrations.py \
+            app/main.py \
+            app/security/headers.py
+          pytest -q tests
+
+      - name: Validate AWS OIDC deployment configuration
+        env:
+          AWS_DEPLOY_ROLE_ARN: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+        run: |
+          test -n "$AWS_DEPLOY_ROLE_ARN" || {
+            echo "::error::Missing repository secret AWS_DEPLOY_ROLE_ARN. Configure it with the IAM role trusted by this GitHub repository's OIDC provider."
+            exit 1
+          }
+          test -n "$AWS_REGION" || {
+            echo "::error::Missing repository secret AWS_REGION."
+            exit 1
+          }
+
+      - name: Configure AWS credentials with GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            --load \
+            -f backend/Dockerfile \
+            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} \
+            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest \
+            backend
+
+      - name: Push Image (Git SHA)
+        run: |
+          docker push \
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Download Current Task Definition
+        run: |
+          aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --query 'services[0].deploymentConfiguration.deploymentCircuitBreaker' \
+            --output json \
+            | jq -e '.enable == true and .rollback == true' > /dev/null
+          aws ecs describe-task-definition \
+            --task-definition $ECS_TASK_DEFINITION \
+            --query taskDefinition \
+            > task-definition.json
+
+      - name: Inject Cognito Environment Variables
+        env:
+          COGNITO_REGION: ${{ secrets.COGNITO_REGION }}
+          COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
+          COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+          DATABASE_SECRET_ARN: ${{ vars.DATABASE_SECRET_ARN || secrets.DATABASE_SECRET_ARN }}
+          DATABASE_HOST: ${{ vars.DATABASE_HOST || secrets.DATABASE_HOST }}
+          DATABASE_NAME: ${{ vars.DATABASE_NAME || secrets.DATABASE_NAME }}
+          CORS_ALLOWED_ORIGINS: ${{ vars.CORS_ALLOWED_ORIGINS || secrets.CORS_ALLOWED_ORIGINS }}
+          TRUSTED_HOSTS: ${{ vars.TRUSTED_HOSTS || secrets.TRUSTED_HOSTS }}
+          ECS_TASK_ROLE_ARN: ${{ vars.ECS_TASK_ROLE_ARN || secrets.ECS_TASK_ROLE_ARN }}
+          CONTAINER_NAME: ${{ env.CONTAINER_NAME }}
+        run: |
+          test -n "$DATABASE_SECRET_ARN"
+          test -n "$DATABASE_HOST"
+          test -n "$DATABASE_NAME"
+          test -n "$CORS_ALLOWED_ORIGINS"
+          test -n "$TRUSTED_HOSTS"
+          test -n "$ECS_TASK_ROLE_ARN"
+          jq \
+            --arg container "$CONTAINER_NAME" \
+            --arg region "$COGNITO_REGION" \
+            --arg pool "$COGNITO_USER_POOL_ID" \
+            --arg client "$COGNITO_CLIENT_ID" \
+            --arg database_secret_arn "$DATABASE_SECRET_ARN" \
+            --arg database_host "$DATABASE_HOST" \
+            --arg database_name "$DATABASE_NAME" \
+            --arg cors_allowed_origins "$CORS_ALLOWED_ORIGINS" \
+            --arg trusted_hosts "$TRUSTED_HOSTS" \
+            --arg task_role "$ECS_TASK_ROLE_ARN" \
+            '
+            .taskRoleArn = $task_role
+            |
+            .containerDefinitions |= map(
+              if .name == $container then
+                .environment =
+                  (
+                    (.environment // [])
+                    | map(select(
+                        .name != "COGNITO_REGION" and
+                        .name != "COGNITO_USER_POOL_ID" and
+                        .name != "COGNITO_CLIENT_ID"
+                        and .name != "APP_ENV"
+                        and .name != "DATABASE_SECRET_ARN"
+                        and .name != "DATABASE_HOST"
+                        and .name != "DATABASE_NAME"
+                        and .name != "CORS_ALLOWED_ORIGINS"
+                        and .name != "TRUSTED_HOSTS"
+                        and .name != "RUN_SCHEMA_CREATE"
+                        and .name != "DATABASE_URL"
+                      ))
+                    +
+                    [
+                      {
+                        "name":"COGNITO_REGION",
+                        "value":$region
+                      },
+                      {
+                        "name":"COGNITO_USER_POOL_ID",
+                        "value":$pool
+                      },
+                      {
+                        "name":"COGNITO_CLIENT_ID",
+                        "value":$client
+                      },
+                      {"name":"APP_ENV","value":"production"},
+                      {"name":"DATABASE_SECRET_ARN","value":$database_secret_arn},
+                      {"name":"DATABASE_HOST","value":$database_host},
+                      {"name":"DATABASE_NAME","value":$database_name},
+                      {"name":"CORS_ALLOWED_ORIGINS","value":$cors_allowed_origins},
+                      {"name":"TRUSTED_HOSTS","value":$trusted_hosts},
+                      {"name":"RUN_SCHEMA_CREATE","value":"false"}
+                    ]
+                  )
+              else
+                .
+              end
+            )
+            ' task-definition.json > task-definition.tmp
+
+          mv task-definition.tmp task-definition.json
+          jq -e --arg container "$CONTAINER_NAME" '
+            .containerDefinitions[]
+            | select(.name == $container)
+            | ((.secrets // []) + (.environment // []))
+            | any(.name == "OPENAI_API_KEY")
+          ' task-definition.json > /dev/null
+
+      - name: Render New Task Definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Register migration task definition
+        id: migration-task-definition
+        env:
+          RENDERED_TASK_DEFINITION: ${{ steps.task-def.outputs.task-definition }}
+        run: |
+          jq 'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy)' \
+            "$RENDERED_TASK_DEFINITION" > migration-task-definition.json
+          arn=$(aws ecs register-task-definition \
+            --cli-input-json file://migration-task-definition.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+          echo "arn=$arn" >> "$GITHUB_OUTPUT"
+
+      - name: Run database migrations in ECS
+        env:
+          MIGRATION_TASK_DEFINITION: ${{ steps.migration-task-definition.outputs.arn }}
+        run: |
+          network=$(aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --query 'services[0].networkConfiguration' \
+            --output json)
+          overrides=$(jq -cn \
+            --arg container "$CONTAINER_NAME" \
+            '{containerOverrides:[{name:$container,command:["alembic","upgrade","head"]}]}')
+          task=$(aws ecs run-task \
+            --cluster "$ECS_CLUSTER" \
+            --task-definition "$MIGRATION_TASK_DEFINITION" \
+            --launch-type FARGATE \
+            --network-configuration "$network" \
+            --overrides "$overrides" \
+            --query 'tasks[0].taskArn' \
+            --output text)
+          test "$task" != "None"
+          aws ecs wait tasks-stopped --cluster "$ECS_CLUSTER" --tasks "$task"
+          exit_code=$(aws ecs describe-tasks \
+            --cluster "$ECS_CLUSTER" \
+            --tasks "$task" \
+            --query "tasks[0].containers[?name=='$CONTAINER_NAME'].exitCode | [0]" \
+            --output text)
+          if [ "$exit_code" != "0" ]; then
+            echo "::error::Database migration task failed with exit code $exit_code"
+            aws ecs describe-tasks \
+              --cluster "$ECS_CLUSTER" \
+              --tasks "$task" \
+              --query 'tasks[0].{stopCode:stopCode,stoppedReason:stoppedReason,containers:containers[].{name:name,lastStatus:lastStatus,exitCode:exitCode,reason:reason}}' \
+              --output json
+            exit 1
+          fi
+
+      - name: Initialize the governed tool catalog
+        env:
+          MIGRATION_TASK_DEFINITION: ${{ steps.migration-task-definition.outputs.arn }}
+        run: |
+          network=$(aws ecs describe-services \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE" \
+            --query 'services[0].networkConfiguration' \
+            --output json)
+          overrides=$(jq -cn \
+            --arg container "$CONTAINER_NAME" \
+            '{containerOverrides:[{name:$container,command:["python","-m","scripts.initialize_catalog"]}]}')
+          task=$(aws ecs run-task \
+            --cluster "$ECS_CLUSTER" \
+            --task-definition "$MIGRATION_TASK_DEFINITION" \
+            --launch-type FARGATE \
+            --network-configuration "$network" \
+            --overrides "$overrides" \
+            --query 'tasks[0].taskArn' \
+            --output text)
+          test "$task" != "None"
+          aws ecs wait tasks-stopped --cluster "$ECS_CLUSTER" --tasks "$task"
+          exit_code=$(aws ecs describe-tasks \
+            --cluster "$ECS_CLUSTER" \
+            --tasks "$task" \
+            --query "tasks[0].containers[?name=='$CONTAINER_NAME'].exitCode | [0]" \
+            --output text)
+          test "$exit_code" = "0"
+
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          service: ${{ env.ECS_SERVICE }}
+          wait-for-service-stability: true
+
+      - name: Verify Deployment
+        run: |
+          service=$(aws ecs describe-services \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --query 'services[0].{running:runningCount,desired:desiredCount,pending:pendingCount,rollout:deployments[?status==`PRIMARY`] | [0].rolloutState}' \
+            --output json)
+          echo "$service"
+          jq -e \
+            '.desired > 0 and .running == .desired and .pending == 0 and .rollout == "COMPLETED"' \
+            <<< "$service" > /dev/null
+
+      - name: Promote immutable image to latest
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+      - name: Deployment Summary
+        run: |
+          echo "Deployment completed successfully!"
+          echo "Cluster    : $ECS_CLUSTER"
+          echo "Service    : $ECS_SERVICE"
+          echo "Repository : $ECR_REPOSITORY"
+          echo "Image      : ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}"

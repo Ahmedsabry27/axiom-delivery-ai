@@ -1,0 +1,19 @@
+import {QueryClient,QueryClientProvider} from "@tanstack/react-query";
+import {fireEvent,render,screen,waitFor} from "@testing-library/react";
+import {MemoryRouter,Route,Routes} from "react-router-dom";
+import {beforeEach,describe,expect,it,vi} from "vitest";
+import MeetingsPage from "./MeetingsPage";
+
+const mocks=vi.hoisted(()=>({addMeetingTranscript:vi.fn(),analyseMeeting:vi.fn(),createMeeting:vi.fn(),generateMeetingArtifact:vi.fn(),getMeeting:vi.fn(),getMeetingFindings:vi.fn(),getMeetingTranscript:vi.fn(),listMeetings:vi.fn(),proposeMeetingFinding:vi.fn(),reviewMeetingFinding:vi.fn()}));
+vi.mock("../../services/meeting.service",()=>mocks);
+const meeting={id:"meeting-1",title:"Release readiness",meetingType:"STEERING_COMMITTEE",status:"NEEDS_REVIEW",description:"",scheduledStart:"2026-08-20T10:00:00Z",timezone:"UTC",version:1,metadata:{summary:"Grounded summary"},findingCounts:{ACTION:1,DECISION:1},needsReview:1,createdAt:"2026-08-20T10:00:00Z",updatedAt:"2026-08-20T10:00:00Z"};
+const finding={id:"finding-1",meetingId:"meeting-1",type:"RISK",title:"Supplier delay",description:"Risk: supplier delay",reviewStatus:"UNREVIEWED",confidence:.85,priority:"HIGH",impact:"HIGH",version:1,evidence:[{segmentId:"segment-1",startOffset:0,endOffset:20,excerpt:"Risk: supplier delay"}]};
+function setup(path="/meetings"){window.history.pushState({},"",path);return render(<QueryClientProvider client={new QueryClient({defaultOptions:{queries:{retry:false}}})}><MemoryRouter initialEntries={[path]}><Routes><Route path="/meetings" element={<MeetingsPage/>}/><Route path="/meetings/new" element={<MeetingsPage/>}/><Route path="/meetings/:meetingId" element={<MeetingsPage/>}/><Route path="/meetings/:meetingId/review" element={<MeetingsPage/>}/></Routes></MemoryRouter></QueryClientProvider>)}
+
+beforeEach(()=>{Object.values(mocks).forEach(mock=>mock.mockReset());mocks.listMeetings.mockResolvedValue({items:[meeting],total:1,page:1});mocks.getMeeting.mockResolvedValue(meeting);mocks.getMeetingFindings.mockResolvedValue({items:[finding]});mocks.getMeetingTranscript.mockResolvedValue({transcript:{id:"transcript-1",sourceType:"TEXT",characterCount:20},segments:[{id:"segment-1",sequence:1,speaker:"Omar",text:"Risk: supplier delay"}]});});
+
+describe("Meeting Intelligence",()=>{
+  it("renders persisted meeting summaries and review attention",async()=>{setup();expect(await screen.findByText("Release readiness")).toBeInTheDocument();expect(screen.getByText("Items Needing Review")).toBeInTheDocument();expect(screen.getByText("1 to review")).toBeInTheDocument();});
+  it("renders an empty state when a legacy response omits items",async()=>{mocks.listMeetings.mockResolvedValue({total:0,page:1});setup();expect(await screen.findByText("No meetings in this view")).toBeInTheDocument();expect(screen.getByText("Meetings Analysed")).toBeInTheDocument();});
+  it("requires processing authorization and reviews grounded evidence",async()=>{setup("/meetings/new");const save=screen.getByRole("button",{name:"Save and Analyse"});expect(save).toBeDisabled();fireEvent.change(screen.getByLabelText("Meeting title"),{target:{value:"Release readiness"}});fireEvent.change(screen.getByLabelText("Transcript or meeting notes"),{target:{value:"Omar: Risk: supplier delay"}});expect(save).toBeDisabled();fireEvent.click(screen.getByLabelText("Authorized to process"));expect(save).toBeEnabled();setup("/meetings/meeting-1/review");fireEvent.click(await screen.findByText("Supplier delay"));expect(screen.getAllByText("Risk: supplier delay")).toHaveLength(2);mocks.reviewMeetingFinding.mockResolvedValue({...finding,reviewStatus:"ACCEPTED",version:2});fireEvent.click(screen.getByRole("button",{name:/Accept/}));await waitFor(()=>expect(mocks.reviewMeetingFinding).toHaveBeenCalledWith("meeting-1","finding-1","accepted",expect.objectContaining({expected_version:1})));});
+});

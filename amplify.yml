@@ -1,0 +1,19 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd frontend
+        - npm ci
+        - npm run lint -- --quiet
+        - npm test -- --run
+    build:
+      commands:
+        - VITE_BUILD_ID=$AWS_COMMIT_ID npm run build
+  artifacts:
+    baseDirectory: frontend/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - frontend/node_modules/**/*

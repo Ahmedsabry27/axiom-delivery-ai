@@ -1,0 +1,114 @@
+name: Agents browser quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ai_delivery_platform_e2e
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres-e2e-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ai_delivery_platform_e2e"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      APP_ENV: e2e
+      AI_PROVIDER: openai
+      DATABASE_URL: postgresql+psycopg://postgres:postgres-e2e-only@127.0.0.1:5432/ai_delivery_platform_e2e
+      CORS_ALLOWED_ORIGINS: http://127.0.0.1:4174
+      E2E_AUTH_ENABLED: "true"
+      E2E_AUTH_SECRET: ${{ secrets.E2E_AUTH_SECRET }}
+      E2E_AUTH_MAX_LIFETIME_SECONDS: "3600"
+      E2E_STATE_PATH: ${{ github.workspace }}/frontend/.e2e-state.json
+      VITE_API_URL: http://127.0.0.1:8000
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Initialize ephemeral E2E signing secret
+        shell: bash
+        run: |
+          if (( ${#E2E_AUTH_SECRET} < 32 )); then
+            E2E_AUTH_SECRET="$(openssl rand -hex 32)"
+            echo "E2E_AUTH_SECRET=$E2E_AUTH_SECRET" >> "$GITHUB_ENV"
+          fi
+          echo "::add-mask::$E2E_AUTH_SECRET"
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements-dev.txt
+      - name: Install frontend dependencies and Chromium
+        working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Mandatory backend Ruff gate
+        working-directory: backend
+        run: ruff check .
+      - name: Migrate and seed disposable PostgreSQL
+        working-directory: backend
+        run: |
+          alembic upgrade head
+          python -m scripts.seed_live_e2e
+      - name: Start backend and wait for readiness
+        working-directory: backend
+        run: |
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/backend-e2e.log 2>&1 &
+          echo $! > /tmp/backend-e2e.pid
+          for attempt in {1..30}; do
+            curl --fail --silent http://127.0.0.1:8000/ready && exit 0
+            sleep 2
+          done
+          cat /tmp/backend-e2e.log
+          exit 1
+      - name: Frontend static quality gates
+        working-directory: frontend
+        run: |
+          npm run lint -- --quiet
+          npx tsc --noEmit
+          npm test -- --run
+          npm run build
+      - name: Fixture browser suite
+        working-directory: frontend
+        run: npx playwright test
+      - name: Live PostgreSQL and backend browser suite
+        working-directory: frontend
+        run: npx playwright test --config playwright.live.config.ts
+      - name: Remove ephemeral authentication state
+        if: always()
+        run: rm -f frontend/.e2e-state.json
+      - name: Upload safe browser and accessibility artifacts
+        if: ${{ always() && hashFiles('frontend/artifacts/**') != '' }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: agents-playwright-artifacts
+          path: |
+            frontend/artifacts/playwright-report
+            frontend/artifacts/playwright
+            frontend/artifacts/accessibility
+            frontend/artifacts/playwright-live-report
+            frontend/artifacts/playwright-live
+          retention-days: 14
+          if-no-files-found: warn
+          include-hidden-files: false
