@@ -2,7 +2,7 @@
 
 ## Completion decision
 
-AX-DEPLOY-01 IN PROGRESS — STAGING BACKEND DEPLOYED
+AX-DEPLOY-01 COMPLETE — STAGING APPLICATION DEPLOYED
 
 ## Executive summary
 
@@ -33,13 +33,16 @@ Approval Gate 1 was explicitly approved. Encrypted, versioned, publicly blocked 
 - State: S3 backend with AES-256 encryption, versioning, public-access blocking, separate `staging/terraform.tfstate` key, and native S3 lockfile
 - Plan scope: VPC/subnets/routes/NAT, security groups, private S3 with CloudFront OAC and security headers, immutable ECR, private encrypted RDS PostgreSQL, ECS cluster/task definition and roles, ALB, logs
 - Runtime safety fix: the least-privilege ECS task role can read only the RDS-managed database secret
-- ECS service: intentionally deferred until the migration-readiness plan is approved and the one-off migration succeeds
+- ECS service: active and stable with one running Fargate task
 - Migration-readiness plan: `5 to add / 0 to change / 1 to destroy`; the destroy is deregistration of the unused bootstrap ECS task-definition revision, not deletion of running application capacity
 - Authentication readiness: plan creates a real email-based Cognito user pool, public OAuth client, and hosted domain because no existing pool was present in `eu-west-2`
 - Migration: one-off ECS task exited `0` and applied Alembic head `d2f4a6c8e0b3`
 - Service activation: `1 added / 0 changed / 0 destroyed`; ECS is stable at `1/1`, the ALB target is healthy, `/health` is healthy, and `/ready` is ready
+- Frontend deployment: production build with mocks disabled uploaded to the versioned S3 bucket and CloudFront invalidation `I8TRMB0J786RLV5CDM8ZZXTYKI` completed
+- Login: Cognito authorization endpoint verified; `ahmedsabry27@outlook.com` created as Ahmed Sabry and requires a password change at first sign-in
 - Frontend URL: `https://d18zu5xein60s4.cloudfront.net`
 - API URL: `http://axiom-delivery-ai-staging-api-276330216.eu-west-2.elb.amazonaws.com`
+- HTTPS API URL: `https://d37o6qbecl9yfz.cloudfront.net`
 - ECR: `594677690649.dkr.ecr.eu-west-2.amazonaws.com/axiom-delivery-ai-staging-backend`
 - Frontend bucket: `axiom-delivery-ai-staging-frontend-594677690649`
 - Backend qualification: `601/601` tests passed twice
@@ -63,13 +66,11 @@ RDS and ECS tasks remain private; S3 public access is blocked. Database ingress 
 
 Recurring staging costs include NAT, ALB, RDS, CloudFront/S3, ECR, Secrets Manager, CloudWatch, and data transfer. Fargate becomes recurring after the service is enabled. WAF is not in this initial plan. Exact pricing depends on runtime and traffic; the NAT gateway, ALB, and RDS instance are the principal always-on staging costs.
 
-## Known blockers and next action
+## Next actions
 
-1. Commit and push the Alpine/ARM64 remediation and attach the immutable commit-SHA image tag.
-2. Produce and review the zero-destroy task-definition/service activation plan.
-3. Run the one-off Alembic migration and confirm the migration head.
-4. Enable the ECS service from the reviewed plan.
-5. Upload the production frontend build, invalidate CloudFront, and execute browser/security journeys.
+1. Sign in with the temporary Cognito password delivered by email and choose a permanent password.
+2. Complete authenticated browser journeys and operational smoke checks.
+3. Add a custom domain and ACM certificate when DNS is available so the generated CloudFront-certificate limitation can be retired.
 
 ## Known staging limitation
 

@@ -312,6 +312,42 @@ resource "aws_cloudfront_distribution" "frontend" {
     ignore_changes = [viewer_certificate[0].minimum_protocol_version]
   }
 }
+
+resource "aws_cloudfront_distribution" "api" {
+  enabled = true
+
+  origin {
+    domain_name = aws_lb.api.dns_name
+    origin_id   = "api-alb"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  default_cache_behavior {
+    target_origin_id           = "api-alb"
+    viewer_protocol_policy     = "redirect-to-https"
+    allowed_methods            = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods             = ["GET", "HEAD"]
+    compress                   = true
+    cache_policy_id            = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
+    origin_request_policy_id   = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # Managed-AllViewerExceptHostHeader
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
+  }
+
+  restrictions {
+    geo_restriction { restriction_type = "none" }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
 resource "aws_s3_bucket_policy" "frontend" {
   bucket = aws_s3_bucket.frontend.id
   policy = jsonencode({
@@ -509,6 +545,7 @@ resource "aws_ecs_service" "backend" {
 output "account_id" { value = data.aws_caller_identity.current.account_id }
 output "frontend_url" { value = "https://${aws_cloudfront_distribution.frontend.domain_name}" }
 output "api_url" { value = "http://${aws_lb.api.dns_name}" }
+output "api_https_url" { value = "https://${aws_cloudfront_distribution.api.domain_name}" }
 output "ecr_repository_url" { value = aws_ecr_repository.backend.repository_url }
 output "frontend_bucket" { value = aws_s3_bucket.frontend.id }
 output "cognito_user_pool_id" { value = aws_cognito_user_pool.app.id }
