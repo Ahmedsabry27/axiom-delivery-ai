@@ -34,7 +34,7 @@ variable "environment" {
 }
 variable "backend_image_tag" {
   type    = string
-  default = "5dde90e04f19b9a17c0354c6862467a8e75ba0a5"
+  default = "tenant-auth-v1"
 }
 variable "create_ecs_service" {
   type    = bool
@@ -82,6 +82,18 @@ resource "aws_cognito_user_pool" "app" {
     require_uppercase                = true
     temporary_password_validity_days = 7
   }
+}
+
+resource "aws_cognito_user_group" "tenant_axiom_demo" {
+  name         = "tenant_axiom-demo"
+  description  = "Authorizes access to the axiom-demo tenant"
+  user_pool_id = aws_cognito_user_pool.app.id
+}
+
+resource "aws_cognito_user_group" "platform_admin" {
+  name         = "platform-admin"
+  description  = "Axiom platform administrators"
+  user_pool_id = aws_cognito_user_pool.app.id
 }
 
 resource "aws_cognito_user_pool_client" "frontend" {
