@@ -1,8 +1,18 @@
 import {expect,test} from "@playwright/test";
+import { mockReleases } from "../src/features/releases/data/mockReleases";
+import { mockReleaseNotesMap } from "../src/features/releases/data/mockReleaseNotes";
 
 test("release readiness and notes remain interactive without console errors",async({page})=>{
   const consoleErrors:string[]=[];
   page.on("console",message=>{if(message.type()==="error")consoleErrors.push(message.text());});
+  const release = { ...mockReleases[0], releaseNotes: mockReleaseNotesMap["rel-001"] };
+  await page.route("**/api/delivery/metadata", route => route.fulfill({ json: { portfolios: [], programmes: [], projects: [], teams: [] } }));
+  await page.route("**/api/releases**", route => {
+    const url = new URL(route.request().url());
+    if (route.request().method() === "POST") return route.fulfill({ json: release });
+    if (url.pathname === "/api/releases") return route.fulfill({ json: { items: [release] } });
+    return route.fulfill({ json: release });
+  });
 
   await page.goto("/releases");
   await expect(page.getByRole("heading",{name:"Releases"})).toBeVisible();
@@ -15,13 +25,7 @@ test("release readiness and notes remain interactive without console errors",asy
   await expect(page.getByText("20 / 22 evidence items verified")).toBeVisible();
   await expect(page.getByText("CONDITIONAL GO").first()).toBeVisible();
 
-  await page.getByRole("button",{name:"Record Decision"}).first().click();
-  const dialog=page.getByRole("dialog",{name:"Record release decision"});
-  await dialog.getByLabel("Conditions").fill("Security approval before deployment");
-  await dialog.getByRole("button",{name:"Continue"}).click();
-  await expect(dialog.getByText("Confirm release decision")).toBeVisible();
-  await dialog.getByRole("button",{name:"Confirm decision"}).click();
-  await expect(page.getByRole("status")).toContainText("Decision recorded successfully");
+  await expect(page.getByText("You do not have permission to record this release decision.")).toBeVisible();
 
   await page.getByRole("link",{name:"Release Notes"}).click();
   await expect(page).toHaveURL(/\/releases\/rel-001\/release-notes$/);

@@ -21,6 +21,9 @@ async function installApi(page: Page) {
   page.on("requestfailed", request => failures.push(`${request.method()} ${request.url()}`));
   page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
   await page.addInitScript(() => sessionStorage.setItem("e2e_access_token", "signed-test-token-redacted"));
+  await page.route("**/api/delivery/metadata", route => route.fulfill({
+    json: { workspace: { is_demo: false }, portfolios: [], programmes: [], projects: [], teams: [] },
+  }));
   await page.route("**/api/v1/agents**", async route => {
     const url = new URL(route.request().url());
     if (url.pathname === "/api/v1/agents") {
@@ -42,7 +45,7 @@ test("server-backed directory controls preserve URL state and expose an accessib
   const evidence = await installApi(page);
   await page.goto("/agents");
   await expect(page.getByRole("heading", { name: "Agents" })).toBeVisible();
-  await expect(page.getByText("Deployment Reporter")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Deployment Reporter" }).first()).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("agents-directory.png"), fullPage: true });
   const search = page.getByRole("textbox", { name: "Search Agents" });
   await search.fill("missing");
@@ -53,15 +56,16 @@ test("server-backed directory controls preserve URL state and expose an accessib
   expect(evidence.consoleErrors).toEqual([]);
 });
 
-test("details tabs support keyboard navigation and analytics uses API data", async ({ page }, testInfo) => {
+test("workspace navigation and overview analytics use API data", async ({ page }, testInfo) => {
   const evidence = await installApi(page);
-  await page.goto(`/agents/${agent.id}?tab=overview`);
+  await page.goto(`/agents/${agent.id}/overview`);
   await expect(page.getByRole("heading", { name: agent.name })).toBeVisible();
-  const overview = page.getByRole("tab", { name: "overview" });
-  await overview.focus();
-  await page.keyboard.press("ArrowRight");
-  await expect(page).toHaveURL(/tab=instructions/);
-  await page.getByRole("tab", { name: "analytics" }).click();
+  const overview = page.getByRole("link", { name: "Overview" });
+  await expect(overview).toHaveAttribute("aria-current", "page");
+  await page.getByRole("link", { name: "Configuration" }).click();
+  await expect(page).toHaveURL(new RegExp(`/agents/${agent.id}/configuration$`));
+  await overview.click();
+  await expect(page).toHaveURL(new RegExp(`/agents/${agent.id}/overview$`));
   await expect(page.getByText("75%", { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("agent-analytics.png"), fullPage: true });
   const results = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();

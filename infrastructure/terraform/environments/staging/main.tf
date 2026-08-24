@@ -40,6 +40,16 @@ variable "create_ecs_service" {
   type    = bool
   default = true
 }
+variable "additional_frontend_origins" {
+  description = "Additional HTTPS frontend origins allowed for OAuth callbacks and API CORS."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for origin in var.additional_frontend_origins : startswith(origin, "https://") && !endswith(origin, "/")])
+    error_message = "Additional frontend origins must use HTTPS and omit the trailing slash."
+  }
+}
 data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" {
   state = "available"
@@ -48,6 +58,10 @@ data "aws_availability_zones" "available" {
 locals {
   name = "${var.project_name}-${var.environment}"
   azs  = slice(data.aws_availability_zones.available.names, 0, 2)
+  frontend_origins = concat(
+    ["https://${aws_cloudfront_distribution.frontend.domain_name}"],
+    var.additional_frontend_origins,
+  )
   tags = {
     Project     = var.project_name
     Environment = var.environment
@@ -78,8 +92,8 @@ resource "aws_cognito_user_pool_client" "frontend" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["openid", "email"]
   supported_identity_providers         = ["COGNITO"]
-  callback_urls                        = ["https://${aws_cloudfront_distribution.frontend.domain_name}"]
-  logout_urls                          = ["https://${aws_cloudfront_distribution.frontend.domain_name}"]
+  callback_urls                        = local.frontend_origins
+  logout_urls                          = local.frontend_origins
   prevent_user_existence_errors        = "ENABLED"
 }
 
@@ -502,7 +516,7 @@ resource "aws_ecs_task_definition" "backend" {
       { name = "AI_PROVIDER", value = "bedrock" },
       { name = "BEDROCK_MODEL_ID", value = "amazon.nova-lite-v1:0" },
       { name = "BUDGET_ENFORCEMENT_ENABLED", value = "true" },
-      { name = "CORS_ALLOWED_ORIGINS", value = "https://${aws_cloudfront_distribution.frontend.domain_name}" },
+      { name = "CORS_ALLOWED_ORIGINS", value = join(",", local.frontend_origins) },
       { name = "TRUSTED_HOSTS", value = aws_lb.api.dns_name },
       { name = "COGNITO_REGION", value = var.aws_region },
       { name = "COGNITO_USER_POOL_ID", value = aws_cognito_user_pool.app.id },
