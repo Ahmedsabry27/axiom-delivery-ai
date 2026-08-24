@@ -79,6 +79,7 @@ const governancePage=name=>lazy(()=>import("../pages/governance/GovernanceOperat
 const GovernanceDashboard=governancePage("GovernanceDashboard"),PoliciesPage=governancePage("PoliciesPage"),PolicyDetailPage=governancePage("PolicyDetailPage"),PermissionsPage=governancePage("PermissionsPage"),AccessReviewsPage=governancePage("AccessReviewsPage"),AuditExplorerPage=governancePage("AuditExplorerPage"),DataControlsPage=governancePage("DataControlsPage"),AIOperationsDashboard=governancePage("AIOperationsDashboard"),ExecutionsPage=governancePage("ExecutionsPage"),EvaluationsPage=governancePage("EvaluationsPage"),CostsPage=governancePage("CostsPage"),IncidentsPage=governancePage("IncidentsPage"),GovernedDetailPage=governancePage("GovernedDetailPage");
 import NotFoundPage from "../pages/NotFoundPage";
 import DesignSystemPage from "../pages/dev/DesignSystemPage";
+import RouteErrorPage from "./RouteErrorPage";
 const adminPage=name=>lazy(()=>import("./AdminPages").then(module=>({default:module[name]})));
 const DiscoveryPage=adminPage("DiscoveryPage"),GovernancePage=adminPage("GovernancePage"),MarketplacePage=adminPage("MarketplacePage"),MCPServerDetailsPage=adminPage("MCPServerDetailsPage"),MCPServerFormPage=adminPage("MCPServerFormPage"),MCPServersPage=adminPage("MCPServersPage"),NativeToolsPage=adminPage("NativeToolsPage"),NativeWorkspacePage=adminPage("NativeWorkspacePage"),ToolAnalyticsPage=adminPage("ToolAnalyticsPage");
 
@@ -89,6 +90,7 @@ export const router = createBrowserRouter([
     path: "/",
 
     element: deferred(EnterpriseLayout),
+    errorElement: <RouteErrorPage />,
 
 
     children: [

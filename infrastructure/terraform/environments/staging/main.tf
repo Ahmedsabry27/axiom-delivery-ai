@@ -456,6 +456,26 @@ resource "aws_iam_role_policy" "ecs_task_database_secret" {
   })
 }
 
+resource "aws_iam_role_policy" "ecs_task_integration_secrets" {
+  name = "integration-secrets"
+  role = aws_iam_role.ecs_task.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid    = "ManageTenantIntegrationCredentials"
+      Effect = "Allow"
+      Action = [
+        "secretsmanager:CreateSecret",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:PutSecretValue",
+        "secretsmanager:TagResource",
+      ]
+      Resource = "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:ai-delivery-platform/integrations/*"
+    }]
+  })
+}
+
 resource "aws_iam_role_policy" "ecs_task_bedrock" {
   name = "bedrock-model-invoke"
   role = aws_iam_role.ecs_task.id

@@ -1,5 +1,5 @@
 customHeaders:
-  - pattern: '**/*'
+  - pattern: "**/*"
     headers:
       - key: X-Content-Type-Options
         value: nosniff
@@ -9,7 +9,11 @@ customHeaders:
         value: camera=(), microphone=(), geolocation=()
       - key: Cross-Origin-Opener-Policy
         value: same-origin
-  - pattern: '/assets/**'
+  - pattern: "**/*.html"
     headers:
       - key: Cache-Control
-        value: public, max-age=31536000, immutable
+        value: "no-cache, no-store, must-revalidate"
+  - pattern: "**/assets/*"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=31536000, immutable"
