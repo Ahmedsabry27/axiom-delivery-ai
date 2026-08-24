@@ -1509,8 +1509,8 @@ async def synchronize(
         )
     if not row.configuration.get("simulator", False):
         if row.connector_type == "jira":
-            from scripts.sync_real_jira import main as sync_live_jira
             from scripts.sync_jira_delivery_portfolio import main as project_live_jira
+            from scripts.sync_real_jira import main as sync_live_jira
 
             await sync_live_jira()
             await asyncio.to_thread(project_live_jira)
@@ -1767,13 +1767,10 @@ def integration_operations(
     provider_tenant_id = (row.configuration or {}).get("provider_tenant_id")
     if not (row.configuration or {}).get("simulator", False) and provider_tenant_id:
         source_query = source_query.filter_by(provider_tenant_id=provider_tenant_id)
-    source = (
-        source_query.order_by(
-            IntegrationSourceRecord.external_entity_type,
-            IntegrationSourceRecord.external_entity_id,
-        )
-        .all()
-    )
+    source = source_query.order_by(
+        IntegrationSourceRecord.external_entity_type,
+        IntegrationSourceRecord.external_entity_id,
+    ).all()
     quarantined = (
         db.query(IntegrationQuarantine)
         .filter_by(connection_id=row.id, tenant_id=ctx.tenant_id)
@@ -1781,7 +1778,10 @@ def integration_operations(
     )
     if section == "overview":
         summary = _summary(row.connector_type, source, len(quarantined))
-        if row.connector_type == "outlook_calendar" and row.safe_metadata.get("mode") == "LIVE":
+        if (
+            row.connector_type == "outlook_calendar"
+            and row.safe_metadata.get("mode") == "LIVE"
+        ):
             summary.update(
                 {
                     "account": row.safe_metadata.get("account", "Microsoft account"),
@@ -1790,9 +1790,14 @@ def integration_operations(
                     "provider": "Microsoft Graph",
                 }
             )
-        if row.connector_type == "microsoft_teams" and row.safe_metadata.get("mode") == "LIVE":
+        if (
+            row.connector_type == "microsoft_teams"
+            and row.safe_metadata.get("mode") == "LIVE"
+        ):
             summary = {
-                "meetings": sum(item.external_entity_type == "meeting" for item in source),
+                "meetings": sum(
+                    item.external_entity_type == "meeting" for item in source
+                ),
                 "transcripts_available": 0,
                 "transcripts_ingested": 0,
                 "meetings_without_transcript": sum(
@@ -1839,9 +1844,13 @@ def integration_operations(
             "credential_configured": bool(row.secret_ref),
             "secret_value_returned": False,
             "account": authorization.account_label if authorization else None,
-            "granted_scopes": authorization.granted_scopes if authorization else PROVIDER_SCOPES[provider],
+            "granted_scopes": authorization.granted_scopes
+            if authorization
+            else PROVIDER_SCOPES[provider],
             "status": authorization.status if authorization else row.status,
-            "last_verified_at": authorization.last_verified_at if authorization else None,
+            "last_verified_at": authorization.last_verified_at
+            if authorization
+            else None,
             "token_expires_at": authorization.expires_at if authorization else None,
             "missing_scopes": [],
         }
@@ -1932,7 +1941,10 @@ def integration_operations(
             for x in source[:100]
         ]
     if section == "webhooks":
-        if row.connector_type in {"outlook_calendar", "microsoft_teams"} and row.safe_metadata.get("mode") == "LIVE":
+        if (
+            row.connector_type in {"outlook_calendar", "microsoft_teams"}
+            and row.safe_metadata.get("mode") == "LIVE"
+        ):
             return []
         return [
             {
