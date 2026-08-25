@@ -31,3 +31,15 @@ def test_nova_lite_uses_us_inference_profile_without_changing_published_model(
     request = provider._build_request(system_prompt=None, conversation=[])
     assert provider.model == "amazon.nova-lite-v1:0"
     assert request["modelId"] == "us.amazon.nova-lite-v1:0"
+
+
+def test_nova_lite_uses_direct_model_in_eu_without_configured_profile(monkeypatch):
+    monkeypatch.setattr(
+        "app.ai.providers.bedrock_provider.settings.AWS_REGION", "eu-west-2"
+    )
+    monkeypatch.setattr(
+        "app.ai.providers.bedrock_provider.settings.BEDROCK_INFERENCE_PROFILE_ID", None
+    )
+    provider = BedrockProvider("amazon.nova-lite-v1:0")
+    request = provider._build_request(system_prompt=None, conversation=[])
+    assert request["modelId"] == "amazon.nova-lite-v1:0"

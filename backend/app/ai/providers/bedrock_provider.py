@@ -69,8 +69,10 @@ class BedrockProvider(AIProvider):
         if self.model == "amazon.nova-lite-v1:0":
             if settings.AWS_REGION.startswith("us-"):
                 return "us.amazon.nova-lite-v1:0"
-            if settings.AWS_REGION.startswith("eu-"):
-                return "eu.amazon.nova-lite-v1:0"
+            # Nova Lite is available for direct on-demand inference in the
+            # production eu-west-2 region. Do not invent an `eu.` cross-region
+            # profile identifier when no profile has been configured: Bedrock
+            # rejects that identifier even though the base model is active.
         return self.model
 
     def ask(
