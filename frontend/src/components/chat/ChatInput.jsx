@@ -71,7 +71,7 @@ export default function ChatInput({
           items-end
           gap-4
 
-          rounded-3xl
+          rounded-xl
 
           border
           border-stone-300
@@ -153,7 +153,7 @@ export default function ChatInput({
                 items-center
                 justify-center
 
-                rounded-full
+                rounded-lg
 
                 bg-red-50
 
@@ -198,13 +198,9 @@ export default function ChatInput({
                 items-center
                 justify-center
 
-                rounded-full
+                rounded-lg
 
-                bg-gradient-to-br
-
-                from-blue-500
-
-                to-purple-500
+                bg-[#a00028]
 
 
                 text-white
@@ -220,8 +216,7 @@ export default function ChatInput({
                 opacity-40
 
 
-                hover:
-                scale-105
+                hover:bg-[#7d001f]
 
               "
 

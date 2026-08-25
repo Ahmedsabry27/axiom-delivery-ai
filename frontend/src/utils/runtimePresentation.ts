@@ -20,12 +20,12 @@ export function runtimeFailureMessage(runtime:{status?:RuntimeStatus;error?:{cod
 }
 
 export const runtimeStatusPresentation:Record<RuntimeStatus,{label:string;badge:string;dot:string}>={
-  PENDING:{label:"Pending",badge:"border-slate-400/30 bg-slate-400/10 text-slate-300",dot:"bg-slate-400"},
-  RUNNING:{label:"Running",badge:"border-blue-400/30 bg-blue-400/10 text-blue-300",dot:"bg-blue-400 animate-pulse"},
-  WAITING_FOR_INPUT:{label:"Waiting for input",badge:"border-amber-400/30 bg-amber-400/10 text-amber-300",dot:"bg-amber-400"},
-  WAITING_FOR_APPROVAL:{label:"Waiting for approval",badge:"border-amber-400/30 bg-amber-400/10 text-amber-300",dot:"bg-amber-400"},
-  COMPLETED:{label:"Completed",badge:"border-emerald-400/30 bg-emerald-400/10 text-emerald-300",dot:"bg-emerald-400"},
-  FAILED:{label:"Failed",badge:"border-rose-400/30 bg-rose-400/10 text-rose-300",dot:"bg-rose-400"},
-  CANCELLED:{label:"Cancelled",badge:"border-slate-400/30 bg-slate-400/10 text-slate-300",dot:"bg-slate-400"},
-  TIMED_OUT:{label:"Timed out",badge:"border-orange-400/30 bg-orange-400/10 text-orange-300",dot:"bg-orange-400"},
+  PENDING:{label:"Pending",badge:"border-stone-300 bg-stone-100 text-stone-700",dot:"bg-stone-500"},
+  RUNNING:{label:"Running",badge:"border-blue-300 bg-blue-50 text-blue-800",dot:"bg-blue-600 animate-pulse"},
+  WAITING_FOR_INPUT:{label:"Waiting for input",badge:"border-amber-300 bg-amber-50 text-amber-900",dot:"bg-amber-600"},
+  WAITING_FOR_APPROVAL:{label:"Waiting for approval",badge:"border-amber-300 bg-amber-50 text-amber-900",dot:"bg-amber-600"},
+  COMPLETED:{label:"Completed",badge:"border-emerald-300 bg-emerald-50 text-emerald-800",dot:"bg-emerald-600"},
+  FAILED:{label:"Failed",badge:"border-rose-300 bg-rose-50 text-rose-800",dot:"bg-rose-600"},
+  CANCELLED:{label:"Cancelled",badge:"border-stone-300 bg-stone-100 text-stone-700",dot:"bg-stone-500"},
+  TIMED_OUT:{label:"Timed out",badge:"border-orange-300 bg-orange-50 text-orange-800",dot:"bg-orange-600"},
 };

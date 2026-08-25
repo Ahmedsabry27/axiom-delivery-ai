@@ -1,4 +1,4 @@
-import {render,screen} from "@testing-library/react";
+import {fireEvent,render,screen} from "@testing-library/react";
 import {describe,expect,it,vi} from "vitest";
 
 import ConversationSidebar from "./ConversationSidebar";
@@ -23,5 +23,27 @@ describe("ConversationSidebar states",()=>{
       "Conversations could not be loaded.",
     );
     expect(screen.queryByText("No conversations found.")).not.toBeInTheDocument();
+  });
+
+  it("tolerates an unavailable conversation collection",()=>{
+    render(<ConversationSidebar conversation={conversation({conversations:undefined})}/>);
+    expect(screen.getByText("No conversations found.")).toBeInTheDocument();
+  });
+
+  it("supports untitled records, filtering, selection, and new chat",()=>{
+    const state=conversation({
+      conversations:[
+        {id:"one",title:null,updated_at:"2026-08-25T08:00:00Z",is_pinned:false},
+        {id:"two",title:"Release readiness",updated_at:"2026-08-25T09:00:00Z",is_pinned:true},
+      ],
+    });
+    render(<ConversationSidebar conversation={state}/>);
+    fireEvent.click(screen.getByRole("button",{name:"New chat"}));
+    expect(state.newChat).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByText("Release readiness").closest("button"));
+    expect(state.selectConversation).toHaveBeenCalledWith(expect.objectContaining({id:"two"}));
+    fireEvent.change(screen.getByPlaceholderText("Search conversations…"),{target:{value:"untitled"}});
+    expect(screen.getByText("Untitled conversation")).toBeInTheDocument();
+    expect(screen.queryByText("Release readiness")).not.toBeInTheDocument();
   });
 });

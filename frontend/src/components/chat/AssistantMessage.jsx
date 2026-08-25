@@ -208,13 +208,8 @@ export default function AssistantMessage({
                     items-center
                     justify-center
 
-                    rounded-full
-
-                    bg-gradient-to-br
-
-                    from-blue-500
-
-                    to-purple-500
+                    bg-[#a00028]
+                    text-white
                   "
                 >
 

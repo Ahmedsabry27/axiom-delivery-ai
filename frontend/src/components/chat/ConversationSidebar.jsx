@@ -15,8 +15,8 @@ export default function ConversationSidebar({ conversation }) {
 
   const items = useMemo(
     () =>
-      conversation.conversations.filter((item) =>
-        item.title.toLowerCase().includes(query.toLowerCase())
+      (Array.isArray(conversation.conversations) ? conversation.conversations : []).filter((item) =>
+        String(item.title || "Untitled conversation").toLowerCase().includes(query.toLowerCase())
       ),
     [conversation.conversations, query]
   );
@@ -42,15 +42,15 @@ export default function ConversationSidebar({ conversation }) {
         shrink-0
         overflow-hidden
         border-r
-        border-white/10
-        bg-[#071426]/75
-        text-stone-100
+        border-stone-300
+        bg-[#f4f1ed]
+        text-stone-900
         lg:flex
         lg:flex-col
       "
     >
       {/* Fixed header */}
-      <div className="flex shrink-0 items-center justify-between border-b border-white/10 p-4">
+      <div className="flex shrink-0 items-center justify-between border-b border-stone-300 bg-white p-4">
         <div>
           <h2 className="font-semibold">Conversations</h2>
           <p className="text-xs text-slate-500">Runtime history</p>
@@ -58,7 +58,7 @@ export default function ConversationSidebar({ conversation }) {
 
         <button
           onClick={conversation.newChat}
-          className="rounded-lg bg-violet-600 p-2"
+          className="rounded-sm bg-[#a00028] p-2 text-white transition hover:bg-[#7d001f] focus:outline-none focus:ring-2 focus:ring-[#ffb600]"
           aria-label="New chat"
         >
           <Plus size={17} />
@@ -66,13 +66,13 @@ export default function ConversationSidebar({ conversation }) {
       </div>
 
       {/* Fixed search */}
-      <label className="m-3 flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+      <label className="m-3 flex shrink-0 items-center gap-2 border border-stone-300 bg-white px-3 py-2 focus-within:border-[#a00028]">
         <Search size={15} className="text-slate-500" />
 
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="min-w-0 flex-1 bg-transparent text-sm text-stone-100 outline-none placeholder:text-slate-500"
+          className="min-w-0 flex-1 bg-transparent text-sm text-stone-900 outline-none placeholder:text-stone-500"
           placeholder="Search conversations…"
         />
       </label>
@@ -95,7 +95,7 @@ export default function ConversationSidebar({ conversation }) {
         )}
 
         {conversation.error && (
-          <p role="alert" className="p-3 text-sm text-rose-300">
+          <p role="alert" className="m-2 border border-rose-300 bg-rose-50 p-3 text-sm text-rose-800">
             {conversation.error}
           </p>
         )}
@@ -117,10 +117,10 @@ export default function ConversationSidebar({ conversation }) {
                 {group.items.map((item) => (
                   <div
                     key={item.id}
-                    className={`group relative mb-1 rounded-xl ${
+                    className={`group relative mb-1 ${
                       conversation.conversationId === item.id
-                        ? "bg-violet-500/20"
-                        : "hover:bg-white/5"
+                        ? "bg-[#a00028] text-white"
+                        : "hover:bg-white"
                     }`}
                   >
                     {renaming === item.id ? (
@@ -145,7 +145,7 @@ export default function ConversationSidebar({ conversation }) {
                           name="title"
                           autoFocus
                           defaultValue={item.title}
-                          className="w-full rounded border border-violet-400/40 bg-slate-950 px-2 py-1 text-sm"
+                          className="w-full border border-[#a00028] bg-white px-2 py-1 text-sm text-stone-900 outline-none"
                           onBlur={() => setRenaming(null)}
                         />
                       </form>
@@ -156,11 +156,11 @@ export default function ConversationSidebar({ conversation }) {
                         }
                         className="w-full px-3 py-3 pr-9 text-left"
                       >
-                        <p className="truncate text-sm text-slate-200">
-                          {item.title}
+                        <p className={`truncate text-sm font-medium ${conversation.conversationId === item.id ? "text-white" : "text-stone-800"}`}>
+                          {item.title || "Untitled conversation"}
                         </p>
 
-                        <p className="mt-1 text-[10px] text-slate-600">
+                        <p className={`mt-1 text-[10px] ${conversation.conversationId === item.id ? "text-white/70" : "text-stone-500"}`}>
                           {new Date(
                             item.updated_at
                           ).toLocaleString()}
@@ -169,23 +169,23 @@ export default function ConversationSidebar({ conversation }) {
                     )}
 
                     <button
-                      aria-label={`Conversation actions for ${item.title}`}
+                      aria-label={`Conversation actions for ${item.title || "Untitled conversation"}`}
                       onClick={() =>
                         setMenu(menu === item.id ? null : item.id)
                       }
-                      className="absolute right-2 top-3 hidden rounded p-1 text-slate-400 group-hover:block"
+                      className={`absolute right-2 top-3 hidden p-1 group-hover:block ${conversation.conversationId === item.id ? "text-white" : "text-stone-500"}`}
                     >
                       <MoreHorizontal size={15} />
                     </button>
 
                     {menu === item.id && (
-                      <div className="absolute right-2 top-9 z-20 w-36 rounded-lg border border-white/10 bg-slate-950 p-1 text-xs shadow-xl">
+                      <div className="absolute right-2 top-9 z-20 w-36 border border-stone-300 bg-white p-1 text-xs text-stone-800 shadow-xl">
                         <button
                           onClick={() => {
                             setRenaming(item.id);
                             setMenu(null);
                           }}
-                          className="block w-full rounded px-2 py-2 text-left hover:bg-white/10"
+                          className="block w-full px-2 py-2 text-left hover:bg-stone-100"
                         >
                           Rename
                         </button>
@@ -198,7 +198,7 @@ export default function ConversationSidebar({ conversation }) {
                             );
                             setMenu(null);
                           }}
-                          className="flex w-full items-center gap-2 rounded px-2 py-2 hover:bg-white/10"
+                          className="flex w-full items-center gap-2 px-2 py-2 hover:bg-stone-100"
                         >
                           {item.is_pinned ? (
                             <PinOff size={13} />
@@ -213,7 +213,7 @@ export default function ConversationSidebar({ conversation }) {
                           onClick={() =>
                             conversation.removeConversation(item.id)
                           }
-                          className="flex w-full items-center gap-2 rounded px-2 py-2 text-rose-300 hover:bg-white/10"
+                          className="flex w-full items-center gap-2 px-2 py-2 text-red-700 hover:bg-red-50"
                         >
                           <Trash2 size={13} />
                           Delete
