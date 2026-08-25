@@ -9,4 +9,8 @@ describe("AssistantMessage runtime result",()=>{
     rerender(<AssistantMessage message={{text:"Created Jira issue OPS-1",metadata:{execution_id:"runtime-1",workflow_id:"workflow-1",status:"COMPLETED",steps:[]}}}/>);
     expect(screen.getByText("Created Jira issue OPS-1")).toBeInTheDocument();
   });
+  it("uses a readable light-surface foreground for Copilot responses",()=>{
+    const {container}=render(<AssistantMessage message={{text:"Visible response",metadata:{status:"COMPLETED"}}}/>);
+    expect(container.querySelector(".bg-white.text-stone-900")).toBeInTheDocument();
+  });
 });

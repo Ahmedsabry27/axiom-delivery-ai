@@ -9,12 +9,12 @@ export default function MarkdownRenderer({ children }) {
       className="
         prose
         prose-lg
-        dark:prose-invert
+        text-stone-800
         max-w-none
 
         prose-headings:font-bold
         prose-headings:tracking-tight
-        prose-headings:text-foreground
+        prose-headings:text-stone-950
 
         prose-h1:text-4xl
         prose-h1:mt-2
@@ -36,7 +36,7 @@ export default function MarkdownRenderer({ children }) {
         prose-p:leading-9
         prose-p:my-5
 
-        prose-strong:text-foreground
+        prose-strong:text-stone-950
         prose-strong:font-semibold
 
         prose-ul:my-6
@@ -95,7 +95,7 @@ export default function MarkdownRenderer({ children }) {
 
           strong({ children }) {
             return (
-              <strong className="font-semibold text-foreground">
+              <strong className="font-semibold text-stone-950">
                 {children}
               </strong>
             );

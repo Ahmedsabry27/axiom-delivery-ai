@@ -146,32 +146,23 @@ export default function AssistantMessage({
               rounded-3xl
 
               border
-              border-white/10
+              border-stone-300
 
-              bg-gradient-to-br
-
-              from-white/10
-
-              via-white/5
-
-              to-transparent
+              bg-white
 
 
               p-6
 
 
-              shadow-2xl
+              shadow-sm
 
 
-              backdrop-blur-xl
-
-
-              text-white
+              text-stone-900
 
 
               ring-1
 
-              ring-white/5
+              ring-stone-200
 
             "
           >
@@ -354,7 +345,7 @@ export default function AssistantMessage({
 
                     ?
 
-                    "border-t border-white/10 pt-6"
+                    "border-t border-stone-200 pt-6"
 
                     :
 
@@ -405,9 +396,9 @@ export default function AssistantMessage({
 
                     border
 
-                    border-white/10
+                    border-stone-200
 
-                    bg-black/10
+                    bg-[#faf8f5]
 
                     p-4
                   "

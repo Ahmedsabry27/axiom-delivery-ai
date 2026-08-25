@@ -11,6 +11,14 @@ export function formatRuntimeDuration(durationMs?:number):string {
   return `${minutes}m ${seconds}s`;
 }
 
+export function runtimeFailureMessage(runtime:{status?:RuntimeStatus;error?:{code?:string;message?:string}|null}):string {
+  if(runtime.error?.code==="BUDGET_ENFORCEMENT_BLOCKED"&&runtime.error?.message==="MODEL_NOT_APPROVED") {
+    return "Chat is unavailable because the selected AI model has not been approved for this workspace. Ask a model administrator to activate an approved Copilot model.";
+  }
+  return runtime.error?.message||
+    (runtime.status==="TIMED_OUT"?"Execution timed out.":runtime.status==="CANCELLED"?"Execution cancelled.":"Execution failed.");
+}
+
 export const runtimeStatusPresentation:Record<RuntimeStatus,{label:string;badge:string;dot:string}>={
   PENDING:{label:"Pending",badge:"border-slate-400/30 bg-slate-400/10 text-slate-300",dot:"bg-slate-400"},
   RUNNING:{label:"Running",badge:"border-blue-400/30 bg-blue-400/10 text-blue-300",dot:"bg-blue-400 animate-pulse"},

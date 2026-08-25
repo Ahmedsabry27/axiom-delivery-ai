@@ -11,6 +11,7 @@ import ChatHeader from "../components/chat/ChatHeader";
 import DeliveryContextBar from "../components/copilot/DeliveryContextBar";
 import { deliveryContexts } from "../components/copilot/deliveryContexts";
 import ProposedActionDrawer from "../components/copilot/ProposedActionDrawer";
+import { runtimeFailureMessage } from "../utils/runtimePresentation";
 
 import useConversation from "../hooks/useConversation";
 import useChat from "../hooks/useChat";
@@ -196,7 +197,7 @@ export default function ChatPage() {
         {/* -------------------------------- */}
 
         {chat.runtime.status === "WAITING_FOR_APPROVAL" && chat.runtime.approval && (
-          <div className="shrink-0 border-t border-amber-400/20 bg-amber-400/10 p-4 text-amber-100">
+          <div className="shrink-0 border-t border-amber-300 bg-amber-50 p-4 text-amber-950">
             <p className="font-medium">
               Approval required
             </p>
@@ -221,7 +222,7 @@ export default function ChatPage() {
                 onClick={() =>
                   chat.decideApproval("deny")
                 }
-                className="rounded-lg border border-rose-400/30 px-4 py-2 text-sm text-rose-200"
+                className="rounded-lg border border-rose-400 px-4 py-2 text-sm text-rose-800"
               >
                 Deny
               </button>
@@ -270,11 +271,10 @@ export default function ChatPage() {
         {/* -------------------------------- */}
 
         {["FAILED","TIMED_OUT","CANCELLED"].includes(chat.runtime.status) && (
-          <div className="shrink-0 flex items-center justify-between gap-4 border-t border-rose-400/20 bg-rose-400/10 p-4">
+          <div role="alert" className="shrink-0 flex items-center justify-between gap-4 border-t border-rose-300 bg-rose-50 p-4">
             <div>
-              <p className="text-sm font-medium text-rose-200">
-                {chat.runtime.error?.message ||
-                  (chat.runtime.status === "TIMED_OUT" ? "Execution timed out." : chat.runtime.status === "CANCELLED" ? "Execution cancelled." : "Execution failed.")}
+              <p className="text-sm font-medium text-rose-900">
+                {runtimeFailureMessage(chat.runtime)}
               </p>
 
               <p className="mt-1 text-xs text-slate-500">
@@ -285,7 +285,7 @@ export default function ChatPage() {
 
             {(chat.runtime.error?.retryable ?? false) && <button
               onClick={chat.retryExecution}
-              className="rounded-lg border border-rose-300/30 px-4 py-2 text-sm text-rose-100"
+              className="rounded-lg border border-rose-400 bg-white px-4 py-2 text-sm font-semibold text-rose-800"
             >
               Retry
             </button>}
