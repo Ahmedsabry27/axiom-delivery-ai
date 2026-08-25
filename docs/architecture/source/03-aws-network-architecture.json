@@ -1,0 +1,155 @@
+{
+  "title": "AWS Network Architecture",
+  "scope": "eu-west-2 VPC traffic, trust boundaries and production target",
+  "state": "CURRENT + PROPOSED HARDENING",
+  "master": true,
+  "columns": [
+    [
+      "Internet / edge",
+      {
+        "label": "Users + external SaaS",
+        "status": "EXTERNAL",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "CloudFront HTTPS 443",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Internet Gateway",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      }
+    ],
+    [
+      "Public subnets AZ-a / AZ-b",
+      {
+        "label": "Internet-facing ALB :80",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "NAT Gateway AZ-a",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "Second NAT / HTTPS listener",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ],
+    [
+      "Private app subnets",
+      {
+        "label": "ECS task AZ-a :8080",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "ECS task AZ-b + autoscaling",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "VPC endpoints: ECR, logs, secrets",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "ECS security group: ALB only",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": false
+      }
+    ],
+    [
+      "Private data subnets",
+      {
+        "label": "RDS PostgreSQL :5432 private",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "RDS security group: ECS only",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": false
+      },
+      {
+        "label": "Multi-AZ standby",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Route 53 private DNS",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      1,
+      "HTTPS 443"
+    ],
+    [
+      0,
+      1,
+      1,
+      0,
+      "origin HTTP current"
+    ],
+    [
+      1,
+      0,
+      2,
+      0,
+      "SG / 8080"
+    ],
+    [
+      2,
+      0,
+      3,
+      0,
+      "SG / 5432"
+    ],
+    [
+      2,
+      0,
+      1,
+      1,
+      "egress"
+    ],
+    [
+      1,
+      1,
+      0,
+      2,
+      "internet"
+    ],
+    [
+      2,
+      2,
+      0,
+      1,
+      "AWS private APIs"
+    ]
+  ]
+}

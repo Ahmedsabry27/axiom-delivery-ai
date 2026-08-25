@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">AI Runtime Architecture</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: Durable planning, execution, interruption, streaming and governance</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">CURRENT STATE</text>
+<text x="3760" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Request</text>
+<rect x="100" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Copilot / Chat request</text>
+<circle cx="124" cy="453" r="8" fill="#1f7a4d"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="878" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="915" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Conversation validation</text>
+<circle cx="124" cy="1006" r="8" fill="#1f7a4d"/><text x="142" y="1012" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="1432" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="1469" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Delivery context + evidence</text>
+<circle cx="124" cy="1560" r="8" fill="#1f7a4d"/><text x="142" y="1566" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="822" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="822" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="846" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Durable runtime</text>
+<rect x="842" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">RuntimeExecutionService</text>
+<circle cx="866" cy="453" r="8" fill="#1f7a4d"/><text x="884" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="842" y="740" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Runtime orchestrator</text>
+<circle cx="866" cy="868" r="8" fill="#1f7a4d"/><text x="884" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="842" y="1155" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Planner → execution plan</text>
+<circle cx="866" cy="1283" r="8" fill="#1f7a4d"/><text x="884" y="1289" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="842" y="1570" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Atomic event sequence</text>
+<circle cx="866" cy="1698" r="8" fill="#1f7a4d"/><text x="884" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1564" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1564" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="1588" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Execution</text>
+<rect x="1584" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Agent registry + permissions</text>
+<circle cx="1608" cy="453" r="8" fill="#1f7a4d"/><text x="1626" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1584" y="657" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="694" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Workflow engine + tasks</text>
+<circle cx="1608" cy="785" r="8" fill="#1f7a4d"/><text x="1626" y="791" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1584" y="989" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="1026" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Tool discovery / native / MCP</text>
+<circle cx="1608" cy="1117" r="8" fill="#1f7a4d"/><text x="1626" y="1123" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1584" y="1321" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="1358" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">WAITING_FOR_INPUT / continuation</text>
+<circle cx="1608" cy="1449" r="8" fill="#1f7a4d"/><text x="1626" y="1455" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1584" y="1653" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="1690" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Cancellation / failure /</text>
+<text x="1606" y="1718" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">recovery</text>
+<circle cx="1608" cy="1781" r="8" fill="#1f7a4d"/><text x="1626" y="1787" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2306" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2306" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="2330" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">AI governance</text>
+<rect x="2326" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Model allowlist</text>
+<circle cx="2350" cy="453" r="8" fill="#1f7a4d"/><text x="2368" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2326" y="740" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Budget reserve + settlement</text>
+<circle cx="2350" cy="868" r="8" fill="#1f7a4d"/><text x="2368" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2326" y="1155" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">OpenAI or Bedrock</text>
+<circle cx="2350" cy="1283" r="8" fill="#1f7a4d"/><text x="2368" y="1289" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2326" y="1570" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Evaluation + AI audit</text>
+<circle cx="2350" cy="1698" r="8" fill="#1f7a4d"/><text x="2368" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="3048" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="3048" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="3072" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Events</text>
+<rect x="3068" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="3090" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Runtime event persistence</text>
+<circle cx="3092" cy="453" r="8" fill="#1f7a4d"/><text x="3110" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="3068" y="878" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="3090" y="915" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Authenticated SSE</text>
+<circle cx="3092" cy="1006" r="8" fill="#1f7a4d"/><text x="3110" y="1012" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="3068" y="1432" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="3090" y="1469" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Frontend reducer reconciliation</text>
+<circle cx="3092" cy="1560" r="8" fill="#1f7a4d"/><text x="3110" y="1566" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<path d="M624,400 H624 V953 H624" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="556" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="624" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">validate</text>
+<path d="M772,953 H807 V400 H842" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="739" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="807" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">create</text>
+<path d="M1366,400 H1366 V815 H1366" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1298" y="590" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1366" y="612" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">coordinate</text>
+<path d="M1366,815 H1366 V1230 H1366" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1298" y="1006" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1366" y="1026" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">plan</text>
+<path d="M1514,1230 H1549 V400 H1584" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1481" y="798" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1549" y="819" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">select</text>
+<path d="M2108,400 H2108 V732 H2108" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2040" y="549" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2108" y="570" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">execute</text>
+<path d="M2108,732 H2108 V1064 H2108" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2040" y="881" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2108" y="902" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">invoke</text>
+<path d="M2256,1064 H2291 V1230 H2326" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2223" y="1130" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2291" y="1151" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">model/tool</text>
+<path d="M2850,400 H2850 V1230 H2850" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2782" y="798" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2850" y="819" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">allow</text>
+<path d="M2850,815 H2850 V1230 H2850" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2782" y="1006" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2850" y="1026" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">budget</text>
+<path d="M2256,1396 H1549 V815 H842" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1481" y="1088" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1549" y="1110" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">continue</text>
+<path d="M2256,1728 H1549 V400 H842" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1481" y="1047" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1549" y="1068" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">recover</text>
+<path d="M2998,1230 H3033 V400 H3068" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2965" y="798" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="3033" y="819" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">result</text>
+<path d="M3592,400 H3592 V953 H3592" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="3524" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="3592" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">stream</text>
+<path d="M3592,953 H3592 V1507 H3592" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="3524" y="1213" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="3592" y="1234" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">SSE</text>
+<text x="80" y="2022" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="2050" r="8" fill="#1f7a4d"/><text x="104" y="2056" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="2050" r="8" fill="#d97706"/><text x="574" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="2050" r="8" fill="#2563eb"/><text x="1044" y="2056" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="2050" r="8" fill="#64748b"/><text x="1514" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="2050" r="8" fill="#7c3aed"/><text x="1984" y="2056" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="2050" r="8" fill="#b91c1c"/><text x="2454" y="2056" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

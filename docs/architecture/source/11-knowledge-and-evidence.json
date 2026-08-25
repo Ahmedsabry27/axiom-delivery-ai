@@ -1,0 +1,174 @@
+{
+  "title": "Knowledge and Evidence Architecture",
+  "scope": "Authorized ingestion, lineage, retrieval, citation and review",
+  "state": "CURRENT + PROPOSED SEARCH",
+  "columns": [
+    [
+      "Authorized sources",
+      {
+        "label": "Jira / Confluence / meetings",
+        "status": "EXTERNAL",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Release and delivery records",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Knowledge and lessons",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Ingestion",
+      {
+        "label": "Source authorization first",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/delivery/repositories.py",
+        "aws": false
+      },
+      {
+        "label": "Sanitation + redaction",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/security",
+        "aws": false
+      },
+      {
+        "label": "Content fingerprint + version",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/knowledge_source.py",
+        "aws": false
+      },
+      {
+        "label": "Freshness / trust / conflict status",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/knowledge_intelligence",
+        "aws": false
+      }
+    ],
+    [
+      "Knowledge graph",
+      {
+        "label": "Evidence reference + source mapping",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/knowledge.py",
+        "aws": false
+      },
+      {
+        "label": "Decision / lesson / meeting summary",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/knowledge.py",
+        "aws": false
+      },
+      {
+        "label": "Superseded content + human verification",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/knowledge_intelligence",
+        "aws": false
+      }
+    ],
+    [
+      "Retrieval + response",
+      {
+        "label": "Tenant/entity authorization before ranking",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/delivery.py",
+        "aws": false
+      },
+      {
+        "label": "SQL retrieval",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/knowledge_intelligence/service.py",
+        "aws": false
+      },
+      {
+        "label": "OpenSearch/vector retrieval",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Copilot structured response + citations",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/delivery/copilot_service.py",
+        "aws": false
+      },
+      {
+        "label": "Audit",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/audit",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      1,
+      0,
+      "authorize"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "sanitize"
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      "fingerprint"
+    ],
+    [
+      1,
+      2,
+      2,
+      0,
+      "version"
+    ],
+    [
+      2,
+      0,
+      3,
+      0,
+      "filter"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "retrieve"
+    ],
+    [
+      3,
+      1,
+      3,
+      3,
+      "ground"
+    ],
+    [
+      3,
+      2,
+      3,
+      3,
+      "optional rank"
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      "audit"
+    ]
+  ]
+}

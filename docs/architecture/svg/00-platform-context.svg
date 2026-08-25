@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1800" viewBox="0 0 3200 1800">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">Platform Context</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: Business users, Axiom Delivery AI and trusted external systems</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">CURRENT + TARGET CONTEXT</text>
+<text x="3120" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="738" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="738" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Users</text>
+<rect x="100" y="325" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Delivery and portfolio</text>
+<text x="122" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">leadership</text>
+<circle cx="124" cy="453" r="8" fill="#7c3aed"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="100" y="650" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Programme / project / product</text>
+<text x="122" y="715" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">roles</text>
+<circle cx="124" cy="778" r="8" fill="#7c3aed"/><text x="142" y="784" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="100" y="975" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Scrum, release and risk managers</text>
+<circle cx="124" cy="1103" r="8" fill="#7c3aed"/><text x="142" y="1109" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="100" y="1300" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Approvers and governance</text>
+<text x="122" y="1365" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">administrators</text>
+<circle cx="124" cy="1428" r="8" fill="#7c3aed"/><text x="142" y="1434" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="848" y="250" width="738" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="848" y="250" width="738" height="58" rx="22" fill="#232f3e"/><text x="872" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Axiom Delivery AI</text>
+<rect x="868" y="325" width="698" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="890" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Delivery intelligence workspaces</text>
+<circle cx="892" cy="453" r="8" fill="#1f7a4d"/><text x="910" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="868" y="650" width="698" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="890" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">AI Copilot and evidence</text>
+<circle cx="892" cy="778" r="8" fill="#1f7a4d"/><text x="910" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="868" y="975" width="698" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="890" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Agents, workflows and governed</text>
+<text x="890" y="1040" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">tools</text>
+<circle cx="892" cy="1103" r="8" fill="#1f7a4d"/><text x="910" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="868" y="1300" width="698" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="890" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Approval and Action Center</text>
+<circle cx="892" cy="1428" r="8" fill="#1f7a4d"/><text x="910" y="1434" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1615" y="250" width="738" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1615" y="250" width="738" height="58" rx="22" fill="#232f3e"/><text x="1639" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Delivery SaaS</text>
+<rect x="1635" y="325" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="1657" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Jira: projects, work and sprints</text>
+<circle cx="1659" cy="453" r="8" fill="#7c3aed"/><text x="1677" y="459" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="1635" y="650" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="1657" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Confluence: pages and evidence</text>
+<circle cx="1659" cy="778" r="8" fill="#7c3aed"/><text x="1677" y="784" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="1635" y="975" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="1657" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Outlook / Teams via Graph</text>
+<circle cx="1659" cy="1103" r="8" fill="#7c3aed"/><text x="1677" y="1109" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="1635" y="1300" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="1657" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">GitHub: source and delivery</text>
+<circle cx="1659" cy="1428" r="8" fill="#7c3aed"/><text x="1677" y="1434" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="2382" y="250" width="738" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2382" y="250" width="738" height="58" rx="22" fill="#232f3e"/><text x="2406" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Identity + AI</text>
+<rect x="2402" y="325" width="698" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="2420" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="2448" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2490" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Amazon Cognito / identity</text>
+<text x="2490" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">provider</text>
+<circle cx="2426" cy="453" r="8" fill="#1f7a4d"/><text x="2444" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2402" y="650" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<rect x="2420" y="668" width="54" height="54" rx="10" fill="#ff9900"/><text x="2448" y="703" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2490" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Amazon Bedrock</text>
+<circle cx="2426" cy="778" r="8" fill="#7c3aed"/><text x="2444" y="784" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="2402" y="975" width="698" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="2424" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">OpenAI</text>
+<circle cx="2426" cy="1103" r="8" fill="#7c3aed"/><text x="2444" y="1109" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="2402" y="1300" width="698" height="150" rx="16" fill="#fff" stroke="#d97706" stroke-width="4" filter="url(#shadow)"/>
+<text x="2424" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Monitoring and notifications</text>
+<circle cx="2426" cy="1428" r="8" fill="#d97706"/><text x="2444" y="1434" font-family="Arial" font-size="15" fill="#52616f">PARTIALLY_IMPLEMENTED</text>
+<path d="M798,400 H832 V400 H868" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="764" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="832" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">delivery decisions</text>
+<path d="M798,1375 H832 V1375 H868" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="764" y="1358" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="832" y="1379" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">review / approve</text>
+<path d="M1565,400 H1600 V400 H1635" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1532" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1600" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">synchronize</text>
+<path d="M1565,725 H1600 V725 H1635" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1532" y="708" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1600" y="729" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">authorized evidence</text>
+<path d="M1565,1050 H1984 V725 H2402" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1916" y="870" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1984" y="892" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">model invocation</text>
+<path d="M3100,400 H1984 V400 H868" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1916" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1984" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">JWT claims</text>
+<text x="80" y="1662" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="1690" r="8" fill="#1f7a4d"/><text x="104" y="1696" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="1690" r="8" fill="#d97706"/><text x="574" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="1690" r="8" fill="#2563eb"/><text x="1044" y="1696" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="1690" r="8" fill="#64748b"/><text x="1514" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="1690" r="8" fill="#7c3aed"/><text x="1984" y="1696" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="1690" r="8" fill="#b91c1c"/><text x="2454" y="1696" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

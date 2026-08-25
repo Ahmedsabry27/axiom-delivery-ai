@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">AWS Network Architecture</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: eu-west-2 VPC traffic, trust boundaries and production target</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">CURRENT + PROPOSED HARDENING</text>
+<text x="3760" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Internet / edge</text>
+<rect x="100" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Users + external SaaS</text>
+<circle cx="124" cy="453" r="8" fill="#7c3aed"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="100" y="878" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="118" y="896" width="54" height="54" rx="10" fill="#ff9900"/><text x="145" y="931" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="188" y="915" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">CloudFront HTTPS 443</text>
+<circle cx="124" cy="1006" r="8" fill="#1f7a4d"/><text x="142" y="1012" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="1432" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="118" y="1450" width="54" height="54" rx="10" fill="#ff9900"/><text x="145" y="1485" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="188" y="1469" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Internet Gateway</text>
+<circle cx="124" cy="1560" r="8" fill="#1f7a4d"/><text x="142" y="1566" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1008" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1008" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="1032" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Public subnets AZ-a / AZ-b</text>
+<rect x="1028" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#d97706" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1046" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="1072" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="1116" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Internet-facing ALB :80</text>
+<circle cx="1052" cy="453" r="8" fill="#d97706"/><text x="1070" y="459" font-family="Arial" font-size="15" fill="#52616f">PARTIALLY_IMPLEMENTED</text>
+<rect x="1028" y="878" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1046" y="896" width="54" height="54" rx="10" fill="#ff9900"/><text x="1072" y="931" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="1116" y="915" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">NAT Gateway AZ-a</text>
+<circle cx="1052" cy="1006" r="8" fill="#1f7a4d"/><text x="1070" y="1012" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1028" y="1432" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1046" y="1450" width="54" height="54" rx="10" fill="#ff9900"/><text x="1072" y="1485" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="1116" y="1469" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Second NAT / HTTPS</text>
+<text x="1116" y="1497" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">listener</text>
+<circle cx="1052" cy="1560" r="8" fill="#64748b"/><text x="1070" y="1566" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="1935" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1935" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="1959" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Private app subnets</text>
+<rect x="1955" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1973" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">ECS task AZ-a :8080</text>
+<circle cx="1979" cy="453" r="8" fill="#1f7a4d"/><text x="1997" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1955" y="740" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1973" y="758" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="793" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">ECS task AZ-b +</text>
+<text x="2043" y="805" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">autoscaling</text>
+<circle cx="1979" cy="868" r="8" fill="#64748b"/><text x="1997" y="874" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="1955" y="1155" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1973" y="1173" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="1208" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">VPC endpoints: ECR, logs,</text>
+<text x="2043" y="1220" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">secrets</text>
+<circle cx="1979" cy="1283" r="8" fill="#64748b"/><text x="1997" y="1289" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="1955" y="1570" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1977" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">ECS security group: ALB only</text>
+<circle cx="1979" cy="1698" r="8" fill="#1f7a4d"/><text x="1997" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2862" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2862" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="2886" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Private data subnets</text>
+<rect x="2882" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="2900" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="2928" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2970" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">RDS PostgreSQL :5432</text>
+<text x="2970" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">private</text>
+<circle cx="2906" cy="453" r="8" fill="#1f7a4d"/><text x="2924" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2882" y="740" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2904" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">RDS security group: ECS only</text>
+<circle cx="2906" cy="868" r="8" fill="#1f7a4d"/><text x="2924" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2882" y="1155" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="2900" y="1173" width="54" height="54" rx="10" fill="#ff9900"/><text x="2928" y="1208" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2970" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Multi-AZ standby</text>
+<circle cx="2906" cy="1283" r="8" fill="#64748b"/><text x="2924" y="1289" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="2882" y="1570" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="2900" y="1588" width="54" height="54" rx="10" fill="#ff9900"/><text x="2928" y="1623" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2970" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Route 53 private DNS</text>
+<circle cx="2906" cy="1698" r="8" fill="#64748b"/><text x="2924" y="1704" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<path d="M769,400 H769 V953 H769" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="701" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="769" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">HTTPS 443</text>
+<path d="M958,953 H992 V400 H1028" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="924" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="992" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">origin HTTP current</text>
+<path d="M1885,400 H1920 V400 H1955" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1852" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1920" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">SG / 8080</text>
+<path d="M2812,400 H2848 V400 H2882" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2780" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2848" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">SG / 5432</text>
+<path d="M2812,400 H1920 V953 H1028" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1852" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1920" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">egress</text>
+<path d="M1885,953 H992 V1507 H100" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="924" y="1213" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="992" y="1234" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">internet</text>
+<path d="M2812,1230 H1456 V953 H100" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1388" y="1075" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1456" y="1096" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">AWS private APIs</text>
+<text x="80" y="2022" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="2050" r="8" fill="#1f7a4d"/><text x="104" y="2056" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="2050" r="8" fill="#d97706"/><text x="574" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="2050" r="8" fill="#2563eb"/><text x="1044" y="2056" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="2050" r="8" fill="#64748b"/><text x="1514" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="2050" r="8" fill="#7c3aed"/><text x="1984" y="2056" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="2050" r="8" fill="#b91c1c"/><text x="2454" y="2056" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

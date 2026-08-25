@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1800" viewBox="0 0 3200 1800">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">Backend Service Architecture</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: FastAPI layering and shared enforcement</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">CURRENT STATE</text>
+<text x="3120" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">API</text>
+<rect x="100" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Routers: chat, runtime,</text>
+<text x="122" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">delivery, admin</text>
+<circle cx="124" cy="453" r="8" fill="#1f7a4d"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="758" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="795" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Authentication + tenant context</text>
+<circle cx="124" cy="886" r="8" fill="#1f7a4d"/><text x="142" y="892" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="1192" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="1229" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Validation + response contracts</text>
+<circle cx="124" cy="1320" r="8" fill="#1f7a4d"/><text x="142" y="1326" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="694" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="694" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="718" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Application services</text>
+<rect x="714" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="736" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Conversation + runtime execution</text>
+<circle cx="738" cy="453" r="8" fill="#1f7a4d"/><text x="756" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="714" y="650" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="736" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Sprint / RAID / dependency /</text>
+<text x="736" y="715" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">release / portfolio intelligence</text>
+<circle cx="738" cy="778" r="8" fill="#1f7a4d"/><text x="756" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="714" y="975" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="736" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Meeting + knowledge intelligence</text>
+<circle cx="738" cy="1103" r="8" fill="#1f7a4d"/><text x="756" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="714" y="1300" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="736" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Approvals, actions, governance,</text>
+<text x="736" y="1365" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">integrations</text>
+<circle cx="738" cy="1428" r="8" fill="#1f7a4d"/><text x="756" y="1434" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1308" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1308" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="1332" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Domain + runtime</text>
+<rect x="1328" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Orchestrator / planner /</text>
+<text x="1350" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">workflow engine</text>
+<circle cx="1352" cy="453" r="8" fill="#1f7a4d"/><text x="1370" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="650" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Agent registry + execution</text>
+<circle cx="1352" cy="778" r="8" fill="#1f7a4d"/><text x="1370" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="975" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Tool discovery / native / MCP</text>
+<circle cx="1352" cy="1103" r="8" fill="#1f7a4d"/><text x="1370" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="1300" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">AI provider abstraction</text>
+<circle cx="1352" cy="1428" r="8" fill="#1f7a4d"/><text x="1370" y="1434" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1922" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1922" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="1946" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Persistence</text>
+<rect x="1942" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Repositories and transactions</text>
+<circle cx="1966" cy="453" r="8" fill="#1f7a4d"/><text x="1984" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="650" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">SQLAlchemy models</text>
+<circle cx="1966" cy="778" r="8" fill="#1f7a4d"/><text x="1984" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="975" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Alembic forward migrations</text>
+<circle cx="1966" cy="1103" r="8" fill="#1f7a4d"/><text x="1984" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="1300" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">PostgreSQL</text>
+<circle cx="1966" cy="1428" r="8" fill="#1f7a4d"/><text x="1984" y="1434" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2536" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2536" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="2560" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Shared controls</text>
+<rect x="2556" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Permissions / source</text>
+<text x="2578" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">authorization</text>
+<circle cx="2580" cy="453" r="8" fill="#1f7a4d"/><text x="2598" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2556" y="650" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Audit + redaction</text>
+<circle cx="2580" cy="778" r="8" fill="#1f7a4d"/><text x="2598" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2556" y="975" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Correlation logging + metrics</text>
+<circle cx="2580" cy="1103" r="8" fill="#1f7a4d"/><text x="2598" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2556" y="1300" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Budget and model governance</text>
+<circle cx="2580" cy="1428" r="8" fill="#1f7a4d"/><text x="2598" y="1434" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<path d="M524,400 H524 V833 H524" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="456" y="600" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="524" y="621" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">Depends</text>
+<path d="M644,833 H679 V400 H714" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="611" y="600" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="679" y="621" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">authorize</text>
+<path d="M1258,400 H1293 V400 H1328" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1225" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1293" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">coordinate</text>
+<path d="M1258,725 H1600 V400 H1942" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1532" y="546" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1600" y="566" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">read/write</text>
+<path d="M1752,400 H1752 V725 H1752" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1684" y="546" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1752" y="566" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">dispatch</text>
+<path d="M1752,725 H1752 V1050 H1752" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1684" y="870" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1752" y="892" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">capabilities</text>
+<path d="M2366,400 H2366 V725 H2366" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2298" y="546" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2366" y="566" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">ORM</text>
+<path d="M2366,725 H2366 V1375 H2366" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2298" y="1033" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2366" y="1054" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">SQL</text>
+<path d="M3100,400 H1907 V725 H714" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1839" y="546" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1907" y="566" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">enforce</text>
+<path d="M3100,725 H2521 V725 H1942" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2453" y="708" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2521" y="729" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">append</text>
+<text x="80" y="1662" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="1690" r="8" fill="#1f7a4d"/><text x="104" y="1696" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="1690" r="8" fill="#d97706"/><text x="574" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="1690" r="8" fill="#2563eb"/><text x="1044" y="1696" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="1690" r="8" fill="#64748b"/><text x="1514" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="1690" r="8" fill="#7c3aed"/><text x="1984" y="1696" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="1690" r="8" fill="#b91c1c"/><text x="2454" y="1696" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

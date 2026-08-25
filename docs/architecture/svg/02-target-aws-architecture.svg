@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">Target AWS Reference Architecture</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: Required deployment, production hardening and optional scale</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">TARGET STATE</text>
+<text x="3760" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Edge</text>
+<rect x="100" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="118" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="145" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="188" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Route 53 + ACM</text>
+<circle cx="124" cy="453" r="8" fill="#64748b"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="100" y="740" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="118" y="758" width="54" height="54" rx="10" fill="#ff9900"/><text x="145" y="793" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="188" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">AWS WAF</text>
+<circle cx="124" cy="868" r="8" fill="#64748b"/><text x="142" y="874" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="100" y="1155" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="118" y="1173" width="54" height="54" rx="10" fill="#ff9900"/><text x="145" y="1208" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="188" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">CloudFront</text>
+<circle cx="124" cy="1283" r="8" fill="#1f7a4d"/><text x="142" y="1289" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="1570" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="118" y="1588" width="54" height="54" rx="10" fill="#ff9900"/><text x="145" y="1623" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="188" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Private S3 frontend + OAC</text>
+<circle cx="124" cy="1698" r="8" fill="#1f7a4d"/><text x="142" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1008" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1008" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="1032" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Identity + API</text>
+<rect x="1028" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1046" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="1072" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="1116" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Cognito user pool and</text>
+<text x="1116" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">claims</text>
+<circle cx="1052" cy="453" r="8" fill="#1f7a4d"/><text x="1070" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1028" y="740" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1046" y="758" width="54" height="54" rx="10" fill="#ff9900"/><text x="1072" y="793" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="1116" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Application Load Balancer</text>
+<circle cx="1052" cy="868" r="8" fill="#1f7a4d"/><text x="1070" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1028" y="1155" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1046" y="1173" width="54" height="54" rx="10" fill="#ff9900"/><text x="1072" y="1208" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="1116" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">ECS Fargate tasks across</text>
+<text x="1116" y="1220" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">AZs</text>
+<circle cx="1052" cy="1283" r="8" fill="#64748b"/><text x="1070" y="1289" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="1028" y="1570" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1046" y="1588" width="54" height="54" rx="10" fill="#ff9900"/><text x="1072" y="1623" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="1116" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">ECR immutable images</text>
+<circle cx="1052" cy="1698" r="8" fill="#1f7a4d"/><text x="1070" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1935" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1935" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="1959" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Data + AI</text>
+<rect x="1955" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1973" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Multi-AZ RDS PostgreSQL</text>
+<circle cx="1979" cy="453" r="8" fill="#64748b"/><text x="1997" y="459" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="1955" y="657" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1973" y="675" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="710" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="694" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Secrets Manager</text>
+<circle cx="1979" cy="785" r="8" fill="#1f7a4d"/><text x="1997" y="791" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1955" y="989" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1973" y="1007" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="1042" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="1026" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">KMS customer-managed keys</text>
+<circle cx="1979" cy="1117" r="8" fill="#64748b"/><text x="1997" y="1123" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="1955" y="1321" width="858" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1973" y="1339" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="1374" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="1358" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Bedrock + governed models</text>
+<circle cx="1979" cy="1449" r="8" fill="#1f7a4d"/><text x="1997" y="1455" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1955" y="1653" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1973" y="1671" width="54" height="54" rx="10" fill="#ff9900"/><text x="2000" y="1706" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2043" y="1690" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Evidence S3 / search</text>
+<circle cx="1979" cy="1781" r="8" fill="#64748b"/><text x="1997" y="1787" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="2862" y="250" width="898" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2862" y="250" width="898" height="58" rx="22" fill="#232f3e"/><text x="2886" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Integration + ops</text>
+<rect x="2882" y="325" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="2900" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="2928" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2970" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">EventBridge / SQS / DLQ</text>
+<circle cx="2906" cy="453" r="8" fill="#64748b"/><text x="2924" y="459" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="2882" y="657" width="858" height="150" rx="16" fill="#fff" stroke="#d97706" stroke-width="4" filter="url(#shadow)"/>
+<rect x="2900" y="675" width="54" height="54" rx="10" fill="#ff9900"/><text x="2928" y="710" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2970" y="694" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">CloudWatch logs, metrics,</text>
+<text x="2970" y="722" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">alarms</text>
+<circle cx="2906" cy="785" r="8" fill="#d97706"/><text x="2924" y="791" font-family="Arial" font-size="15" fill="#52616f">PARTIALLY_IMPLEMENTED</text>
+<rect x="2882" y="989" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="2900" y="1007" width="54" height="54" rx="10" fill="#ff9900"/><text x="2928" y="1042" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2970" y="1026" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">CloudTrail / Config /</text>
+<text x="2970" y="1054" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">GuardDuty / Security Hub</text>
+<circle cx="2906" cy="1117" r="8" fill="#64748b"/><text x="2924" y="1123" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="2882" y="1321" width="858" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="2900" y="1339" width="54" height="54" rx="10" fill="#ff9900"/><text x="2928" y="1374" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2970" y="1358" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">AWS Backup + SNS</text>
+<circle cx="2906" cy="1449" r="8" fill="#64748b"/><text x="2924" y="1455" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="2882" y="1653" width="858" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="2904" y="1690" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">External Jira / Graph / OpenAI</text>
+<circle cx="2906" cy="1781" r="8" fill="#7c3aed"/><text x="2924" y="1787" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<path d="M769,400 H769 V1230 H769" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="701" y="798" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="769" y="819" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">DNS + TLS</text>
+<path d="M769,815 H769 V1230 H769" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="701" y="1006" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="769" y="1026" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">filter</text>
+<path d="M769,1230 H769 V1645 H769" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="701" y="1420" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="769" y="1442" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">static</text>
+<path d="M958,1230 H992 V815 H1028" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="924" y="1006" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="992" y="1026" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">HTTPS</text>
+<path d="M1696,400 H1696 V815 H1696" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1628" y="590" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1696" y="612" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">JWT</text>
+<path d="M1696,815 H1696 V1230 H1696" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1628" y="1006" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1696" y="1026" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">8080</text>
+<path d="M1885,1230 H1920 V400 H1955" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1852" y="798" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1920" y="819" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">5432</text>
+<path d="M1885,1230 H1920 V732 H1955" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1852" y="964" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1920" y="985" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">credentials</text>
+<path d="M1885,1230 H1920 V1396 H1955" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1852" y="1296" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1920" y="1317" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">AI</text>
+<path d="M1885,1230 H2384 V400 H2882" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2316" y="798" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2384" y="819" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">async</text>
+<path d="M3551,732 H3551 V1396 H3551" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="3483" y="1047" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="3551" y="1068" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">notify</text>
+<text x="80" y="2022" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="2050" r="8" fill="#1f7a4d"/><text x="104" y="2056" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="2050" r="8" fill="#d97706"/><text x="574" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="2050" r="8" fill="#2563eb"/><text x="1044" y="2056" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="2050" r="8" fill="#64748b"/><text x="1514" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="2050" r="8" fill="#7c3aed"/><text x="1984" y="2056" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="2050" r="8" fill="#b91c1c"/><text x="2454" y="2056" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

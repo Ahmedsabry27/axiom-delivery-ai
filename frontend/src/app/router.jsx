@@ -12,6 +12,8 @@ import EnterpriseLayout from "../components/layout/EnterpriseLayout";
 // eslint-disable-next-line react-refresh/only-export-components
 const ChatPage=lazy(()=>import("../pages/ChatPage"));
 // eslint-disable-next-line react-refresh/only-export-components
+const CopilotLibraryPage=lazy(()=>import("../pages/copilot/CopilotLibraryPage"));
+// eslint-disable-next-line react-refresh/only-export-components
 const DashboardPage=lazy(()=>import("../pages/dashboard/DashboardPage"));
 // eslint-disable-next-line react-refresh/only-export-components
 const MyDayPage=lazy(()=>import("../pages/my-day/MyDayPage"));
@@ -53,6 +55,8 @@ const ApprovalsPage=lazy(()=>import("../pages/approvals/ApprovalsPage"));
 const MeetingsPage=lazy(()=>import("../pages/meetings/MeetingsPage"));
 // eslint-disable-next-line react-refresh/only-export-components
 const CeremonyPages=lazy(()=>import("../pages/ceremonies/CeremonyPages"));
+// eslint-disable-next-line react-refresh/only-export-components
+const AgilePerformancePage=lazy(()=>import("../pages/agile-performance/AgilePerformancePage"));
 // eslint-disable-next-line react-refresh/only-export-components
 const AuditPage=lazy(()=>import("../pages/audit/AuditPage"));
 // eslint-disable-next-line react-refresh/only-export-components
@@ -142,6 +146,15 @@ export const router = createBrowserRouter([
       { path: "raid/:raidId", element: deferred(RAIDPage) },
       { path: "dependencies", element: deferred(DependencyIntelligencePage), handle:{title:"Dependency Intelligence"} },
       { path: "dependencies/:dependencyId", element: deferred(DependencyIntelligencePage), handle:{title:"Dependency Intelligence"} },
+      { path: "agile-performance", element: deferred(AgilePerformancePage), handle:{title:"Agile Performance"} },
+      { path: "agile-performance/predictability", element: deferred(AgilePerformancePage), handle:{title:"Predictability"} },
+      { path: "agile-performance/flow", element: deferred(AgilePerformancePage), handle:{title:"Flow"} },
+      { path: "agile-performance/backlog", element: deferred(AgilePerformancePage), handle:{title:"Backlog"} },
+      { path: "agile-performance/quality", element: deferred(AgilePerformancePage), handle:{title:"Quality"} },
+      { path: "agile-performance/risk", element: deferred(AgilePerformancePage), handle:{title:"Delivery Risk"} },
+      { path: "agile-performance/team-health", element: deferred(AgilePerformancePage), handle:{title:"Team Health"} },
+      { path: "agile-performance/okrs", element: deferred(AgilePerformancePage), handle:{title:"OKR Intelligence"} },
+      { path: "agile-performance/okrs/:objectiveId", element: deferred(AgilePerformancePage), handle:{title:"Objective"} },
       { path: "meetings/ceremonies", element: deferred(CeremonyPages), handle:{title:"Ceremony Intelligence"} },
       { path: "meetings/ceremonies/templates", element: deferred(CeremonyPages), handle:{title:"Ceremony Templates"} },
       { path: "meetings/ceremonies/templates/:templateId", element: deferred(CeremonyPages), handle:{title:"Ceremony Template"} },
@@ -198,7 +211,19 @@ export const router = createBrowserRouter([
       },
       { path: "chat/:conversationId", element: <Navigate to="/copilot" replace /> },
       { path: "copilot", element: <ChatPage />, handle: { title: "AI Copilot", icon: "chat" } },
-      { path: "copilot/:conversationId", element: <ChatPage />, handle: { title: "AI Copilot", icon: "chat" } },
+      { path: "copilot/new", element: <ChatPage />, handle: { title: "New Copilot conversation", icon: "chat" } },
+      { path: "copilot/conversations", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/conversations/:conversationId", element: <ChatPage />, handle: { title: "AI Copilot", icon: "chat" } },
+      { path: "copilot/saved-insights", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/saved-insights/:insightId", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/evidence", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/evidence/:evidenceId", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/proposed-actions", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/proposed-actions/:actionId", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/prompt-library", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/prompt-library/:templateId", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/feedback", element: deferred(CopilotLibraryPage) },
+      { path: "copilot/feedback/:feedbackId", element: deferred(CopilotLibraryPage) },
 
 
 

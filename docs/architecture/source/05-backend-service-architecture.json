@@ -1,0 +1,208 @@
+{
+  "title": "Backend Service Architecture",
+  "scope": "FastAPI layering and shared enforcement",
+  "state": "CURRENT STATE",
+  "columns": [
+    [
+      "API",
+      {
+        "label": "Routers: chat, runtime, delivery, admin",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/main.py",
+        "aws": false
+      },
+      {
+        "label": "Authentication + tenant context",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/auth/dependencies.py",
+        "aws": false
+      },
+      {
+        "label": "Validation + response contracts",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/contracts",
+        "aws": false
+      }
+    ],
+    [
+      "Application services",
+      {
+        "label": "Conversation + runtime execution",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/services",
+        "aws": false
+      },
+      {
+        "label": "Sprint / RAID / dependency / release / portfolio intelligence",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/delivery",
+        "aws": false
+      },
+      {
+        "label": "Meeting + knowledge intelligence",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/meeting_intelligence",
+        "aws": false
+      },
+      {
+        "label": "Approvals, actions, governance, integrations",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/action_center",
+        "aws": false
+      }
+    ],
+    [
+      "Domain + runtime",
+      {
+        "label": "Orchestrator / planner / workflow engine",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/runtime",
+        "aws": false
+      },
+      {
+        "label": "Agent registry + execution",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/agents",
+        "aws": false
+      },
+      {
+        "label": "Tool discovery / native / MCP",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/tool_discovery",
+        "aws": false
+      },
+      {
+        "label": "AI provider abstraction",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/ai",
+        "aws": false
+      }
+    ],
+    [
+      "Persistence",
+      {
+        "label": "Repositories and transactions",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/repositories",
+        "aws": false
+      },
+      {
+        "label": "SQLAlchemy models",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models",
+        "aws": false
+      },
+      {
+        "label": "Alembic forward migrations",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/alembic/versions",
+        "aws": false
+      },
+      {
+        "label": "PostgreSQL",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/postgres.py",
+        "aws": false
+      }
+    ],
+    [
+      "Shared controls",
+      {
+        "label": "Permissions / source authorization",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/security",
+        "aws": false
+      },
+      {
+        "label": "Audit + redaction",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/audit",
+        "aws": false
+      },
+      {
+        "label": "Correlation logging + metrics",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/logging",
+        "aws": false
+      },
+      {
+        "label": "Budget and model governance",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/governance/budget_enforcement.py",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      1,
+      "Depends"
+    ],
+    [
+      0,
+      1,
+      1,
+      0,
+      "authorize"
+    ],
+    [
+      1,
+      0,
+      2,
+      0,
+      "coordinate"
+    ],
+    [
+      1,
+      1,
+      3,
+      0,
+      "read/write"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "dispatch"
+    ],
+    [
+      2,
+      1,
+      2,
+      2,
+      "capabilities"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "ORM"
+    ],
+    [
+      3,
+      1,
+      3,
+      3,
+      "SQL"
+    ],
+    [
+      4,
+      0,
+      1,
+      1,
+      "enforce"
+    ],
+    [
+      4,
+      1,
+      3,
+      1,
+      "append"
+    ]
+  ]
+}

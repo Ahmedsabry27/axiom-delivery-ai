@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1800" viewBox="0 0 3200 1800">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">Runtime Request Sequence</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: Primary and alternate execution paths</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">CURRENT STATE</text>
+<text x="3120" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Frontend</text>
+<rect x="100" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">1. POST Chat/Copilot</text>
+<circle cx="124" cy="453" r="8" fill="#1f7a4d"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="758" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="795" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">11. Consume SSE</text>
+<circle cx="124" cy="886" r="8" fill="#1f7a4d"/><text x="142" y="892" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="1192" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="1229" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">12. Reconcile UI</text>
+<circle cx="124" cy="1320" r="8" fill="#1f7a4d"/><text x="142" y="1326" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="694" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="694" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="718" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">API + conversation</text>
+<rect x="714" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="736" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">2. Authenticate / authorize</text>
+<circle cx="738" cy="453" r="8" fill="#1f7a4d"/><text x="756" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="714" y="758" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="736" y="795" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">3. Validate conversation</text>
+<circle cx="738" cy="886" r="8" fill="#1f7a4d"/><text x="756" y="892" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="714" y="1192" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="736" y="1229" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Unauthorized → 401/403</text>
+<circle cx="738" cy="1320" r="8" fill="#1f7a4d"/><text x="756" y="1326" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1308" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1308" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="1332" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Runtime</text>
+<rect x="1328" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">4. Create durable execution</text>
+<circle cx="1352" cy="453" r="8" fill="#1f7a4d"/><text x="1370" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="650" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">5. Orchestrator → planner</text>
+<circle cx="1352" cy="778" r="8" fill="#1f7a4d"/><text x="1370" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="975" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">WAITING_FOR_INPUT → continue</text>
+<circle cx="1352" cy="1103" r="8" fill="#1f7a4d"/><text x="1370" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="1300" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Cancel / sequence conflict</text>
+<text x="1350" y="1365" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">guarded</text>
+<circle cx="1352" cy="1428" r="8" fill="#1f7a4d"/><text x="1370" y="1434" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1922" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1922" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="1946" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Agent / workflow</text>
+<rect x="1942" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">6. Select permitted agent</text>
+<circle cx="1966" cy="453" r="8" fill="#1f7a4d"/><text x="1984" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="758" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="795" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">7. Execute workflow/task</text>
+<circle cx="1966" cy="886" r="8" fill="#1f7a4d"/><text x="1984" y="892" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="1192" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="1229" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Tool failure → failed event</text>
+<circle cx="1966" cy="1320" r="8" fill="#1f7a4d"/><text x="1984" y="1326" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2536" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2536" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="2560" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Tool / model + events</text>
+<rect x="2556" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">8. Invoke allowed tool/model</text>
+<circle cx="2580" cy="453" r="8" fill="#1f7a4d"/><text x="2598" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2556" y="650" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Provider failure → safe error</text>
+<circle cx="2580" cy="778" r="8" fill="#1f7a4d"/><text x="2598" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2556" y="975" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">9. Persist atomic event</text>
+<circle cx="2580" cy="1103" r="8" fill="#1f7a4d"/><text x="2598" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2556" y="1300" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">10. Publish authenticated SSE</text>
+<circle cx="2580" cy="1428" r="8" fill="#1f7a4d"/><text x="2598" y="1434" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<path d="M644,400 H679 V400 H714" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="611" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="679" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">request</text>
+<path d="M1138,400 H1138 V833 H1138" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1070" y="600" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1138" y="621" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">claims</text>
+<path d="M1258,833 H1293 V400 H1328" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1225" y="600" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1293" y="621" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">valid</text>
+<path d="M1752,400 H1752 V725 H1752" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1684" y="546" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1752" y="566" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">start</text>
+<path d="M1872,725 H1907 V400 H1942" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1839" y="546" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1907" y="566" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">plan</text>
+<path d="M2366,400 H2366 V833 H2366" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2298" y="600" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2366" y="621" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">route</text>
+<path d="M2486,833 H2521 V400 H2556" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2453" y="600" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2521" y="621" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">invoke</text>
+<path d="M2980,400 H2980 V1050 H2980" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2912" y="708" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2980" y="729" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">result</text>
+<path d="M2980,1050 H2980 V1375 H2980" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2912" y="1196" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2980" y="1216" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">publish</text>
+<path d="M3100,1375 H1600 V833 H100" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1532" y="1087" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1600" y="1108" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">SSE</text>
+<path d="M524,833 H524 V1267 H524" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="456" y="1033" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="524" y="1054" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">reduce</text>
+<text x="80" y="1662" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="1690" r="8" fill="#1f7a4d"/><text x="104" y="1696" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="1690" r="8" fill="#d97706"/><text x="574" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="1690" r="8" fill="#2563eb"/><text x="1044" y="1696" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="1690" r="8" fill="#64748b"/><text x="1514" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="1690" r="8" fill="#7c3aed"/><text x="1984" y="1696" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="1690" r="8" fill="#b91c1c"/><text x="2454" y="1696" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

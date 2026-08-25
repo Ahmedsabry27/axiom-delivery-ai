@@ -1,0 +1,185 @@
+{
+  "title": "Backup and Recovery",
+  "scope": "Protected assets, restore paths and unverified recovery controls",
+  "state": "CURRENT + PROPOSED RECOVERY",
+  "columns": [
+    [
+      "Protected assets",
+      {
+        "label": "RDS automated backups: 7 days",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "RDS final snapshot + prevent_destroy",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "S3 frontend versioning",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "ECR retains 30 images",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Terraform remote state",
+        "status": "CONFIGURED_NOT_VERIFIED",
+        "evidence": "infrastructure/terraform/environments/staging/backend.tf",
+        "aws": true
+      }
+    ],
+    [
+      "Secrets + audit",
+      {
+        "label": "Secrets Manager versions",
+        "status": "CONFIGURED_NOT_VERIFIED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Secret rotation",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Audit preservation",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "AWS Backup policy",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ],
+    [
+      "Recovery",
+      {
+        "label": "Restore RDS to recovery environment",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Redeploy immutable ECR/frontend artifact",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Run Alembic compatibility checks",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Restore validation / smoke tests",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "DNS / traffic recovery",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ],
+    [
+      "Decision points",
+      {
+        "label": "RTO and RPO: not approved",
+        "status": "UNKNOWN",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Multi-region requirement: unknown",
+        "status": "UNKNOWN",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Recovery rehearsal cadence",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Evidence and audit retention policy",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      2,
+      0,
+      "restore"
+    ],
+    [
+      0,
+      2,
+      2,
+      1,
+      "rollback"
+    ],
+    [
+      0,
+      3,
+      2,
+      1,
+      "image"
+    ],
+    [
+      1,
+      0,
+      2,
+      1,
+      "credentials"
+    ],
+    [
+      2,
+      0,
+      2,
+      2,
+      "migrate"
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      "validate"
+    ],
+    [
+      3,
+      0,
+      2,
+      0,
+      "select point"
+    ],
+    [
+      3,
+      2,
+      2,
+      3,
+      "rehearse"
+    ]
+  ]
+}

@@ -1,0 +1,12 @@
+import api from "./api";
+
+export type AgileMetric={id?:string;key:string;metricVersion?:string;value:number|null;unit?:string;status:string;periodStart?:string;periodEnd?:string;source?:string;freshness?:string;missingInputs?:string[];evidence?:Array<Record<string,unknown>>;definition?:{name:string;formula:string;version:string;missing_data_behaviour:string}};
+export type AgileSummary={context:{type:string;id?:string};generatedAt:string;kpis:AgileMetric[];metrics:AgileMetric[];trends:Record<string,AgileMetric[]>;insufficientData:string[];privacy:{individualScoring:false;teamHealthMinimumResponses:number};calculationBoundary:"BACKEND_ONLY"};
+export type AgileObjective={id:string;title:string;description:string;level:string;ownerId:string;contributors:string[];startDate:string;targetDate:string;status:string;confidence:number|null;baseline:number|null;target:number|null;currentValue:number|null;unit:string;relatedMetrics:string[];relatedEntities:Array<Record<string,unknown>>;evidence:Array<Record<string,unknown>>;risks:Array<Record<string,unknown>>;dependencies:Array<Record<string,unknown>>;suggestedTarget:boolean;version:number;updatedAt:string;keyResults:Array<{id:string;title:string;baseline:number|null;target:number|null;currentValue:number|null;unit:string;status:string;confidence:number|null;metricKey:string|null;evidence:Array<Record<string,unknown>>}>;checkIns:Array<{id:string;currentValue:number|null;confidence:number|null;status:string;note:string;limitations:string[];createdAt:string}>};
+
+export const getAgileSummary=async(params:Record<string,string|undefined>={})=>(await api.get<AgileSummary>("/api/agile-performance/summary",{params})).data;
+export const getAgileMetrics=async(params:Record<string,string|undefined>={})=>(await api.get("/api/agile-performance/metrics",{params})).data;
+export const getAgileAttention=async(params:Record<string,string|undefined>={})=>(await api.get("/api/agile-performance/attention",{params})).data;
+export const listAgileObjectives=async()=>(await api.get<{items:AgileObjective[]}>("/api/agile-performance/okrs")).data.items;
+export const getAgileObjective=async(id:string)=>(await api.get<AgileObjective>(`/api/agile-performance/okrs/${id}`)).data;
+export const checkInAgileObjective=async(id:string,payload:Record<string,unknown>)=>(await api.post<AgileObjective>(`/api/agile-performance/okrs/${id}/check-ins`,payload)).data;

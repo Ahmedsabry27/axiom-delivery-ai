@@ -105,12 +105,22 @@ class PortfolioIntelligenceService:
         )
         live_jira = any(project.source_system == "JIRA" for project in projects)
         if live_jira:
-            projects = [project for project in projects if project.source_system == "JIRA"]
+            projects = [
+                project for project in projects if project.source_system == "JIRA"
+            ]
             project_ids = {project.id for project in projects}
             programme_ids = {project.programme_id for project in projects}
-            programmes = [programme for programme in programmes if programme.id in programme_ids and programme.source_system == "JIRA"]
+            programmes = [
+                programme
+                for programme in programmes
+                if programme.id in programme_ids and programme.source_system == "JIRA"
+            ]
             portfolio_ids = {programme.portfolio_id for programme in programmes}
-            portfolios = [portfolio for portfolio in portfolios if portfolio.id in portfolio_ids and portfolio.source_system == "JIRA"]
+            portfolios = [
+                portfolio
+                for portfolio in portfolios
+                if portfolio.id in portfolio_ids and portfolio.source_system == "JIRA"
+            ]
         milestones, raids, dependencies = (
             r["delivery_milestones"],
             r["delivery_raid_items"],
@@ -122,10 +132,29 @@ class PortfolioIntelligenceService:
         outcome_links = r["portfolio_outcome_links"]
         investment_snapshots = r["portfolio_investment_snapshots"]
         if live_jira:
-            releases = [row for row in releases if row.project_id in project_ids and row.source_system == "JIRA"]
-            sprints = [row for row in sprints if row.project_id in project_ids and row.source_system == "JIRA"]
-            work_items = [row for row in work_items if row.project_id in project_ids and row.source_system == "JIRA"]
-            milestones, raids, dependencies, outcomes, outcome_links, investment_snapshots = [], [], [], [], [], []
+            releases = [
+                row
+                for row in releases
+                if row.project_id in project_ids and row.source_system == "JIRA"
+            ]
+            sprints = [
+                row
+                for row in sprints
+                if row.project_id in project_ids and row.source_system == "JIRA"
+            ]
+            work_items = [
+                row
+                for row in work_items
+                if row.project_id in project_ids and row.source_system == "JIRA"
+            ]
+            (
+                milestones,
+                raids,
+                dependencies,
+                outcomes,
+                outcome_links,
+                investment_snapshots,
+            ) = [], [], [], [], [], []
             evidence = [row for row in evidence if row.entity_id in project_ids]
         latest_investment = {}
         for snapshot in sorted(
@@ -158,9 +187,15 @@ class PortfolioIntelligenceService:
             meta = project.record_metadata or {}
             snapshot = latest_investment.get(("PROJECT", project.id))
             project_sprints = [row for row in sprints if row.project_id == project.id]
-            committed = sum(float(row.original_committed_points or 0) for row in project_sprints)
-            completed = sum(float(row.completed_original_points or 0) for row in project_sprints)
-            jira_health = round(min(100, completed / committed * 100), 1) if committed else None
+            committed = sum(
+                float(row.original_committed_points or 0) for row in project_sprints
+            )
+            completed = sum(
+                float(row.completed_original_points or 0) for row in project_sprints
+            )
+            jira_health = (
+                round(min(100, completed / committed * 100), 1) if committed else None
+            )
             project_rows.append(
                 {
                     "id": project.id,
@@ -168,7 +203,20 @@ class PortfolioIntelligenceService:
                     "programmeId": project.programme_id,
                     "programme": programme.name if programme else "Not available",
                     "status": project.status,
-                    "health": ({"score": jira_health, "status": "UNKNOWN" if jira_health is None else "GREEN" if jira_health >= 80 else "AMBER" if jira_health >= 60 else "RED"} if live_jira else self._health(project.status)),
+                    "health": (
+                        {
+                            "score": jira_health,
+                            "status": "UNKNOWN"
+                            if jira_health is None
+                            else "GREEN"
+                            if jira_health >= 80
+                            else "AMBER"
+                            if jira_health >= 60
+                            else "RED",
+                        }
+                        if live_jira
+                        else self._health(project.status)
+                    ),
                     "manager": meta.get("manager") or project.owner_id or "Unassigned",
                     "strategicTheme": meta.get("strategic_theme") or "Not available",
                     "confidence": jira_health if live_jira else meta.get("confidence"),
@@ -193,14 +241,22 @@ class PortfolioIntelligenceService:
                     "criticalRaid": sum(
                         (x.priority in {"CRITICAL", "HIGH"} or x.severity == "CRITICAL")
                         for x in project_raids
-                    ) if not live_jira else sum(x.goal_critical and x.status not in CLOSED for x in project_work),
+                    )
+                    if not live_jira
+                    else sum(
+                        x.goal_critical and x.status not in CLOSED for x in project_work
+                    ),
                     "overdueDependencies": sum(
                         bool(
                             getattr(x, "required_by_date", None)
                             and x.required_by_date < today
                         )
                         for x in project_deps
-                    ) if not live_jira else sum(x.blocked and x.status not in CLOSED for x in project_work),
+                    )
+                    if not live_jira
+                    else sum(
+                        x.blocked and x.status not in CLOSED for x in project_work
+                    ),
                     "milestones": len(project_milestones),
                     "nextRelease": min(
                         (x.planned_date for x in project_releases if x.planned_date),
@@ -281,29 +337,60 @@ class PortfolioIntelligenceService:
             for x in project_rows
             if x["health"]["score"] is not None
         ]
-        release_scores = [
-            x.readiness_score for x in releases if x.readiness_score is not None
-        ]
-        jira_risk_count = sum(x.goal_critical and x.status not in CLOSED for x in work_items)
-        jira_dependency_count = sum(x.blocked and x.status not in CLOSED for x in work_items)
+        release_scores = []
+        for release in releases:
+            linked_work = [
+                item
+                for item in work_items
+                if release.name in (item.record_metadata or {}).get("fix_versions", [])
+            ]
+            if linked_work:
+                completed_release_work = sum(
+                    item.status in CLOSED for item in linked_work
+                )
+                release_scores.append(
+                    round(completed_release_work / len(linked_work) * 100, 2)
+                )
+            elif release.status in {"DEPLOYED", "RELEASED"}:
+                release_scores.append(100.0)
+            elif not live_jira and release.readiness_score is not None:
+                release_scores.append(float(release.readiness_score))
+        jira_risk_count = sum(
+            x.goal_critical and x.status not in CLOSED for x in work_items
+        )
+        jira_dependency_count = sum(
+            x.blocked and x.status not in CLOSED for x in work_items
+        )
         raid_score = (
             100 - min(100, jira_risk_count * 3)
             if live_jira
-            else
-            100 - min(100, sum(x.status not in CLOSED for x in raids) * 5)
+            else 100 - min(100, sum(x.status not in CLOSED for x in raids) * 5)
             if projects
             else None
         )
         dep_score = (
             100 - min(100, jira_dependency_count * 7)
             if live_jira
-            else
-            100 - min(100, sum(x.status not in CLOSED for x in dependencies) * 5)
+            else 100 - min(100, sum(x.status not in CLOSED for x in dependencies) * 5)
             if projects
             else None
         )
+        jira_release_milestones = [
+            release for release in releases if release.planned_date is not None
+        ]
         milestone_score = (
-            100
+            round(
+                sum(
+                    release.status in {"DEPLOYED", "RELEASED"}
+                    or release.planned_date >= today
+                    for release in jira_release_milestones
+                )
+                / len(jira_release_milestones)
+                * 100,
+                2,
+            )
+            if live_jira and jira_release_milestones
+            else 100
             - min(
                 100,
                 sum(
@@ -317,15 +404,17 @@ class PortfolioIntelligenceService:
         )
         health = portfolio_health(
             {
-                "project": sum(project_scores) / len(project_scores)
+                "project": round(sum(project_scores) / len(project_scores), 1)
                 if project_scores
                 else None,
-                "release": sum(release_scores) / len(release_scores)
+                "release": round(sum(release_scores) / len(release_scores), 1)
                 if release_scores
                 else None,
-                "risk": raid_score,
-                "dependency": dep_score,
-                "milestone": milestone_score,
+                "risk": round(raid_score, 1) if raid_score is not None else None,
+                "dependency": round(dep_score, 1) if dep_score is not None else None,
+                "milestone": round(milestone_score, 1)
+                if milestone_score is not None
+                else None,
             }
         )
 
@@ -368,21 +457,29 @@ class PortfolioIntelligenceService:
             )
         if live_jira:
             for item in work_items:
-                if item.status in CLOSED or (not item.blocked and not item.goal_critical):
+                if item.status in CLOSED or (
+                    not item.blocked and not item.goal_critical
+                ):
                     continue
                 project = project_by_id.get(item.project_id)
-                attention.append({
-                    "id": item.id,
-                    "kind": "Dependency" if item.blocked else "Risk",
-                    "title": item.name,
-                    "severity": "RED" if item.blocked else "AMBER",
-                    "score": 90 if item.blocked else 70,
-                    "explanation": ["Jira blocker link" if item.blocked else "High-priority incomplete Jira work"],
-                    "entity": project.name if project else "Not available",
-                    "owner": item.assignee_id or "Unassigned",
-                    "dueDate": None,
-                    "projectId": item.project_id,
-                })
+                attention.append(
+                    {
+                        "id": item.id,
+                        "kind": "Dependency" if item.blocked else "Risk",
+                        "title": item.name,
+                        "severity": "RED" if item.blocked else "AMBER",
+                        "score": 90 if item.blocked else 70,
+                        "explanation": [
+                            "Jira blocker link"
+                            if item.blocked
+                            else "High-priority incomplete Jira work"
+                        ],
+                        "entity": project.name if project else "Not available",
+                        "owner": item.assignee_id or "Unassigned",
+                        "dueDate": None,
+                        "projectId": item.project_id,
+                    }
+                )
         attention.sort(key=lambda x: x["score"], reverse=True)
 
         currencies = sorted(
@@ -429,8 +526,12 @@ class PortfolioIntelligenceService:
                     row[field] = None
         return {
             "generatedAt": datetime.now(UTC).isoformat(),
-            "source": "Live Jira delivery records" if live_jira else "Persisted delivery records",
-            "freshness": "Latest Jira synchronization" if live_jira else "Current database snapshot",
+            "source": "Live Jira delivery records"
+            if live_jira
+            else "Persisted delivery records",
+            "freshness": "Latest Jira synchronization"
+            if live_jira
+            else "Current database snapshot",
             "portfolios": [
                 {
                     "id": x.id,
@@ -442,6 +543,7 @@ class PortfolioIntelligenceService:
             ],
             "health": {
                 **health.to_dict(),
+                "score": health.value,
                 "version": "portfolio-health-v1",
                 "weights": {
                     "project": 0.25,
@@ -449,6 +551,23 @@ class PortfolioIntelligenceService:
                     "risk": 0.2,
                     "dependency": 0.15,
                     "milestone": 0.15,
+                },
+                "sources": {
+                    "project": "Jira sprint commitment completion"
+                    if live_jira
+                    else "Persisted project health",
+                    "release": "Jira fix-version issue completion"
+                    if live_jira
+                    else "Persisted release readiness",
+                    "risk": "Incomplete high-priority Jira work"
+                    if live_jira
+                    else "Open RAID records",
+                    "dependency": "Open Jira blocker links"
+                    if live_jira
+                    else "Open dependency records",
+                    "milestone": "Jira fix-version schedule status"
+                    if live_jira
+                    else "Persisted milestone status",
                 },
             },
             "programmes": programme_rows,
@@ -478,15 +597,46 @@ class PortfolioIntelligenceService:
                 for x in milestones
             ],
             "sprints": [
-                {"id": x.id, "projectId": x.project_id, "name": x.name, "status": x.status, "goal": x.goal, "startDate": x.start_date.isoformat() if x.start_date else None, "endDate": x.end_date.isoformat() if x.end_date else None, "committedPoints": x.original_committed_points or 0, "completedPoints": x.completed_original_points or 0, "sourceUrl": x.source_url}
+                {
+                    "id": x.id,
+                    "projectId": x.project_id,
+                    "name": x.name,
+                    "status": x.status,
+                    "goal": x.goal,
+                    "startDate": x.start_date.isoformat() if x.start_date else None,
+                    "endDate": x.end_date.isoformat() if x.end_date else None,
+                    "committedPoints": x.original_committed_points or 0,
+                    "completedPoints": x.completed_original_points or 0,
+                    "sourceUrl": x.source_url,
+                }
                 for x in sprints
             ],
             "releases": [
-                {"id": x.id, "projectId": x.project_id, "name": x.name, "status": x.status, "plannedDate": x.planned_date.isoformat() if x.planned_date else None, "readinessScore": x.readiness_score, "sourceUrl": x.source_url}
+                {
+                    "id": x.id,
+                    "projectId": x.project_id,
+                    "name": x.name,
+                    "status": x.status,
+                    "plannedDate": x.planned_date.isoformat()
+                    if x.planned_date
+                    else None,
+                    "readinessScore": x.readiness_score,
+                    "sourceUrl": x.source_url,
+                }
                 for x in releases
             ],
             "workItems": [
-                {"id": x.id, "projectId": x.project_id, "name": x.name, "status": x.status, "storyPoints": x.story_points or 0, "blocked": x.blocked, "priority": "HIGH" if x.goal_critical else "MEDIUM", "assignee": x.assignee_id, "sourceUrl": x.source_url}
+                {
+                    "id": x.id,
+                    "projectId": x.project_id,
+                    "name": x.name,
+                    "status": x.status,
+                    "storyPoints": x.story_points or 0,
+                    "blocked": x.blocked,
+                    "priority": "HIGH" if x.goal_critical else "MEDIUM",
+                    "assignee": x.assignee_id,
+                    "sourceUrl": x.source_url,
+                }
                 for x in work_items
             ],
             "attention": attention[:50],

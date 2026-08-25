@@ -57,6 +57,7 @@ class ConversationRepository:
         self,
         db: Session,
         user_id: str,
+        tenant_id: str | None = None,
     ) -> list[Conversation]:
 
         start = time.perf_counter()
@@ -64,7 +65,10 @@ class ConversationRepository:
         try:
             return (
                 db.query(Conversation)
-                .filter(Conversation.user_id == user_id)
+                .filter(
+                    Conversation.user_id == user_id,
+                    *([Conversation.tenant_id == tenant_id] if tenant_id else []),
+                )
                 .order_by(Conversation.updated_at.desc())
                 .all()
             )
@@ -82,6 +86,7 @@ class ConversationRepository:
         db: Session,
         conversation_id: UUID,
         user_id: str,
+        tenant_id: str | None = None,
     ) -> Conversation | None:
 
         start = time.perf_counter()
@@ -92,6 +97,7 @@ class ConversationRepository:
                 .filter(
                     Conversation.id == conversation_id,
                     Conversation.user_id == user_id,
+                    *([Conversation.tenant_id == tenant_id] if tenant_id else []),
                 )
                 .first()
             )
@@ -142,11 +148,17 @@ class ConversationRepository:
         *,
         title: str | None = None,
         is_pinned: bool | None = None,
+        is_archived: bool | None = None,
+        context_summary: dict | None = None,
     ) -> Conversation:
         if title is not None:
             conversation.title = title.strip()[:255] or "New Conversation"
         if is_pinned is not None:
             conversation.is_pinned = is_pinned
+        if is_archived is not None:
+            conversation.is_archived = is_archived
+        if context_summary is not None:
+            conversation.context_summary = context_summary
         conversation.updated_at = datetime.now(UTC)
         db.commit()
         db.refresh(conversation)

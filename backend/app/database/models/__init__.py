@@ -14,6 +14,12 @@ from app.database.models.agent_assignment import (
     AgentToolAssignment,
 )
 from app.database.models.agent_execution import AgentContinuation, AgentExecution
+from app.database.models.agile_intelligence import (
+    AgileKeyResult,
+    AgileMetricObservation,
+    AgileObjective,
+    AgileObjectiveCheckIn,
+)
 from app.database.models.audit import AuditLog
 from app.database.models.ceremony import (
     Ceremony,
@@ -21,6 +27,11 @@ from app.database.models.ceremony import (
     CeremonyTemplate,
     Lesson,
     LessonAdoption,
+)
+from app.database.models.copilot import (
+    CopilotPromptFavorite,
+    CopilotPromptTemplate,
+    CopilotSavedInsight,
 )
 from app.database.models.delivery import (
     ConversationDeliveryContext,
@@ -158,6 +169,10 @@ __all__ = [
     "AgentKnowledgeAssignment",
     "AgentToolAssignment",
     "AgentVersion",
+    "AgileKeyResult",
+    "AgileMetricObservation",
+    "AgileObjective",
+    "AgileObjectiveCheckIn",
     "ApprovalDecision",
     "ApprovalRequest",
     "AuditLog",
@@ -171,7 +186,10 @@ __all__ = [
     "ClarificationRequest",
     "ConversationDeliveryContext",
     "CopilotFeedback",
+    "CopilotPromptFavorite",
+    "CopilotPromptTemplate",
     "CopilotResponseEvidence",
+    "CopilotSavedInsight",
     "DeliveryCopilotResponse",
     "DeliveryDefect",
     "DeliveryDependency",

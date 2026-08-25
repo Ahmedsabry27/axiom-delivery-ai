@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3200" height="1800" viewBox="0 0 3200 1800">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">Security and Authorization Architecture</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: Defense in depth and decision enforcement points</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">CURRENT + TARGET HARDENING</text>
+<text x="3120" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Browser trust</text>
+<rect x="100" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="118" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="145" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="188" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Cognito sign-in /</text>
+<text x="188" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">external IdP</text>
+<circle cx="124" cy="453" r="8" fill="#1f7a4d"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="758" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="795" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Access token held client-side</text>
+<circle cx="124" cy="886" r="8" fill="#1f7a4d"/><text x="142" y="892" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="1192" width="544" height="150" rx="16" fill="#fff" stroke="#7c3aed" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="1229" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">CI/CD administrator boundary</text>
+<circle cx="124" cy="1320" r="8" fill="#7c3aed"/><text x="142" y="1326" font-family="Arial" font-size="15" fill="#52616f">EXTERNAL</text>
+<rect x="694" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="694" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="718" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">AWS edge</text>
+<rect x="714" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="732" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="759" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="802" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">TLS / CloudFront</text>
+<circle cx="738" cy="453" r="8" fill="#1f7a4d"/><text x="756" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="714" y="758" width="544" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="732" y="776" width="54" height="54" rx="10" fill="#ff9900"/><text x="759" y="811" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="802" y="795" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">WAF</text>
+<circle cx="738" cy="886" r="8" fill="#64748b"/><text x="756" y="892" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="714" y="1192" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="732" y="1210" width="54" height="54" rx="10" fill="#ff9900"/><text x="759" y="1245" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="802" y="1229" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">ALB security group</text>
+<circle cx="738" cy="1320" r="8" fill="#1f7a4d"/><text x="756" y="1326" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1308" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1308" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="1332" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Application boundary</text>
+<rect x="1328" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">JWT issuer/client/token-use</text>
+<text x="1350" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">validation</text>
+<circle cx="1352" cy="453" r="8" fill="#1f7a4d"/><text x="1370" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="585" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="622" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Tenant + role/group claims</text>
+<circle cx="1352" cy="713" r="8" fill="#1f7a4d"/><text x="1370" y="719" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="845" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="882" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Permission catalogue + entity</text>
+<text x="1350" y="910" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">grants</text>
+<circle cx="1352" cy="973" r="8" fill="#1f7a4d"/><text x="1370" y="979" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="1105" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="1142" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Source/evidence authorization</text>
+<circle cx="1352" cy="1233" r="8" fill="#1f7a4d"/><text x="1370" y="1239" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1328" y="1365" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1350" y="1402" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">SoD + approval policy</text>
+<circle cx="1352" cy="1493" r="8" fill="#1f7a4d"/><text x="1370" y="1499" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1922" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1922" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="1946" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Data + AI boundary</text>
+<rect x="1942" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1960" y="343" width="54" height="54" rx="10" fill="#ff9900"/><text x="1987" y="378" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2030" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Private RDS + SG</text>
+<circle cx="1966" cy="453" r="8" fill="#1f7a4d"/><text x="1984" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="650" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<rect x="1960" y="668" width="54" height="54" rx="10" fill="#ff9900"/><text x="1987" y="703" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2030" y="687" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Secrets Manager tenant</text>
+<text x="2030" y="715" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">prefix</text>
+<circle cx="1966" cy="778" r="8" fill="#1f7a4d"/><text x="1984" y="784" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="975" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1964" y="1012" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Model allowlist + budget</text>
+<circle cx="1966" cy="1103" r="8" fill="#1f7a4d"/><text x="1984" y="1109" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1942" y="1300" width="544" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="1960" y="1318" width="54" height="54" rx="10" fill="#ff9900"/><text x="1987" y="1353" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2030" y="1337" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">KMS CMK</text>
+<circle cx="1966" cy="1428" r="8" fill="#64748b"/><text x="1984" y="1434" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="2536" y="250" width="584" height="1370" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2536" y="250" width="584" height="58" rx="22" fill="#232f3e"/><text x="2560" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Detection</text>
+<rect x="2556" y="325" width="544" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2578" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Redacted audit trail</text>
+<circle cx="2580" cy="453" r="8" fill="#1f7a4d"/><text x="2598" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2556" y="758" width="544" height="150" rx="16" fill="#fff" stroke="#64748b" stroke-width="4" stroke-dasharray="12 8" filter="url(#shadow)"/>
+<rect x="2574" y="776" width="54" height="54" rx="10" fill="#ff9900"/><text x="2601" y="811" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2644" y="795" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">CloudTrail / Config /</text>
+<text x="2644" y="823" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">GuardDuty / Security Hub</text>
+<circle cx="2580" cy="886" r="8" fill="#64748b"/><text x="2598" y="892" font-family="Arial" font-size="15" fill="#52616f">PROPOSED</text>
+<rect x="2556" y="1192" width="544" height="150" rx="16" fill="#fff" stroke="#d97706" stroke-width="4" filter="url(#shadow)"/>
+<rect x="2574" y="1210" width="54" height="54" rx="10" fill="#ff9900"/><text x="2601" y="1245" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">AWS</text>
+<text x="2644" y="1229" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">CloudWatch alerts</text>
+<circle cx="2580" cy="1320" r="8" fill="#d97706"/><text x="2598" y="1326" font-family="Arial" font-size="15" fill="#52616f">PARTIALLY_IMPLEMENTED</text>
+<path d="M644,400 H679 V400 H714" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="611" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="679" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">HTTPS</text>
+<path d="M1258,400 H1293 V400 H1328" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1225" y="383" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1293" y="404" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">bearer JWT</text>
+<path d="M1752,400 H1752 V660 H1752" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1684" y="513" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1752" y="534" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">claims</text>
+<path d="M1752,660 H1752 V920 H1752" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1684" y="773" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1752" y="794" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">tenant/role</text>
+<path d="M1752,920 H1752 V1180 H1752" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1684" y="1033" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1752" y="1054" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">before retrieval</text>
+<path d="M1752,920 H1752 V1440 H1752" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1684" y="1163" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1752" y="1184" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">before action</text>
+<path d="M1872,920 H1907 V400 H1942" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1839" y="643" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1907" y="664" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">authorized SQL</text>
+<path d="M1872,1440 H2214 V400 H2556" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2146" y="903" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2214" y="924" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">decision audit</text>
+<path d="M2486,725 H1907 V1180 H1328" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1839" y="936" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1907" y="956" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">credential ref</text>
+<path d="M2486,1050 H2521 V400 H2556" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2453" y="708" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2521" y="729" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">usage audit</text>
+<text x="80" y="1662" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="1690" r="8" fill="#1f7a4d"/><text x="104" y="1696" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="1690" r="8" fill="#d97706"/><text x="574" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="1690" r="8" fill="#2563eb"/><text x="1044" y="1696" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="1690" r="8" fill="#64748b"/><text x="1514" y="1696" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="1690" r="8" fill="#7c3aed"/><text x="1984" y="1696" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="1690" r="8" fill="#b91c1c"/><text x="2454" y="1696" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

@@ -1,0 +1,180 @@
+{
+  "title": "Observability and Operations",
+  "scope": "End-to-end correlation, health, signals and incident response",
+  "state": "CURRENT + TARGET HARDENING",
+  "columns": [
+    [
+      "Application signals",
+      {
+        "label": "Structured logs + request ID",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/logging",
+        "aws": false
+      },
+      {
+        "label": "Correlation / runtime execution IDs",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/runtime/tracing.py",
+        "aws": false
+      },
+      {
+        "label": "Audit events",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/audit",
+        "aws": false
+      },
+      {
+        "label": "Prometheus metrics",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/metrics",
+        "aws": false
+      }
+    ],
+    [
+      "AWS telemetry",
+      {
+        "label": "CloudWatch Logs",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "ECS Container Insights",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "ALB / ECS / RDS health",
+        "status": "CONFIGURED_NOT_VERIFIED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "X-Ray / OpenTelemetry",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ],
+    [
+      "Operations",
+      {
+        "label": "Prometheus / Grafana configs",
+        "status": "CONFIGURED_NOT_VERIFIED",
+        "evidence": "observability/docker-compose.yml",
+        "aws": false
+      },
+      {
+        "label": "Dashboards and alarms",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "SNS notifications",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Incident records + runbooks",
+        "status": "IMPLEMENTED",
+        "evidence": "docs/operations-runbook.md",
+        "aws": false
+      }
+    ],
+    [
+      "Trace path",
+      {
+        "label": "User request \u2192 API",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Runtime \u2192 provider/tool",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "DB/audit \u2192 CloudWatch",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Alarm \u2192 incident \u2192 runbook",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      1,
+      0,
+      "ship"
+    ],
+    [
+      0,
+      1,
+      3,
+      0,
+      "correlate"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "execution ID"
+    ],
+    [
+      3,
+      1,
+      3,
+      2,
+      "audit ID"
+    ],
+    [
+      3,
+      2,
+      3,
+      3,
+      "signal"
+    ],
+    [
+      1,
+      0,
+      2,
+      1,
+      "query"
+    ],
+    [
+      1,
+      1,
+      2,
+      1,
+      "metrics"
+    ],
+    [
+      2,
+      1,
+      2,
+      2,
+      "alarm"
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      "notify"
+    ]
+  ]
+}

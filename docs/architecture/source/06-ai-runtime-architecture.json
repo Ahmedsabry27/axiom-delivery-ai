@@ -1,0 +1,244 @@
+{
+  "title": "AI Runtime Architecture",
+  "scope": "Durable planning, execution, interruption, streaming and governance",
+  "state": "CURRENT STATE",
+  "master": true,
+  "columns": [
+    [
+      "Request",
+      {
+        "label": "Copilot / Chat request",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Conversation validation",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Delivery context + evidence",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Durable runtime",
+      {
+        "label": "RuntimeExecutionService",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/services/runtime_execution_service.py",
+        "aws": false
+      },
+      {
+        "label": "Runtime orchestrator",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/runtime/orchestrator.py",
+        "aws": false
+      },
+      {
+        "label": "Planner \u2192 execution plan",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/planners",
+        "aws": false
+      },
+      {
+        "label": "Atomic event sequence",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/alembic/versions/a1c3e5f7b9d2_atomic_runtime_event_sequence.py",
+        "aws": false
+      }
+    ],
+    [
+      "Execution",
+      {
+        "label": "Agent registry + permissions",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/runtime/agent_registry.py",
+        "aws": false
+      },
+      {
+        "label": "Workflow engine + tasks",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/workflows",
+        "aws": false
+      },
+      {
+        "label": "Tool discovery / native / MCP",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/tool_discovery",
+        "aws": false
+      },
+      {
+        "label": "WAITING_FOR_INPUT / continuation",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/runtime/continuation_interpreter.py",
+        "aws": false
+      },
+      {
+        "label": "Cancellation / failure / recovery",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/runtime/recovery.py",
+        "aws": false
+      }
+    ],
+    [
+      "AI governance",
+      {
+        "label": "Model allowlist",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/governance/service.py",
+        "aws": false
+      },
+      {
+        "label": "Budget reserve + settlement",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/governance/budget_enforcement.py",
+        "aws": false
+      },
+      {
+        "label": "OpenAI or Bedrock",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/ai/factory.py",
+        "aws": false
+      },
+      {
+        "label": "Evaluation + AI audit",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/governance",
+        "aws": false
+      }
+    ],
+    [
+      "Events",
+      {
+        "label": "Runtime event persistence",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/task.py",
+        "aws": false
+      },
+      {
+        "label": "Authenticated SSE",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/runtime.py",
+        "aws": false
+      },
+      {
+        "label": "Frontend reducer reconciliation",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/store/runtime.reducer.ts",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      1,
+      "validate"
+    ],
+    [
+      0,
+      1,
+      1,
+      0,
+      "create"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "coordinate"
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      "plan"
+    ],
+    [
+      1,
+      2,
+      2,
+      0,
+      "select"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "execute"
+    ],
+    [
+      2,
+      1,
+      2,
+      2,
+      "invoke"
+    ],
+    [
+      2,
+      2,
+      3,
+      2,
+      "model/tool"
+    ],
+    [
+      3,
+      0,
+      3,
+      2,
+      "allow"
+    ],
+    [
+      3,
+      1,
+      3,
+      2,
+      "budget"
+    ],
+    [
+      2,
+      3,
+      1,
+      1,
+      "continue"
+    ],
+    [
+      2,
+      4,
+      1,
+      0,
+      "recover"
+    ],
+    [
+      3,
+      2,
+      4,
+      0,
+      "result"
+    ],
+    [
+      4,
+      0,
+      4,
+      1,
+      "stream"
+    ],
+    [
+      4,
+      1,
+      4,
+      2,
+      "SSE"
+    ]
+  ]
+}

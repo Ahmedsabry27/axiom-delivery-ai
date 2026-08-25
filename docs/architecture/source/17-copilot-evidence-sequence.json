@@ -1,0 +1,172 @@
+{
+  "title": "Copilot Evidence Retrieval Sequence",
+  "scope": "Authorization-before-ranking and cited response alternatives",
+  "state": "CURRENT STATE",
+  "sequence": true,
+  "columns": [
+    [
+      "User / Copilot",
+      {
+        "label": "1. Ask with delivery context",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "9. Structured cited response",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Authorization",
+      {
+        "label": "2. Validate JWT + tenant",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/auth/dependencies.py",
+        "aws": false
+      },
+      {
+        "label": "3. Entity/source grants",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/delivery/repositories.py",
+        "aws": false
+      },
+      {
+        "label": "Unauthorized \u2192 deny + audit",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/delivery.py",
+        "aws": false
+      }
+    ],
+    [
+      "Evidence",
+      {
+        "label": "4. Retrieve authorized evidence",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Missing evidence \u2192 explicit insufficiency",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "5. Freshness/trust/conflict checks",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Ranking + model",
+      {
+        "label": "6. Rank permitted evidence",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "7. Governed model invocation",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Provider failure \u2192 graceful error",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Citation + audit",
+      {
+        "label": "8. Attach evidence references",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Record retrieval/model/audit IDs",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Proposed actions remain unexecuted",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      1,
+      0,
+      "request"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "claims"
+    ],
+    [
+      1,
+      1,
+      2,
+      0,
+      "allowed scope"
+    ],
+    [
+      2,
+      0,
+      2,
+      2,
+      "evidence"
+    ],
+    [
+      2,
+      2,
+      3,
+      0,
+      "rank"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "grounded prompt"
+    ],
+    [
+      3,
+      1,
+      4,
+      0,
+      "response"
+    ],
+    [
+      4,
+      0,
+      4,
+      1,
+      "audit"
+    ],
+    [
+      4,
+      0,
+      0,
+      1,
+      "cite"
+    ]
+  ]
+}

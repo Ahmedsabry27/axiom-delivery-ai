@@ -100,24 +100,36 @@ class DeliveryReadService:
         projects = scoped_projects
         project_ids = {row.id for row in projects}
         live_jira = bool(jira_projects)
-        sprints = self._all(
-            DeliverySprint,
-            DeliverySprint.project_id.in_(project_ids),
-            *([DeliverySprint.source_system == "JIRA"] if live_jira else []),
-        ) if project_ids else []
-        work_items = self._all(
-            DeliveryWorkItem,
-            DeliveryWorkItem.project_id.in_(project_ids),
-            *([DeliveryWorkItem.source_system == "JIRA"] if live_jira else []),
-        ) if project_ids else []
-        raid_items = self._all(
-            DeliveryRAIDItem,
-            DeliveryRAIDItem.project_id.in_(project_ids),
-            DeliveryRAIDItem.status.not_in(
-                ("COMPLETED", "CLOSED", "CANCELLED", "RESOLVED", "IMPLEMENTED")
-            ),
-            *([DeliveryRAIDItem.source_system == "JIRA"] if live_jira else []),
-        ) if project_ids else []
+        sprints = (
+            self._all(
+                DeliverySprint,
+                DeliverySprint.project_id.in_(project_ids),
+                *([DeliverySprint.source_system == "JIRA"] if live_jira else []),
+            )
+            if project_ids
+            else []
+        )
+        work_items = (
+            self._all(
+                DeliveryWorkItem,
+                DeliveryWorkItem.project_id.in_(project_ids),
+                *([DeliveryWorkItem.source_system == "JIRA"] if live_jira else []),
+            )
+            if project_ids
+            else []
+        )
+        raid_items = (
+            self._all(
+                DeliveryRAIDItem,
+                DeliveryRAIDItem.project_id.in_(project_ids),
+                DeliveryRAIDItem.status.not_in(
+                    ("COMPLETED", "CLOSED", "CANCELLED", "RESOLVED", "IMPLEMENTED")
+                ),
+                *([DeliveryRAIDItem.source_system == "JIRA"] if live_jira else []),
+            )
+            if project_ids
+            else []
+        )
         risks = [item for item in raid_items if item.item_type in {"RISK", "ISSUE"}]
         jira_risk_signals = [
             item
@@ -126,18 +138,26 @@ class DeliveryReadService:
             and item.status not in {"DONE", "CLOSED", "COMPLETED", "RESOLVED"}
         ]
         jira_dependency_signals = [item for item in work_items if item.blocked]
-        dependencies = self._all(
-            DeliveryDependency,
-            DeliveryDependency.project_id.in_(project_ids),
-            DeliveryDependency.status.not_in(("RESOLVED", "CLOSED", "CANCELLED")),
-            *([DeliveryDependency.source_system == "JIRA"] if live_jira else []),
-        ) if project_ids else []
-        milestones = self._all(
-            DeliveryMilestone,
-            DeliveryMilestone.project_id.in_(project_ids),
-            DeliveryMilestone.status.not_in(("COMPLETED", "CANCELLED")),
-            *([DeliveryMilestone.source_system == "JIRA"] if live_jira else []),
-        ) if project_ids else []
+        dependencies = (
+            self._all(
+                DeliveryDependency,
+                DeliveryDependency.project_id.in_(project_ids),
+                DeliveryDependency.status.not_in(("RESOLVED", "CLOSED", "CANCELLED")),
+                *([DeliveryDependency.source_system == "JIRA"] if live_jira else []),
+            )
+            if project_ids
+            else []
+        )
+        milestones = (
+            self._all(
+                DeliveryMilestone,
+                DeliveryMilestone.project_id.in_(project_ids),
+                DeliveryMilestone.status.not_in(("COMPLETED", "CANCELLED")),
+                *([DeliveryMilestone.source_system == "JIRA"] if live_jira else []),
+            )
+            if project_ids
+            else []
+        )
         recommendations = self._all(
             DeliveryRecommendation,
             DeliveryRecommendation.status.not_in(("DISMISSED", "COMPLETED")),
@@ -147,11 +167,15 @@ class DeliveryReadService:
             # advice into a live Jira workspace; a Jira evidence generator can
             # populate this collection explicitly in a later intelligence run.
             recommendations = []
-        governed_actions = [] if live_jira else self._all(
-            ProposedAction,
-            ProposedAction.status.in_(
-                ("PENDING_APPROVAL", "FAILED", "VERIFICATION_FAILED")
-            ),
+        governed_actions = (
+            []
+            if live_jira
+            else self._all(
+                ProposedAction,
+                ProposedAction.status.in_(
+                    ("PENDING_APPROVAL", "FAILED", "VERIFICATION_FAILED")
+                ),
+            )
         )
 
         committed = sum(s.original_committed_points or 0 for s in sprints)
@@ -180,7 +204,11 @@ class DeliveryReadService:
                     )
                 )
         scored = [
-            round(sum(sprint_scores_by_project[project.id]) / len(sprint_scores_by_project[project.id]), 1)
+            round(
+                sum(sprint_scores_by_project[project.id])
+                / len(sprint_scores_by_project[project.id]),
+                1,
+            )
             if sprint_scores_by_project.get(project.id)
             else status_scores.get(project.status, 50)
             for project in projects
@@ -358,7 +386,9 @@ class DeliveryReadService:
                 "status": "UNKNOWN"
                 if not scored
                 else ("Healthy" if portfolio_value >= 75 else "At Risk"),
-                "detail": f"{len(projects)} Jira projects" if live_jira else f"{len(projects)} persisted projects",
+                "detail": f"{len(projects)} Jira projects"
+                if live_jira
+                else f"{len(projects)} persisted projects",
                 "change": trend_change,
                 "changeLabel": "vs previous sprint",
                 "state": "missing" if not scored else "ready",
@@ -368,7 +398,9 @@ class DeliveryReadService:
                 "value": predictability.value if predictability else 0,
                 "unit": "%",
                 "status": predictability.status if predictability else "UNKNOWN",
-                "detail": "Jira original commitment" if live_jira else "Persisted original commitment",
+                "detail": "Jira original commitment"
+                if live_jira
+                else "Persisted original commitment",
                 "change": predictability_change,
                 "changeLabel": "vs previous sprint",
                 "state": "ready" if predictability else "missing",
@@ -379,7 +411,9 @@ class DeliveryReadService:
                 "status": "Critical"
                 if any(r.impact == "CRITICAL" for r in risks)
                 else "Open",
-                "detail": f"{len(jira_risk_signals)} high-priority Jira items" if live_jira else f"{len(risks)} persisted",
+                "detail": f"{len(jira_risk_signals)} high-priority Jira items"
+                if live_jira
+                else f"{len(risks)} persisted",
                 "change": 0,
                 "changeLabel": "insufficient history",
                 "state": "ready",
@@ -387,8 +421,12 @@ class DeliveryReadService:
             "dependencies": {
                 "label": "Dependencies",
                 "value": len(dependencies) + len(jira_dependency_signals),
-                "status": "Warning" if dependencies or jira_dependency_signals else "Healthy",
-                "detail": f"{len(jira_dependency_signals)} Jira blockers" if live_jira else f"{sum(1 for d in dependencies if d.critical_path)} critical",
+                "status": "Warning"
+                if dependencies or jira_dependency_signals
+                else "Healthy",
+                "detail": f"{len(jira_dependency_signals)} Jira blockers"
+                if live_jira
+                else f"{sum(1 for d in dependencies if d.critical_path)} critical",
                 "change": 0,
                 "changeLabel": "insufficient history",
                 "state": "ready",
@@ -422,53 +460,91 @@ class DeliveryReadService:
                 {"id": p.id, "name": p.name, "type": "Portfolio"} for p in portfolios
             ]
             + [{"id": p.id, "name": p.name, "type": "Programme"} for p in programmes]
-            + [{"id": p.id, "name": p.name, "type": "Project"} for p in scoped_projects],
+            + [
+                {"id": p.id, "name": p.name, "type": "Project"} for p in scoped_projects
+            ],
             "safeActions": {"mode": "proposal_only", "externalWrites": False},
         }
 
     def my_day(self) -> dict:
-        live_jira = bool(self._all(DeliveryProject, DeliveryProject.source_system == "JIRA"))
-        actions = [] if live_jira else self._all(
-            ProposedAction,
-            ProposedAction.owner_id == self.user_id,
-            ProposedAction.status.not_in(("COMPLETED", "CANCELLED")),
+        live_jira = bool(
+            self._all(DeliveryProject, DeliveryProject.source_system == "JIRA")
         )
-        dependencies = [] if live_jira else self._all(
-            DeliveryDependency,
-            DeliveryDependency.owner_id == self.user_id,
-            DeliveryDependency.status.not_in(("RESOLVED", "CLOSED")),
+        actions = (
+            []
+            if live_jira
+            else self._all(
+                ProposedAction,
+                ProposedAction.owner_id == self.user_id,
+                ProposedAction.status.not_in(("COMPLETED", "CANCELLED")),
+            )
+        )
+        dependencies = (
+            []
+            if live_jira
+            else self._all(
+                DeliveryDependency,
+                DeliveryDependency.owner_id == self.user_id,
+                DeliveryDependency.status.not_in(("RESOLVED", "CLOSED")),
+            )
         )
         work = self._all(
             DeliveryWorkItem,
             DeliveryWorkItem.assignee_id == self.user_id,
-            DeliveryWorkItem.status.not_in(("DONE", "CLOSED", "COMPLETED", "RESOLVED", "CANCELLED")),
-            *([DeliveryWorkItem.source_system == "JIRA"] if live_jira else [DeliveryWorkItem.blocked.is_(True)]),
-        )
-        milestones = [] if live_jira else self._all(
-            DeliveryMilestone,
-            DeliveryMilestone.owner_id == self.user_id,
-            DeliveryMilestone.status.not_in(("COMPLETED", "CANCELLED")),
-        )
-        raid_items = [] if live_jira else self._all(
-            DeliveryRAIDItem,
-            DeliveryRAIDItem.owner_id == self.user_id,
-            DeliveryRAIDItem.status.not_in(
-                ("COMPLETED", "CLOSED", "CANCELLED", "RESOLVED", "IMPLEMENTED")
+            DeliveryWorkItem.status.not_in(
+                ("DONE", "CLOSED", "COMPLETED", "RESOLVED", "CANCELLED")
+            ),
+            *(
+                [DeliveryWorkItem.source_system == "JIRA"]
+                if live_jira
+                else [DeliveryWorkItem.blocked.is_(True)]
             ),
         )
-        candidates = [] if live_jira else self._all(
-            DetectedRAIDCandidate,
-            DetectedRAIDCandidate.status.in_(("DETECTED", "UNDER_REVIEW")),
+        milestones = (
+            []
+            if live_jira
+            else self._all(
+                DeliveryMilestone,
+                DeliveryMilestone.owner_id == self.user_id,
+                DeliveryMilestone.status.not_in(("COMPLETED", "CANCELLED")),
+            )
         )
-        dependency_candidates = [] if live_jira else self._all(
-            DetectedDependencyCandidate,
-            DetectedDependencyCandidate.status.in_(("DETECTED", "UNDER_REVIEW")),
+        raid_items = (
+            []
+            if live_jira
+            else self._all(
+                DeliveryRAIDItem,
+                DeliveryRAIDItem.owner_id == self.user_id,
+                DeliveryRAIDItem.status.not_in(
+                    ("COMPLETED", "CLOSED", "CANCELLED", "RESOLVED", "IMPLEMENTED")
+                ),
+            )
         )
-        assigned_approvals = [] if live_jira else self._all(
-            ApprovalRequest,
-            ApprovalRequest.proposed_action_id.is_not(None),
-            ApprovalRequest.assigned_approver_id == self.user_id,
-            ApprovalRequest.status == "PENDING",
+        candidates = (
+            []
+            if live_jira
+            else self._all(
+                DetectedRAIDCandidate,
+                DetectedRAIDCandidate.status.in_(("DETECTED", "UNDER_REVIEW")),
+            )
+        )
+        dependency_candidates = (
+            []
+            if live_jira
+            else self._all(
+                DetectedDependencyCandidate,
+                DetectedDependencyCandidate.status.in_(("DETECTED", "UNDER_REVIEW")),
+            )
+        )
+        assigned_approvals = (
+            []
+            if live_jira
+            else self._all(
+                ApprovalRequest,
+                ApprovalRequest.proposed_action_id.is_not(None),
+                ApprovalRequest.assigned_approver_id == self.user_id,
+                ApprovalRequest.status == "PENDING",
+            )
         )
         items = []
         for record, kind, due, summary in [
@@ -485,7 +561,15 @@ class DeliveryReadService:
                 (d, "Attention", d.required_by_date, d.description or "Open dependency")
                 for d in dependencies
             ],
-            *[(w, "Attention", None, "Blocked Jira work" if w.blocked else "Assigned Jira sprint work") for w in work],
+            *[
+                (
+                    w,
+                    "Attention",
+                    None,
+                    "Blocked Jira work" if w.blocked else "Assigned Jira sprint work",
+                )
+                for w in work
+            ],
             *[
                 (
                     m,
@@ -622,11 +706,21 @@ class DeliveryReadService:
             )
         return {
             "generatedAt": _now(),
-            "focusScore": round(100 - (sum(item["priority"] == "Critical" for item in items) / max(1, len(items))) * 50),
+            "focusScore": round(
+                100
+                - (
+                    sum(item["priority"] == "Critical" for item in items)
+                    / max(1, len(items))
+                )
+                * 50
+            ),
             "items": items,
             "briefings": briefings,
             "capabilities": {"schedule": False, "briefings": True},
-            "dataFreshness": {"calculatedAt": _now(), "source": "JIRA" if live_jira else "persisted"},
+            "dataFreshness": {
+                "calculatedAt": _now(),
+                "source": "JIRA" if live_jira else "persisted",
+            },
         }
 
     def sprint_detail(self, sprint_id: str) -> dict | None:
@@ -974,12 +1068,17 @@ class DeliveryReadService:
             for item in items
             if item
         ]
-        total = len(jira_rows) if jira_rows else int(
-            self.db.scalar(
-                select(func.count()).select_from(DeliverySprint).where(
-                    DeliverySprint.tenant_id == self.tenant_id
+        total = (
+            len(jira_rows)
+            if jira_rows
+            else int(
+                self.db.scalar(
+                    select(func.count())
+                    .select_from(DeliverySprint)
+                    .where(DeliverySprint.tenant_id == self.tenant_id)
                 )
-            ) or 0
+                or 0
+            )
         )
         return {
             "tenantId": self.tenant_id,

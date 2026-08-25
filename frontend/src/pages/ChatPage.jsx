@@ -4,7 +4,7 @@ import { getAuthorizedAgents } from "../services/agentService";
 
 import ChatWindow from "../components/chat/ChatWindow";
 import ChatInput from "../components/chat/ChatInput";
-import ExecutionInspector from "../components/chat/ExecutionInspector";
+import CopilotInspector from "../components/copilot/CopilotInspector";
 import RequiredInformationCard from "../components/chat/RequiredInformationCard";
 import ConversationSidebar from "../components/chat/ConversationSidebar";
 import ChatHeader from "../components/chat/ChatHeader";
@@ -310,7 +310,7 @@ export default function ChatPage() {
       {/* Execution Inspector */}
       {/* -------------------------------- */}
 
-      <ExecutionInspector runtime={chat.runtime} />
+      <CopilotInspector contextId={deliveryContext} messages={chat.messages} runtime={chat.runtime} onContextChange={value=>{setDeliveryContext(value);globalThis.localStorage?.setItem("axiom.copilot.context",value)}} />
       <ProposedActionDrawer proposal={proposal} onClose={()=>setProposal(null)}/>
     </div>
   );

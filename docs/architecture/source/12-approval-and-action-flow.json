@@ -1,0 +1,183 @@
+{
+  "title": "Approval and Action Flow",
+  "scope": "Stateful separation-of-duties control plane",
+  "state": "CURRENT STATE",
+  "columns": [
+    [
+      "Proposal",
+      {
+        "label": "DRAFT \u2192 PROPOSED",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/action_center.py",
+        "aws": false
+      },
+      {
+        "label": "Policy classification",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "PENDING_APPROVAL",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Decision",
+      {
+        "label": "Requester identity",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Eligible approver + SoD check",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/action_center/authorization.py",
+        "aws": false
+      },
+      {
+        "label": "APPROVED / REJECTED",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "CANCELLED",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Execution",
+      {
+        "label": "EXECUTING",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Allowlisted controlled adapter",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/actions/services/action_executor.py",
+        "aws": false
+      },
+      {
+        "label": "EXECUTED / FAILED",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Assurance",
+      {
+        "label": "Independent verification",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/action_center/service.py",
+        "aws": false
+      },
+      {
+        "label": "VERIFIED",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Audit + notification",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/audit",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      1,
+      "classify"
+    ],
+    [
+      0,
+      1,
+      0,
+      2,
+      "submit"
+    ],
+    [
+      0,
+      2,
+      1,
+      1,
+      "review"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "cannot self-approve"
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      "decide"
+    ],
+    [
+      1,
+      2,
+      2,
+      0,
+      "approved"
+    ],
+    [
+      1,
+      2,
+      1,
+      3,
+      "reject/cancel"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "dispatch"
+    ],
+    [
+      2,
+      1,
+      2,
+      2,
+      "result"
+    ],
+    [
+      2,
+      2,
+      3,
+      0,
+      "verify"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "success"
+    ],
+    [
+      3,
+      1,
+      3,
+      2,
+      "record"
+    ]
+  ]
+}

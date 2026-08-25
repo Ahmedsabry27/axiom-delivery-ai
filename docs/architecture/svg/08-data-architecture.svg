@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
+<defs><filter id="shadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".15"/></filter><marker id="blue" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto"><path d="M0,0 L0,8 L11,4 z" fill="#2474b5"/></marker></defs>
+<rect width="100%" height="100%" fill="#f7f7f5"/>
+<rect width="100%" height="18" fill="#ff9900"/><text x="80" y="90" font-family="Arial" font-size="48" font-weight="700" fill="#232f3e">Logical Data Architecture</text>
+<text x="80" y="138" font-family="Arial" font-size="22" fill="#52616f">Scope: Tenant-owned aggregates, evidence lineage and immutable governance records</text><text x="80" y="178" font-family="Arial" font-size="20" font-weight="700" fill="#a15c00">CURRENT STATE</text>
+<text x="3760" y="90" text-anchor="end" font-family="Arial" font-size="18" fill="#52616f">Generated 2026-08-24 • Git 73b4a14</text>
+<rect x="80" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="80" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="104" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Identity / hierarchy</text>
+<rect x="100" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Tenant → user identity reference</text>
+<circle cx="124" cy="453" r="8" fill="#1f7a4d"/><text x="142" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="878" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="915" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Portfolio → programme → project</text>
+<text x="122" y="943" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">→ team</text>
+<circle cx="124" cy="1006" r="8" fill="#1f7a4d"/><text x="142" y="1012" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="100" y="1432" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="122" y="1469" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Source integration + mapping</text>
+<circle cx="124" cy="1560" r="8" fill="#1f7a4d"/><text x="142" y="1566" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="822" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="822" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="846" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Delivery</text>
+<rect x="842" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Sprint → work item → defect</text>
+<circle cx="866" cy="453" r="8" fill="#1f7a4d"/><text x="884" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="842" y="740" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Release → milestone</text>
+<circle cx="866" cy="868" r="8" fill="#1f7a4d"/><text x="884" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="842" y="1155" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">RAID item ↔ dependency</text>
+<circle cx="866" cy="1283" r="8" fill="#1f7a4d"/><text x="884" y="1289" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="842" y="1570" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="864" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Meeting → transcript / decision</text>
+<text x="864" y="1635" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">/ lesson</text>
+<circle cx="866" cy="1698" r="8" fill="#1f7a4d"/><text x="884" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1564" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="1564" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="1588" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Evidence + intelligence</text>
+<rect x="1584" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Knowledge item + source version</text>
+<circle cx="1608" cy="453" r="8" fill="#1f7a4d"/><text x="1626" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1584" y="740" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Evidence reference + lineage</text>
+<circle cx="1608" cy="868" r="8" fill="#1f7a4d"/><text x="1626" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1584" y="1155" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Recommendation → proposed action</text>
+<circle cx="1608" cy="1283" r="8" fill="#1f7a4d"/><text x="1626" y="1289" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="1584" y="1570" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="1606" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Approval → execution →</text>
+<text x="1606" y="1635" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">verification</text>
+<circle cx="1608" cy="1698" r="8" fill="#1f7a4d"/><text x="1626" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2306" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="2306" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="2330" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Runtime</text>
+<rect x="2326" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Conversation → messages</text>
+<circle cx="2350" cy="453" r="8" fill="#1f7a4d"/><text x="2368" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2326" y="740" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Runtime execution → immutable</text>
+<text x="2348" y="805" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">events</text>
+<circle cx="2350" cy="868" r="8" fill="#1f7a4d"/><text x="2368" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2326" y="1155" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Agent / workflow / tool versions</text>
+<circle cx="2350" cy="1283" r="8" fill="#1f7a4d"/><text x="2368" y="1289" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="2326" y="1570" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="2348" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Integration sync runs / quality</text>
+<circle cx="2350" cy="1698" r="8" fill="#1f7a4d"/><text x="2368" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="3048" y="250" width="712" height="1730" rx="22" fill="#ffffff" stroke="#9aa7b2" stroke-width="2"/>
+<rect x="3048" y="250" width="712" height="58" rx="22" fill="#232f3e"/><text x="3072" y="289" font-family="Arial" font-size="24" font-weight="700" fill="white">Governance</text>
+<rect x="3068" y="325" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="3090" y="362" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Policy / entity grant / access</text>
+<text x="3090" y="390" font-family="Arial" font-size="20" font-weight="400" fill="#232f3e">review</text>
+<circle cx="3092" cy="453" r="8" fill="#1f7a4d"/><text x="3110" y="459" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="3068" y="740" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="3090" y="777" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Usage ledger / cost / budget</text>
+<circle cx="3092" cy="868" r="8" fill="#1f7a4d"/><text x="3110" y="874" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="3068" y="1155" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="3090" y="1192" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Evaluation / incident</text>
+<circle cx="3092" cy="1283" r="8" fill="#1f7a4d"/><text x="3110" y="1289" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<rect x="3068" y="1570" width="672" height="150" rx="16" fill="#fff" stroke="#1f7a4d" stroke-width="4" filter="url(#shadow)"/>
+<text x="3090" y="1607" font-family="Arial" font-size="22" font-weight="700" fill="#232f3e">Append-only hash-chained audit</text>
+<circle cx="3092" cy="1698" r="8" fill="#1f7a4d"/><text x="3110" y="1704" font-family="Arial" font-size="15" fill="#52616f">IMPLEMENTED</text>
+<path d="M624,400 H624 V953 H624" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="556" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="624" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">owns</text>
+<path d="M772,953 H807 V400 H842" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="739" y="660" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="807" y="681" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">plans</text>
+<path d="M772,1507 H807 V400 H842" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="739" y="936" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="807" y="957" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">maps</text>
+<path d="M1366,400 H1366 V815 H1366" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1298" y="590" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1366" y="612" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">delivers</text>
+<path d="M1514,1230 H1549 V1230 H1584" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1481" y="1213" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1549" y="1234" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">recommend</text>
+<path d="M1514,1645 H1549 V400 H1584" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="1481" y="1006" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="1549" y="1026" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">creates</text>
+<path d="M2108,400 H2108 V815 H2108" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2040" y="590" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2108" y="612" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">versions</text>
+<path d="M2108,1230 H2108 V1645 H2108" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2040" y="1420" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2108" y="1442" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">govern</text>
+<path d="M2850,400 H2850 V815 H2850" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2782" y="590" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2850" y="612" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">executes</text>
+<path d="M2998,815 H3033 V1645 H3068" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2965" y="1213" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="3033" y="1234" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">audits</text>
+<path d="M2850,1230 H2850 V815 H2850" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2782" y="1006" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2850" y="1026" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">runs</text>
+<path d="M3740,400 H2662 V815 H1584" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2594" y="590" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="2662" y="612" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">authorizes</text>
+<path d="M3740,815 H3033 V815 H2326" fill="none" stroke="#2474b5" stroke-width="3" marker-end="url(#blue)"/>
+<rect x="2965" y="798" width="136" height="28" rx="6" fill="#f7f7f5"/><text x="3033" y="819" text-anchor="middle" font-family="Arial" font-size="14" fill="#185887">limits</text>
+<text x="80" y="2022" font-family="Arial" font-size="18" font-weight="700" fill="#232f3e">Legend — solid: evidenced; dashed: proposed/unknown; blue arrows: synchronous; AWS tile: AWS service</text>
+<circle cx="88" cy="2050" r="8" fill="#1f7a4d"/><text x="104" y="2056" font-family="Arial" font-size="16" fill="#232f3e">IMPLEMENTED</text>
+<circle cx="558" cy="2050" r="8" fill="#d97706"/><text x="574" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PARTIALLY_IMPLEMENTED</text>
+<circle cx="1028" cy="2050" r="8" fill="#2563eb"/><text x="1044" y="2056" font-family="Arial" font-size="16" fill="#232f3e">CONFIGURED_NOT_VERIFIED</text>
+<circle cx="1498" cy="2050" r="8" fill="#64748b"/><text x="1514" y="2056" font-family="Arial" font-size="16" fill="#232f3e">PROPOSED</text>
+<circle cx="1968" cy="2050" r="8" fill="#7c3aed"/><text x="1984" y="2056" font-family="Arial" font-size="16" fill="#232f3e">EXTERNAL</text>
+<circle cx="2438" cy="2050" r="8" fill="#b91c1c"/><text x="2454" y="2056" font-family="Arial" font-size="16" fill="#232f3e">UNKNOWN</text>
+</svg>

@@ -31,7 +31,7 @@ def create_conversation(
         db=db,
         user_id=user["sub"],
         title=request.title,
-        tenant_id=user.get("custom:tenant_id", "default"),
+        tenant_id=user["custom:tenant_id"],
     )
 
 
@@ -46,6 +46,7 @@ def get_conversations(
     return conversation_service.get_conversations(
         db=db,
         user_id=user["sub"],
+        tenant_id=user["custom:tenant_id"],
     )
 
 
@@ -65,6 +66,7 @@ def get_conversation(
         db=db,
         conversation_id=conversation_id,
         user_id=user["sub"],
+        tenant_id=user["custom:tenant_id"],
     )
 
     if conversation is None:
@@ -93,8 +95,11 @@ def update_conversation(
         db=db,
         conversation_id=conversation_id,
         user_id=user["sub"],
+        tenant_id=user["custom:tenant_id"],
         title=request.title,
         is_pinned=request.is_pinned,
+        is_archived=request.is_archived,
+        context_summary=request.context_summary,
     )
 
     if conversation is None:
@@ -119,6 +124,7 @@ def get_messages(
         db=db,
         conversation_id=conversation_id,
         user_id=user["sub"],
+        tenant_id=user["custom:tenant_id"],
     )
 
     return messages
@@ -137,6 +143,7 @@ def delete_conversation(
         db=db,
         conversation_id=conversation_id,
         user_id=user["sub"],
+        tenant_id=user["custom:tenant_id"],
     )
 
     if not deleted:
@@ -148,3 +155,21 @@ def delete_conversation(
     return {
         "message": "Conversation deleted",
     }
+
+
+@router.patch("/{conversation_id}/archive", response_model=ConversationResponse)
+def archive_conversation(
+    conversation_id: UUID,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    conversation = conversation_service.update_conversation(
+        db=db,
+        conversation_id=conversation_id,
+        user_id=user["sub"],
+        tenant_id=user["custom:tenant_id"],
+        is_archived=True,
+    )
+    if conversation is None:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    return conversation

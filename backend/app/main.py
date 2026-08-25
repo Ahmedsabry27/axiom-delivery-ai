@@ -16,11 +16,13 @@ from app.api.agent_executions import (
     execution_router as agent_continuation_router,
 )
 from app.api.agents_v1 import router as agents_v1_router
+from app.api.agile_performance import router as agile_performance_router
 from app.api.audit import router as audit_router
 from app.api.auth import router as auth_router
 from app.api.ceremonies import router as ceremonies_router
 from app.api.chat import router as chat_router
 from app.api.conversation import router as conversation_router
+from app.api.copilot import router as copilot_router
 from app.api.delivery import router as delivery_router
 from app.api.dependencies import router as dependencies_router
 from app.api.governance_operations import router as governance_operations_router
@@ -195,6 +197,7 @@ app.add_middleware(SecurityHeadersMiddleware, production=settings.production)
 app.include_router(auth_router, tags=["Authentication"])
 app.include_router(chat_router, tags=["Chat"])
 app.include_router(conversation_router, tags=["Conversations"])
+app.include_router(copilot_router)
 app.include_router(delivery_router)
 app.include_router(dependencies_router)
 app.include_router(raid_router)
@@ -204,6 +207,7 @@ app.include_router(runtime_router)
 app.include_router(audit_router)
 app.include_router(operations_router)
 app.include_router(action_center_router)
+app.include_router(agile_performance_router)
 app.include_router(meetings_router)
 app.include_router(ceremonies_router)
 app.include_router(knowledge_router)

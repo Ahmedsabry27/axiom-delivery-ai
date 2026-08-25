@@ -1,0 +1,204 @@
+{
+  "title": "Runtime Request Sequence",
+  "scope": "Primary and alternate execution paths",
+  "state": "CURRENT STATE",
+  "sequence": true,
+  "columns": [
+    [
+      "Frontend",
+      {
+        "label": "1. POST Chat/Copilot",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "11. Consume SSE",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "12. Reconcile UI",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "API + conversation",
+      {
+        "label": "2. Authenticate / authorize",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "3. Validate conversation",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Unauthorized \u2192 401/403",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Runtime",
+      {
+        "label": "4. Create durable execution",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "5. Orchestrator \u2192 planner",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "WAITING_FOR_INPUT \u2192 continue",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Cancel / sequence conflict guarded",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Agent / workflow",
+      {
+        "label": "6. Select permitted agent",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "7. Execute workflow/task",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Tool failure \u2192 failed event",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Tool / model + events",
+      {
+        "label": "8. Invoke allowed tool/model",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Provider failure \u2192 safe error",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "9. Persist atomic event",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "10. Publish authenticated SSE",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      1,
+      0,
+      "request"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "claims"
+    ],
+    [
+      1,
+      1,
+      2,
+      0,
+      "valid"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "start"
+    ],
+    [
+      2,
+      1,
+      3,
+      0,
+      "plan"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "route"
+    ],
+    [
+      3,
+      1,
+      4,
+      0,
+      "invoke"
+    ],
+    [
+      4,
+      0,
+      4,
+      2,
+      "result"
+    ],
+    [
+      4,
+      2,
+      4,
+      3,
+      "publish"
+    ],
+    [
+      4,
+      3,
+      0,
+      1,
+      "SSE"
+    ],
+    [
+      0,
+      1,
+      0,
+      2,
+      "reduce"
+    ]
+  ]
+}

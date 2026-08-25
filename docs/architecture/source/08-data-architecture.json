@@ -1,0 +1,230 @@
+{
+  "title": "Logical Data Architecture",
+  "scope": "Tenant-owned aggregates, evidence lineage and immutable governance records",
+  "state": "CURRENT STATE",
+  "master": true,
+  "columns": [
+    [
+      "Identity / hierarchy",
+      {
+        "label": "Tenant \u2192 user identity reference",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/user.py",
+        "aws": false
+      },
+      {
+        "label": "Portfolio \u2192 programme \u2192 project \u2192 team",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/delivery.py",
+        "aws": false
+      },
+      {
+        "label": "Source integration + mapping",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/integration.py",
+        "aws": false
+      }
+    ],
+    [
+      "Delivery",
+      {
+        "label": "Sprint \u2192 work item \u2192 defect",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/delivery.py",
+        "aws": false
+      },
+      {
+        "label": "Release \u2192 milestone",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/delivery.py",
+        "aws": false
+      },
+      {
+        "label": "RAID item \u2194 dependency",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/delivery.py",
+        "aws": false
+      },
+      {
+        "label": "Meeting \u2192 transcript / decision / lesson",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/meeting.py",
+        "aws": false
+      }
+    ],
+    [
+      "Evidence + intelligence",
+      {
+        "label": "Knowledge item + source version",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/knowledge.py",
+        "aws": false
+      },
+      {
+        "label": "Evidence reference + lineage",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/knowledge_source.py",
+        "aws": false
+      },
+      {
+        "label": "Recommendation \u2192 proposed action",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/action_center.py",
+        "aws": false
+      },
+      {
+        "label": "Approval \u2192 execution \u2192 verification",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/action_center.py",
+        "aws": false
+      }
+    ],
+    [
+      "Runtime",
+      {
+        "label": "Conversation \u2192 messages",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/models/conversation.py",
+        "aws": false
+      },
+      {
+        "label": "Runtime execution \u2192 immutable events",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/models/runtime_execution.py",
+        "aws": false
+      },
+      {
+        "label": "Agent / workflow / tool versions",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/agent.py",
+        "aws": false
+      },
+      {
+        "label": "Integration sync runs / quality",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/integration.py",
+        "aws": false
+      }
+    ],
+    [
+      "Governance",
+      {
+        "label": "Policy / entity grant / access review",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/governance.py",
+        "aws": false
+      },
+      {
+        "label": "Usage ledger / cost / budget",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/governance.py",
+        "aws": false
+      },
+      {
+        "label": "Evaluation / incident",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/governance.py",
+        "aws": false
+      },
+      {
+        "label": "Append-only hash-chained audit",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/audit.py",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      1,
+      "owns"
+    ],
+    [
+      0,
+      1,
+      1,
+      0,
+      "plans"
+    ],
+    [
+      0,
+      2,
+      1,
+      0,
+      "maps"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "delivers"
+    ],
+    [
+      1,
+      2,
+      2,
+      2,
+      "recommend"
+    ],
+    [
+      1,
+      3,
+      2,
+      0,
+      "creates"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "versions"
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      "govern"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "executes"
+    ],
+    [
+      3,
+      1,
+      4,
+      3,
+      "audits"
+    ],
+    [
+      3,
+      2,
+      3,
+      1,
+      "runs"
+    ],
+    [
+      4,
+      0,
+      2,
+      1,
+      "authorizes"
+    ],
+    [
+      4,
+      1,
+      3,
+      1,
+      "limits"
+    ]
+  ]
+}

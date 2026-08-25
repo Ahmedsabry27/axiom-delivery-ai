@@ -50,6 +50,18 @@ def get(client, path, params=None):
     return response.json()
 
 
+def document_text(value):
+    if isinstance(value, str):
+        return value
+    if isinstance(value, list):
+        return " ".join(document_text(item) for item in value)
+    if isinstance(value, dict):
+        own = str(value.get("text") or "")
+        nested = document_text(value.get("content") or [])
+        return f"{own} {nested}".strip()
+    return ""
+
+
 def jira_hierarchy(client):
     """Discover Axiom hierarchy metadata directly from Jira project properties."""
     projects = []
@@ -402,7 +414,7 @@ def main():
                     )
                     counts["releases"] += 1
                 requested = (
-                    "summary,status,issuetype,parent,assignee,priority,fixVersions,issuelinks"
+                    "summary,status,issuetype,parent,assignee,priority,fixVersions,issuelinks,description,labels"
                     + (f",{points_field}" if points_field else "")
                 )
                 issues = get(
@@ -430,6 +442,7 @@ def main():
                         for link in data.get("issuelinks", [])
                     )
                     assignee = data.get("assignee") or {}
+                    description_text = document_text(data.get("description")).lower()
                     assignee_id = (
                         "local-developer"
                         if assignee.get("accountId") == me.get("accountId")
@@ -462,6 +475,11 @@ def main():
                                 ],
                                 "issue_links": data.get("issuelinks", []),
                                 "jira_assignee": assignee.get("displayName"),
+                                "acceptanceCriteria": (
+                                    "acceptance criteria" in description_text
+                                    or "acceptance-criteria-defined"
+                                    in (data.get("labels") or [])
+                                ),
                             },
                         ),
                     )

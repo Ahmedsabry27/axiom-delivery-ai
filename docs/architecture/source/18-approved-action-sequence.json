@@ -1,0 +1,192 @@
+{
+  "title": "Approved Action Sequence",
+  "scope": "Human-governed proposal, execution, verification and alternatives",
+  "state": "CURRENT STATE",
+  "sequence": true,
+  "columns": [
+    [
+      "User / Copilot",
+      {
+        "label": "1. Recommendation",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "2. Create proposed action",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Cancellation \u2192 CANCELLED",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Policy",
+      {
+        "label": "3. Classify impact / approval",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "4. Check requester and SoD",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Ineligible \u2192 reject",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Approval Center",
+      {
+        "label": "5. PENDING_APPROVAL",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "6. Approver decision",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Rejected / changes requested",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Execution adapter",
+      {
+        "label": "7. APPROVED \u2192 EXECUTING",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "8. Allowlisted adapter",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Tool failure \u2192 FAILED",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Verification / audit",
+      {
+        "label": "9. EXECUTED \u2192 verify",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "10. VERIFIED or failed verification",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "11. Immutable audit + notification",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      1,
+      "propose"
+    ],
+    [
+      0,
+      1,
+      1,
+      0,
+      "classify"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "policy"
+    ],
+    [
+      1,
+      1,
+      2,
+      0,
+      "eligible"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "review"
+    ],
+    [
+      2,
+      1,
+      3,
+      0,
+      "approve"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "execute"
+    ],
+    [
+      3,
+      1,
+      4,
+      0,
+      "result"
+    ],
+    [
+      4,
+      0,
+      4,
+      1,
+      "verify"
+    ],
+    [
+      4,
+      1,
+      4,
+      2,
+      "record"
+    ],
+    [
+      4,
+      2,
+      0,
+      0,
+      "notify"
+    ]
+  ]
+}

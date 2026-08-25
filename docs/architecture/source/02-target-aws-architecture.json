@@ -1,0 +1,207 @@
+{
+  "title": "Target AWS Reference Architecture",
+  "scope": "Required deployment, production hardening and optional scale",
+  "state": "TARGET STATE",
+  "master": true,
+  "columns": [
+    [
+      "Edge",
+      {
+        "label": "Route 53 + ACM",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "AWS WAF",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "CloudFront",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "Private S3 frontend + OAC",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      }
+    ],
+    [
+      "Identity + API",
+      {
+        "label": "Cognito user pool and claims",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "Application Load Balancer",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "ECS Fargate tasks across AZs",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "ECR immutable images",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      }
+    ],
+    [
+      "Data + AI",
+      {
+        "label": "Multi-AZ RDS PostgreSQL",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Secrets Manager",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/integrations/secrets.py",
+        "aws": true
+      },
+      {
+        "label": "KMS customer-managed keys",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Bedrock + governed models",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/ai/providers/bedrock_provider.py",
+        "aws": true
+      },
+      {
+        "label": "Evidence S3 / search",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ],
+    [
+      "Integration + ops",
+      {
+        "label": "EventBridge / SQS / DLQ",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "CloudWatch logs, metrics, alarms",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "CloudTrail / Config / GuardDuty / Security Hub",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "AWS Backup + SNS",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "External Jira / Graph / OpenAI",
+        "status": "EXTERNAL",
+        "evidence": "",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      2,
+      "DNS + TLS"
+    ],
+    [
+      0,
+      1,
+      0,
+      2,
+      "filter"
+    ],
+    [
+      0,
+      2,
+      0,
+      3,
+      "static"
+    ],
+    [
+      0,
+      2,
+      1,
+      1,
+      "HTTPS"
+    ],
+    [
+      1,
+      0,
+      1,
+      1,
+      "JWT"
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      "8080"
+    ],
+    [
+      1,
+      2,
+      2,
+      0,
+      "5432"
+    ],
+    [
+      1,
+      2,
+      2,
+      1,
+      "credentials"
+    ],
+    [
+      1,
+      2,
+      2,
+      3,
+      "AI"
+    ],
+    [
+      1,
+      2,
+      3,
+      0,
+      "async"
+    ],
+    [
+      3,
+      1,
+      3,
+      3,
+      "notify"
+    ]
+  ]
+}

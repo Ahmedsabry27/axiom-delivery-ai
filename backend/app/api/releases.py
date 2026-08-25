@@ -87,11 +87,9 @@ def list_releases(
     query = db.query(DeliveryRelease).filter_by(tenant_id=_tenant(user))
     if query.filter(DeliveryRelease.source_system == "JIRA").first():
         query = query.filter(DeliveryRelease.source_system == "JIRA")
-    rows = (
-        query
-        .order_by(DeliveryRelease.planned_date.asc(), DeliveryRelease.created_at.desc())
-        .all()
-    )
+    rows = query.order_by(
+        DeliveryRelease.planned_date.asc(), DeliveryRelease.created_at.desc()
+    ).all()
     return {"items": [_contract(row) for row in rows], "source": "database"}
 
 

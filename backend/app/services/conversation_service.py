@@ -33,10 +33,12 @@ class ConversationService:
         self,
         db: Session,
         user_id: str,
+        tenant_id: str | None = None,
     ):
         return conversation_repository.get_all(
             db=db,
             user_id=user_id,
+            tenant_id=tenant_id,
         )
 
     def get_conversation(
@@ -44,11 +46,13 @@ class ConversationService:
         db: Session,
         conversation_id: UUID,
         user_id: str,
+        tenant_id: str | None = None,
     ):
         return conversation_repository.get_by_id(
             db=db,
             conversation_id=conversation_id,
             user_id=user_id,
+            tenant_id=tenant_id,
         )
 
     # --------------------------------------------------
@@ -82,17 +86,25 @@ class ConversationService:
         db: Session,
         conversation_id: UUID,
         user_id: str,
+        tenant_id: str | None = None,
         *,
         title: str | None = None,
         is_pinned: bool | None = None,
+        is_archived: bool | None = None,
+        context_summary: dict | None = None,
     ):
         conversation = self.get_conversation(
-            db=db, conversation_id=conversation_id, user_id=user_id
+            db=db, conversation_id=conversation_id, user_id=user_id, tenant_id=tenant_id
         )
         if conversation is None:
             return None
         return conversation_repository.update(
-            db, conversation, title=title, is_pinned=is_pinned
+            db,
+            conversation,
+            title=title,
+            is_pinned=is_pinned,
+            is_archived=is_archived,
+            context_summary=context_summary,
         )
 
     # --------------------------------------------------
@@ -104,11 +116,13 @@ class ConversationService:
         db: Session,
         conversation_id: UUID,
         user_id: str,
+        tenant_id: str | None = None,
     ):
         conversation = self.get_conversation(
             db=db,
             conversation_id=conversation_id,
             user_id=user_id,
+            tenant_id=tenant_id,
         )
 
         if conversation is None:
@@ -180,6 +194,7 @@ class ConversationService:
         db: Session,
         conversation_id: UUID,
         user_id: str,
+        tenant_id: str | None = None,
     ):
         """
         Returns all messages for a conversation after verifying
@@ -190,6 +205,7 @@ class ConversationService:
             db=db,
             conversation_id=conversation_id,
             user_id=user_id,
+            tenant_id=tenant_id,
         )
 
         if conversation is None:

@@ -716,8 +716,16 @@ def critical_paths(
 def bottlenecks(user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
     repo = _repository(db, user, "dependency.analyse")
     graph, _ = repo.graph()
+    items = graph.bottlenecks()
+    labels = repo.entity_labels(graph.nodes)
+    for item in items:
+        node = item["node"]
+        item["nodeId"] = node
+        item["node"] = labels.get(node, node.split(":", 1)[-1])
+        item["name"] = item["node"]
+        item["entityType"] = node.split(":", 1)[0]
     return {
-        "items": graph.bottlenecks(),
+        "items": items,
         "generatedAt": datetime.now(UTC).isoformat(),
         "source": "deterministic persisted graph",
     }

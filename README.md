@@ -1,10 +1,14 @@
 # Axiom Delivery AI
 
+Detailed current-state and target AWS architecture diagrams are available in the [architecture pack](docs/architecture/README.md).
+
 Production-readiness status: **NO-GO FOR AX-EP05**. See `docs/AX-H02-final-gap-closure-report.md` for verified results and remaining blockers.
 
 ## AI Delivery Copilot
 
 Open `/copilot` for the evidence-backed conversational delivery workspace. It preserves the existing conversation history, SSE runtime, agent registry, and OpenAI/Bedrock provider abstraction while adding delivery-context selection, structured evidence responses, confidence and limitation display, feedback, and approval-only action drafts. See [the Copilot guide](docs/ai-delivery-copilot.md) and the related response, evidence, streaming, and proposed-action contracts in `docs/`.
+
+Copilot organization routes provide persisted conversation history, saved insights with immutable evidence snapshots, canonical evidence and proposed actions, versioned governed prompt templates, user favorites, and durable privacy-safe feedback. Additive migration `f1b3d5e7a9c2` creates the Copilot persistence layer and conversation archive/context metadata. Runtime requests continue through the canonical pre-invocation model and budget gate; no Copilot route bypasses actions or approvals.
 
 ## Sprint Intelligence
 
@@ -191,3 +195,7 @@ cd backend
 ```
 
 See `docs/ceremony-intelligence.md`, `docs/ceremony-checklist-templates.md`, `docs/ceremony-effectiveness-scoring.md`, and `docs/lessons-learned.md`.
+
+# Agile Performance and OKR Intelligence
+
+Agile Performance is available at `/agile-performance`, with backend-calculated predictability, flow, backlog, quality, risk, team-health and OKR views. Missing observations remain explicitly unknown and team-health aggregates require at least five anonymous responses. See [the implementation guide](docs/AX-AGI01-agile-performance.md), [metric catalogue](docs/agile-metric-catalogue.md), and [AX-AGI01 outcome](docs/AX-AGI01-outcome.md).

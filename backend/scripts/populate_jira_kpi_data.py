@@ -119,6 +119,7 @@ def main() -> None:
         counts = {
             "projects": 0,
             "stories_created": 0,
+            "stories_updated": 0,
             "transitions": 0,
             "sprints_created": 0,
             "links_created": 0,
@@ -249,6 +250,29 @@ def main() -> None:
                             )
                             counts["stories_created"] += 1
                         story_keys.append(issue["key"])
+                for issue_key in story_keys:
+                    require(
+                        client.put(
+                            f"/rest/api/3/issue/{issue_key}",
+                            json={
+                                "fields": {
+                                    "description": adf(
+                                        "Outcome: deliver the stated measurable capability. "
+                                        "Acceptance criteria: implementation is complete, evidence is linked, "
+                                        "automated validation passes, and the product owner accepts the result."
+                                    ),
+                                    "labels": [
+                                        "axiom-real-portfolio",
+                                        "axiom-kpi-evidence",
+                                        "acceptance-criteria-defined",
+                                    ],
+                                    "fixVersions": [{"id": version["id"]}],
+                                }
+                            },
+                        ),
+                        f"Update KPI evidence {issue_key}",
+                    )
+                    counts["stories_updated"] += 1
                 boards = require(
                     client.get(
                         "/rest/agile/1.0/board",

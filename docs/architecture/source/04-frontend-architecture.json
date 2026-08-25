@@ -1,0 +1,165 @@
+{
+  "title": "Frontend Architecture",
+  "scope": "React feature composition, state, transport and production boundaries",
+  "state": "CURRENT STATE",
+  "columns": [
+    [
+      "Application",
+      {
+        "label": "main.jsx + QueryProvider",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/main.jsx",
+        "aws": false
+      },
+      {
+        "label": "Browser router + route error recovery",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/app/router.jsx",
+        "aws": false
+      },
+      {
+        "label": "Enterprise shell + design system",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/components/layout/EnterpriseLayout.jsx",
+        "aws": false
+      },
+      {
+        "label": "Cognito protected routes",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/auth/ProtectedRoute.jsx",
+        "aws": false
+      }
+    ],
+    [
+      "Delivery features",
+      {
+        "label": "My Day / Command Center / Portfolio",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Sprints / Releases / RAID / Dependencies",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Actions / Meetings / Knowledge",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Copilot / ceremonies",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Automation + admin",
+      {
+        "label": "Agents / workflows / approvals",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Integrations / MCP / tools",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Models / governance / AI Operations",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Settings / audit",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Data boundary",
+      {
+        "label": "Typed services and repositories",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/services",
+        "aws": false
+      },
+      {
+        "label": "React Query + Zustand",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/store",
+        "aws": false
+      },
+      {
+        "label": "REST HTTPS + bearer JWT",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/services/api.ts",
+        "aws": false
+      },
+      {
+        "label": "SSE runtime reconciliation",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/services/runtime.service.ts",
+        "aws": false
+      },
+      {
+        "label": "Mock/API selection: dev only",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/config/deliveryDataMode.ts",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      1,
+      1,
+      0,
+      "routes"
+    ],
+    [
+      0,
+      1,
+      2,
+      0,
+      "routes"
+    ],
+    [
+      1,
+      0,
+      3,
+      0,
+      "queries"
+    ],
+    [
+      2,
+      0,
+      3,
+      0,
+      "queries"
+    ],
+    [
+      3,
+      0,
+      3,
+      2,
+      "API"
+    ],
+    [
+      3,
+      3,
+      1,
+      3,
+      "events"
+    ]
+  ]
+}

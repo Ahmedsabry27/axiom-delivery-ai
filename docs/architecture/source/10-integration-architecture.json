@@ -1,0 +1,192 @@
+{
+  "title": "Integration Architecture",
+  "scope": "Provider adapters, OAuth, synchronization and controlled write-back",
+  "state": "CURRENT + PROPOSED DURABILITY",
+  "columns": [
+    [
+      "Axiom framework",
+      {
+        "label": "Integration catalogue + connection",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/integrations.py",
+        "aws": false
+      },
+      {
+        "label": "Secret reference / Secrets Manager",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/integrations/secrets.py",
+        "aws": true
+      },
+      {
+        "label": "OAuth state + callback",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/integrations/runtime.py",
+        "aws": false
+      },
+      {
+        "label": "Sync run, cursor, mappings, quality",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/integration.py",
+        "aws": false
+      },
+      {
+        "label": "Source mapping + evidence lineage",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/integrations",
+        "aws": false
+      }
+    ],
+    [
+      "Atlassian",
+      {
+        "label": "Jira API token / OAuth adapter",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/integrations/jira.py",
+        "aws": false
+      },
+      {
+        "label": "Confluence cloud operations",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/integrations.py",
+        "aws": false
+      },
+      {
+        "label": "Rate limit / retry / idempotency",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "Approved write-back",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "Microsoft",
+      {
+        "label": "Entra OAuth authorization",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/integrations.py",
+        "aws": false
+      },
+      {
+        "label": "Microsoft Graph",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/integrations.py",
+        "aws": false
+      },
+      {
+        "label": "Outlook calendar + meetings",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/integrations.py",
+        "aws": false
+      },
+      {
+        "label": "Teams meetings / transcripts",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/api/integrations.py",
+        "aws": false
+      },
+      {
+        "label": "Human review before knowledge/action",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/meeting_intelligence",
+        "aws": false
+      }
+    ],
+    [
+      "AI / delivery",
+      {
+        "label": "OpenAI secured outbound",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/ai/providers/openai_provider.py",
+        "aws": false
+      },
+      {
+        "label": "Amazon Bedrock IAM",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/ai/providers/bedrock_provider.py",
+        "aws": true
+      },
+      {
+        "label": "GitHub Actions OIDC",
+        "status": "IMPLEMENTED",
+        "evidence": ".github/workflows/deploy.yml",
+        "aws": false
+      },
+      {
+        "label": "SQS / EventBridge / DLQ",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      1,
+      "credential"
+    ],
+    [
+      0,
+      2,
+      1,
+      0,
+      "Atlassian OAuth"
+    ],
+    [
+      0,
+      3,
+      1,
+      0,
+      "poll/sync"
+    ],
+    [
+      0,
+      3,
+      2,
+      1,
+      "Graph sync"
+    ],
+    [
+      1,
+      0,
+      0,
+      4,
+      "source map"
+    ],
+    [
+      2,
+      2,
+      2,
+      4,
+      "review"
+    ],
+    [
+      3,
+      0,
+      0,
+      0,
+      "provider"
+    ],
+    [
+      3,
+      1,
+      0,
+      0,
+      "provider"
+    ],
+    [
+      0,
+      3,
+      3,
+      3,
+      "durable async"
+    ]
+  ]
+}

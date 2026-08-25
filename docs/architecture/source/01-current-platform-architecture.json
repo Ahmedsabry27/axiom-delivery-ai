@@ -1,0 +1,166 @@
+{
+  "title": "Current Platform Architecture",
+  "scope": "Actual repository and configured AWS staging runtime",
+  "state": "CURRENT STATE",
+  "columns": [
+    [
+      "Browser",
+      {
+        "label": "React 19 + Vite application",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/package.json",
+        "aws": false
+      },
+      {
+        "label": "Router, shell and feature pages",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/app/router.jsx",
+        "aws": false
+      },
+      {
+        "label": "React Query / stores / repositories",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/providers/QueryProvider.jsx",
+        "aws": false
+      },
+      {
+        "label": "Cognito auth + SSE hooks",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/services/auth.js",
+        "aws": false
+      }
+    ],
+    [
+      "FastAPI",
+      {
+        "label": "API routers + auth dependencies",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/main.py",
+        "aws": false
+      },
+      {
+        "label": "Delivery intelligence services",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/delivery",
+        "aws": false
+      },
+      {
+        "label": "Runtime execution + recovery",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/services/runtime_execution_service.py",
+        "aws": false
+      },
+      {
+        "label": "Governance / approvals / audit",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/governance",
+        "aws": false
+      }
+    ],
+    [
+      "AI + capabilities",
+      {
+        "label": "Planner + runtime orchestrator",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/runtime/orchestrator.py",
+        "aws": false
+      },
+      {
+        "label": "Managed agents + workflows",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/agents",
+        "aws": false
+      },
+      {
+        "label": "Tool discovery / native / MCP",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/tool_discovery",
+        "aws": false
+      },
+      {
+        "label": "OpenAI / Bedrock abstraction",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/ai/factory.py",
+        "aws": false
+      }
+    ],
+    [
+      "Persistence + AWS",
+      {
+        "label": "SQLAlchemy + Alembic",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database",
+        "aws": false
+      },
+      {
+        "label": "RDS PostgreSQL 17",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "ECS Fargate + ALB",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      },
+      {
+        "label": "CloudFront / S3 and Amplify",
+        "status": "CONFIGURED_NOT_VERIFIED",
+        "evidence": "amplify.yml",
+        "aws": true
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      1,
+      1,
+      0,
+      "HTTPS JSON"
+    ],
+    [
+      0,
+      3,
+      1,
+      2,
+      "SSE"
+    ],
+    [
+      1,
+      2,
+      2,
+      0,
+      "execute"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "select"
+    ],
+    [
+      2,
+      1,
+      2,
+      2,
+      "invoke"
+    ],
+    [
+      2,
+      3,
+      3,
+      2,
+      "AWS SDK"
+    ],
+    [
+      1,
+      1,
+      3,
+      1,
+      "SQL / 5432"
+    ]
+  ]
+}

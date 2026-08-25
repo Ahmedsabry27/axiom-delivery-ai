@@ -77,7 +77,7 @@ class SprintInsightRequest(BaseModel):
 def delivery_metadata(
     user: dict = Depends(get_current_user), db: Session = Depends(get_db)
 ):
-    tenant_id = user.get("custom:tenant_id", "default")
+    tenant_id = user["custom:tenant_id"]
     portfolio = db.scalar(
         select(DeliveryPortfolio).where(DeliveryPortfolio.tenant_id == tenant_id)
     )
@@ -118,7 +118,8 @@ def delivery_health(user: dict = Depends(get_current_user)):
 @router.get("/command-center", summary="Get tenant-scoped delivery command center")
 def delivery_command_center(
     context_id: str | None = None,
-    user: dict = Depends(get_current_user), db: Session = Depends(get_db)
+    user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     return DeliveryReadService(
         db, user["custom:tenant_id"], user["sub"]
@@ -214,7 +215,7 @@ def submit_copilot_feedback(
     user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    tenant_id = user.get("custom:tenant_id", "default")
+    tenant_id = user["custom:tenant_id"]
     record = CopilotFeedbackRecord(
         **payload.model_dump(), tenant_id=tenant_id, user_id=user.get("sub")
     )

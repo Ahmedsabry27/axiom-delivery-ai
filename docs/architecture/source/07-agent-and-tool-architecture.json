@@ -1,0 +1,182 @@
+{
+  "title": "Agent and Tool Architecture",
+  "scope": "Distinct governed definitions, associations and execution records",
+  "state": "CURRENT STATE",
+  "columns": [
+    [
+      "Agent",
+      {
+        "label": "Agent definition + immutable version",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/agent.py",
+        "aws": false
+      },
+      {
+        "label": "Identity, capability and model policy",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/agents/models",
+        "aws": false
+      },
+      {
+        "label": "Tool / knowledge / access assignments",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/agent_assignment.py",
+        "aws": false
+      }
+    ],
+    [
+      "Workflow",
+      {
+        "label": "Workflow definition + version",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/workflow.py",
+        "aws": false
+      },
+      {
+        "label": "Agent/tool/condition/approval nodes",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/workflows",
+        "aws": false
+      },
+      {
+        "label": "Triggers and input contracts",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/workflows",
+        "aws": false
+      }
+    ],
+    [
+      "Capabilities",
+      {
+        "label": "Tool catalogue + discovery",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/tool_discovery",
+        "aws": false
+      },
+      {
+        "label": "Native governed tools",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/tool_sdk",
+        "aws": false
+      },
+      {
+        "label": "Approved MCP remote tools",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/mcp_integration",
+        "aws": false
+      },
+      {
+        "label": "Model registry + allowlist",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/governance/service.py",
+        "aws": false
+      }
+    ],
+    [
+      "Control + evidence",
+      {
+        "label": "Runtime / agent execution records",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/database/models/agent_execution.py",
+        "aws": false
+      },
+      {
+        "label": "Proposed action (not execution)",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/action_center/service.py",
+        "aws": false
+      },
+      {
+        "label": "Approval \u2192 controlled adapter",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/actions/services/action_executor.py",
+        "aws": false
+      },
+      {
+        "label": "Verification + audit trail",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/audit",
+        "aws": false
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      0,
+      2,
+      "assign"
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      "uses"
+    ],
+    [
+      1,
+      1,
+      2,
+      0,
+      "nodes"
+    ],
+    [
+      0,
+      2,
+      2,
+      0,
+      "permissions"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "resolve"
+    ],
+    [
+      2,
+      0,
+      2,
+      2,
+      "resolve"
+    ],
+    [
+      2,
+      3,
+      3,
+      0,
+      "model"
+    ],
+    [
+      0,
+      0,
+      3,
+      0,
+      "execute"
+    ],
+    [
+      3,
+      0,
+      3,
+      1,
+      "propose"
+    ],
+    [
+      3,
+      1,
+      3,
+      2,
+      "approve"
+    ],
+    [
+      3,
+      2,
+      3,
+      3,
+      "verify"
+    ]
+  ]
+}

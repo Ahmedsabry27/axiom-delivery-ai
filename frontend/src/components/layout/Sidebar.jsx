@@ -1,11 +1,11 @@
 import { NavLink } from "react-router-dom";
-import { AlertTriangle, Bot, BookOpen, Boxes, CalendarCheck, CheckSquare, CircleGauge, GitBranch, Layers3, ListChecks, ListTodo, MessageSquare, PanelLeftClose, PanelLeftOpen, PlugZap, Rocket, Settings, ShieldCheck, Sparkles, Target, Workflow, X } from "lucide-react";
+import { AlertTriangle, Bot, BookOpen, Boxes, CalendarCheck, CheckSquare, CircleGauge, Gauge, GitBranch, Layers3, ListChecks, ListTodo, MessageSquare, PanelLeftClose, PanelLeftOpen, PlugZap, Rocket, Settings, ShieldCheck, Sparkles, Target, Workflow, X } from "lucide-react";
 import { productConfig } from "../../config/product";
 
 const navigationGroups = [
   { label:"My Work", items:[{name:"My Day",path:"/my-day",icon:CalendarCheck},{name:"Command Center",path:"/command-center",icon:CircleGauge}] },
   { label:"Delivery", items:[{name:"Portfolio",path:"/portfolio",icon:Layers3},{name:"Sprints",path:"/sprints",icon:Target},{name:"Releases",path:"/releases",icon:Rocket},{name:"RAID",path:"/raid",icon:AlertTriangle},{name:"Dependencies",path:"/dependencies",icon:GitBranch},{name:"Actions",path:"/actions",icon:ListTodo}] },
-  { label:"Intelligence", items:[{name:"AI Copilot",path:"/copilot",icon:MessageSquare},{name:"Meetings",path:"/meetings",icon:Sparkles,end:true},{name:"Ceremonies",path:"/meetings/ceremonies",icon:ListChecks},{name:"Knowledge",path:"/knowledge",icon:BookOpen,end:true},{name:"Lessons Learned",path:"/knowledge/lessons",icon:BookOpen}] },
+  { label:"Intelligence", items:[{name:"Agile Performance",path:"/agile-performance",icon:Gauge},{name:"AI Copilot",path:"/copilot",icon:MessageSquare},{name:"Meetings",path:"/meetings",icon:Sparkles,end:true},{name:"Ceremonies",path:"/meetings/ceremonies",icon:ListChecks},{name:"Knowledge",path:"/knowledge",icon:BookOpen,end:true},{name:"Lessons Learned",path:"/knowledge/lessons",icon:BookOpen}] },
   { label:"Automation", items:[{name:"Agents",path:"/agents",icon:Bot},{name:"Workflows",path:"/workflows",icon:Workflow},{name:"Approvals",path:"/approvals",icon:CheckSquare}] },
   { label:"Administration", items:[{name:"Integrations",path:"/integrations",icon:PlugZap},{name:"Models",path:"/models",icon:Boxes},{name:"Governance",path:"/governance",icon:ShieldCheck},{name:"AI Operations",path:"/ai-operations",icon:Sparkles},{name:"Settings",path:"/settings",icon:Settings}] },
 ];

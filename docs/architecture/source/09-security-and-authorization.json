@@ -1,0 +1,202 @@
+{
+  "title": "Security and Authorization Architecture",
+  "scope": "Defense in depth and decision enforcement points",
+  "state": "CURRENT + TARGET HARDENING",
+  "columns": [
+    [
+      "Browser trust",
+      {
+        "label": "Cognito sign-in / external IdP",
+        "status": "IMPLEMENTED",
+        "evidence": "frontend/src/services/auth.js",
+        "aws": true
+      },
+      {
+        "label": "Access token held client-side",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": false
+      },
+      {
+        "label": "CI/CD administrator boundary",
+        "status": "EXTERNAL",
+        "evidence": "",
+        "aws": false
+      }
+    ],
+    [
+      "AWS edge",
+      {
+        "label": "TLS / CloudFront",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "WAF",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "ALB security group",
+        "status": "IMPLEMENTED",
+        "evidence": "infrastructure/terraform/environments/staging/main.tf",
+        "aws": true
+      }
+    ],
+    [
+      "Application boundary",
+      {
+        "label": "JWT issuer/client/token-use validation",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/auth/cognito.py",
+        "aws": false
+      },
+      {
+        "label": "Tenant + role/group claims",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/auth/dependencies.py",
+        "aws": false
+      },
+      {
+        "label": "Permission catalogue + entity grants",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/security",
+        "aws": false
+      },
+      {
+        "label": "Source/evidence authorization",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/delivery/repositories.py",
+        "aws": false
+      },
+      {
+        "label": "SoD + approval policy",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/action_center/authorization.py",
+        "aws": false
+      }
+    ],
+    [
+      "Data + AI boundary",
+      {
+        "label": "Private RDS + SG",
+        "status": "IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "Secrets Manager tenant prefix",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/integrations/secrets.py",
+        "aws": true
+      },
+      {
+        "label": "Model allowlist + budget",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/governance",
+        "aws": false
+      },
+      {
+        "label": "KMS CMK",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      }
+    ],
+    [
+      "Detection",
+      {
+        "label": "Redacted audit trail",
+        "status": "IMPLEMENTED",
+        "evidence": "backend/app/audit",
+        "aws": false
+      },
+      {
+        "label": "CloudTrail / Config / GuardDuty / Security Hub",
+        "status": "PROPOSED",
+        "evidence": "",
+        "aws": true
+      },
+      {
+        "label": "CloudWatch alerts",
+        "status": "PARTIALLY_IMPLEMENTED",
+        "evidence": "",
+        "aws": true
+      }
+    ]
+  ],
+  "edges": [
+    [
+      0,
+      0,
+      1,
+      0,
+      "HTTPS"
+    ],
+    [
+      1,
+      0,
+      2,
+      0,
+      "bearer JWT"
+    ],
+    [
+      2,
+      0,
+      2,
+      1,
+      "claims"
+    ],
+    [
+      2,
+      1,
+      2,
+      2,
+      "tenant/role"
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      "before retrieval"
+    ],
+    [
+      2,
+      2,
+      2,
+      4,
+      "before action"
+    ],
+    [
+      2,
+      2,
+      3,
+      0,
+      "authorized SQL"
+    ],
+    [
+      2,
+      4,
+      4,
+      0,
+      "decision audit"
+    ],
+    [
+      3,
+      1,
+      2,
+      3,
+      "credential ref"
+    ],
+    [
+      3,
+      2,
+      4,
+      0,
+      "usage audit"
+    ]
+  ]
+}
