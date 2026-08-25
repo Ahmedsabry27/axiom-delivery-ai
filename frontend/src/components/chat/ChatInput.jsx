@@ -74,16 +74,14 @@ export default function ChatInput({
           rounded-3xl
 
           border
-          border-white/10
+          border-stone-300
 
-          bg-white/10
+          bg-white
 
           px-5
           py-4
 
-          backdrop-blur-2xl
-
-          shadow-2xl
+          shadow-lg
 
         "
       >
@@ -119,9 +117,9 @@ export default function ChatInput({
 
             outline-none
 
-            text-white
+            text-stone-900
 
-            placeholder:text-slate-400
+            placeholder:text-stone-500
 
             max-h-32
 
@@ -157,16 +155,16 @@ export default function ChatInput({
 
                 rounded-full
 
-                bg-red-500/20
+                bg-red-50
 
-                text-red-300
+                text-red-700
 
                 border
-                border-red-400/20
+                border-red-300
 
                 transition
 
-                hover:bg-red-500/30
+                hover:bg-red-100
 
               "
 

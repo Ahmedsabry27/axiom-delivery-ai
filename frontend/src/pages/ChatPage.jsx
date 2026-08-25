@@ -125,7 +125,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-full min-h-0 overflow-hidden">
+    <div className="flex h-full min-h-0 overflow-hidden bg-[#faf8f5] text-stone-900">
       {/* -------------------------------- */}
       {/* Conversation Sidebar */}
       {/* -------------------------------- */}

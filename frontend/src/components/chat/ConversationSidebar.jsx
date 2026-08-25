@@ -44,6 +44,7 @@ export default function ConversationSidebar({ conversation }) {
         border-r
         border-white/10
         bg-[#071426]/75
+        text-stone-100
         lg:flex
         lg:flex-col
       "
@@ -71,7 +72,7 @@ export default function ConversationSidebar({ conversation }) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+          className="min-w-0 flex-1 bg-transparent text-sm text-stone-100 outline-none placeholder:text-slate-500"
           placeholder="Search conversations…"
         />
       </label>
