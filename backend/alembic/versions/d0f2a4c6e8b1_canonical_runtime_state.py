@@ -20,12 +20,12 @@ depends_on: str | Sequence[str] | None = None
 def upgrade() -> None:
     # Existing executions already have a start timestamp. New PENDING rows remain
     # null until the canonical PENDING -> RUNNING transition claims them.
-    op.alter_column(
-        "runtime_executions",
-        "started_at",
-        existing_type=sa.DateTime(),
-        nullable=True,
-    )
+    with op.batch_alter_table("runtime_executions") as batch:
+        batch.alter_column(
+            "started_at",
+            existing_type=sa.DateTime(),
+            nullable=True,
+        )
 
 
 def downgrade() -> None:
@@ -34,9 +34,9 @@ def downgrade() -> None:
         "UPDATE runtime_executions "
         "SET started_at = CURRENT_TIMESTAMP WHERE started_at IS NULL"
     )
-    op.alter_column(
-        "runtime_executions",
-        "started_at",
-        existing_type=sa.DateTime(),
-        nullable=False,
-    )
+    with op.batch_alter_table("runtime_executions") as batch:
+        batch.alter_column(
+            "started_at",
+            existing_type=sa.DateTime(),
+            nullable=False,
+        )
