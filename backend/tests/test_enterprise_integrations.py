@@ -10,11 +10,20 @@ from sqlalchemy.pool import StaticPool
 from app.contracts.tool_models import ExecutionContext
 from app.database.base import Base
 from app.database.models.action import Action
-from app.database.models.integration import IntegrationCapability, IntegrationConnection
+from app.database.models.agent import Agent
+from app.database.models.agent_assignment import AgentToolAssignment
+from app.database.models.integration import (
+    IntegrationAgentAssignment,
+    IntegrationCapability,
+    IntegrationConnection,
+)
 from app.database.models.tool import ToolDefinition
 from app.integrations.errors import IntegrationError
 from app.integrations.jira import CAPABILITIES, JiraConnector
-from app.integrations.provisioning import provision_capability
+from app.integrations.provisioning import (
+    provision_capability,
+    sync_connection_assignments,
+)
 from app.integrations.registry import connector_registry
 from app.integrations.runtime import IntegrationTool
 from app.integrations.secrets import SecretProvider
@@ -256,6 +265,70 @@ def test_provisioning_is_tenant_scoped(integration_db):
         .count()
         == 2
     )
+
+
+def test_assignment_sync_preserves_explicit_read_scope_and_disables_stale_writes(
+    integration_db,
+):
+    registry = ToolRegistry()
+    connection = persisted_connection()
+    agent = Agent(tenant_id="tenant-a", slug="read-agent", name="Read Agent")
+    integration_db.add_all([connection, agent])
+    integration_db.flush()
+    read_capability = persisted_capability(connection)
+    write_capability = persisted_capability(
+        connection, "jira.create_issue", "action"
+    )
+    integration_db.add_all([read_capability, write_capability])
+    integration_db.flush()
+    provision_capability(
+        integration_db, connection, read_capability, "admin", registry
+    )
+    provision_capability(
+        integration_db, connection, write_capability, "admin", registry
+    )
+    integration_db.add_all(
+        [
+            IntegrationAgentAssignment(
+                connection_id=connection.id,
+                agent_id=agent.id,
+                tenant_id="tenant-a",
+                capability_names=["jira.search_issues"],
+                created_by="admin",
+            ),
+            AgentToolAssignment(
+                agent_id=agent.id,
+                agent_version=1,
+                tenant_id="tenant-a",
+                tool_name="jira.create_issue",
+                version_restriction="1.0.0",
+                assignment_action="execute",
+                enabled=True,
+                risk_mode="write",
+                approval_required=True,
+                added_by="admin",
+            ),
+        ]
+    )
+    integration_db.commit()
+
+    sync_connection_assignments(
+        integration_db, connection, "admin", agent_ids={agent.id}
+    )
+    integration_db.commit()
+
+    assignments = {
+        item.tool_name: item
+        for item in integration_db.query(AgentToolAssignment).filter_by(
+            agent_id=agent.id,
+            assignment_action="execute",
+        )
+    }
+    assert assignments["jira.search_issues"].enabled is True
+    assert assignments["jira.search_issues"].risk_mode == "read"
+    assert assignments["jira.create_issue"].enabled is False
+    integration_assignment = integration_db.query(IntegrationAgentAssignment).one()
+    assert integration_assignment.capability_names == ["jira.search_issues"]
 
 
 @pytest.mark.asyncio

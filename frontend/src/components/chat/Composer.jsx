@@ -329,7 +329,7 @@ export default function Composer({
             shadow-lg
             transition-all
             duration-200
-            focus-within:border-emerald-500
+            focus-within:border-[#a00028]
           "
         >
 
@@ -446,10 +446,10 @@ export default function Composer({
                 className="
                   h-12
                   w-12
-                  rounded-full
-                  bg-emerald-600
+                  rounded-sm
+                  bg-[#a00028]
                   shadow-md
-                  hover:bg-emerald-700
+                  hover:bg-[#7d001f]
                 "
 
               >

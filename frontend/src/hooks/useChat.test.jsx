@@ -8,10 +8,11 @@ const mocks = vi.hoisted(() => ({
   subscribeRuntime: vi.fn(),
   getRuntime: vi.fn(),
   unsubscribe: vi.fn(),
+  updateConversationTitle: vi.fn(),
 }));
 
-vi.mock("../api/conversationApi", () => ({
-  updateConversationTitle: vi.fn(),
+vi.mock("../services/conversationService", () => ({
+  updateConversationTitle: mocks.updateConversationTitle,
 }));
 
 vi.mock("../services/chat.service", () => ({
@@ -53,6 +54,27 @@ describe("useChat runtime continuation", () => {
     mocks.getRuntime.mockResolvedValue({
       execution_id:"execution-1",workflow_id:"workflow-1",status:"RUNNING",state_version:3,last_sequence:2,
     });
+    mocks.updateConversationTitle.mockResolvedValue({});
+  });
+
+  it("starts chat even when the cosmetic title update fails", async () => {
+    mocks.updateConversationTitle.mockRejectedValueOnce(new Error("rename failed"));
+    const conversation = {
+      conversations: [{ id: "conversation-1", title: "New Conversation" }],
+      ensureConversation: vi.fn().mockResolvedValue("conversation-1"),
+      refreshConversations: vi.fn(),
+    };
+    const { result } = renderHook(() => useChat(conversation));
+
+    await act(() => result.current.handleStream("Hello Copilot"));
+
+    expect(mocks.startExecution).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "Hello Copilot",
+        conversation_id: "conversation-1",
+      }),
+    );
+    expect(conversation.refreshConversations).not.toHaveBeenCalled();
   });
 
   it("reconnects to runtime events after submitting required Jira details", async () => {

@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 
-import { updateConversationTitle } from "../api/conversationApi";
+import { updateConversationTitle } from "../services/conversationService";
 import { startExecution } from "../services/chat.service";
 import { approveRuntime, cancelRuntime, continueRuntime, continueRuntimeMessage, denyRuntime, getConversationRuntime, getRuntime, subscribeRuntime } from "../services/runtime.service";
 import { initialRuntimeState, runtimeReducer } from "../store/runtime.reducer";
@@ -74,8 +74,17 @@ export default function useChat(conversation) {
       const conversationId = await conversation.ensureConversation();
       const active = conversation.conversations.find((item) => item.id === conversationId);
       if (active?.title === "New Conversation") {
-        await updateConversationTitle(conversationId, createConversationTitle(userMessage));
-        await conversation.refreshConversations();
+        try {
+          await updateConversationTitle(
+            conversationId,
+            createConversationTitle(userMessage),
+          );
+          await conversation.refreshConversations();
+        } catch (error) {
+          // Renaming is cosmetic. A transient title failure must never prevent
+          // the user's prompt from reaching the governed runtime.
+          console.warn("Unable to update conversation title", error);
+        }
       }
 
       assistantId = crypto.randomUUID();

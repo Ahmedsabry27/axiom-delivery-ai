@@ -63,7 +63,7 @@ export default function MarkdownRenderer({ children }) {
 
           h2({ children }) {
             return (
-              <h2 className="mt-10 mb-5 border-l-4 border-emerald-500 pl-4 text-3xl font-bold">
+              <h2 className="mt-10 mb-5 border-l-4 border-[#a00028] pl-4 text-3xl font-bold">
                 {children}
               </h2>
             );
@@ -107,7 +107,7 @@ export default function MarkdownRenderer({ children }) {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-emerald-600 underline decoration-emerald-300 underline-offset-4 transition hover:text-emerald-700"
+                className="font-medium text-[#a00028] underline decoration-[#d8a4b1] underline-offset-4 transition hover:text-[#7d001f]"
               >
                 {children}
               </a>
@@ -119,7 +119,7 @@ export default function MarkdownRenderer({ children }) {
 
             if (!match) {
               return (
-                <code className="rounded-md bg-muted px-1.5 py-1 font-mono text-sm text-emerald-600">
+                <code className="rounded-md bg-muted px-1.5 py-1 font-mono text-sm text-[#a00028]">
                   {children}
                 </code>
               );
@@ -169,7 +169,7 @@ export default function MarkdownRenderer({ children }) {
 
           blockquote({ children }) {
             return (
-              <blockquote className="my-8 rounded-r-2xl border-l-4 border-emerald-500 bg-emerald-50/40 py-4 pl-6 italic dark:bg-emerald-900/10">
+              <blockquote className="my-8 border-l-4 border-[#a00028] bg-[#f7ecef] py-4 pl-6 italic">
                 {children}
               </blockquote>
             );

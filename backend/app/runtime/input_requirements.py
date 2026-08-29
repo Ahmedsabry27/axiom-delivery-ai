@@ -77,6 +77,16 @@ class RequirementSchemaProvider:
     """Reads exact semantic requirement schemas without resolving capabilities."""
 
     _INTENT_TO_SCHEMA: ClassVar[dict[str, str]] = {
+        "jira.project.search": "jira.get_projects",
+        "jira.issue.search": "jira.search_issues",
+        "jira.issue.read": "jira.get_issue",
+        "jira.issue.comment.read": "jira.get_comments",
+        "jira.sprint.health.assess": "jira.get_sprint_health",
+        "jira.sprint.search": "jira.get_sprints",
+        "jira.release.search": "jira.get_versions",
+        "jira.release.issue.search": "jira.get_version_issues",
+        "jira.issue.create_metadata.read": "jira.get_create_metadata",
+        "jira.issue.transition.read": "jira.get_transitions",
         "jira.issue.create": "jira.create_issue",
         "deployment.report.generate": "deployment_report",
     }

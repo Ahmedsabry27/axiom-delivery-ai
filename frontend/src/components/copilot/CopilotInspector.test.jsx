@@ -13,7 +13,7 @@ describe("CopilotInspector",()=>{
     expect(screen.getByText("Sprint snapshot")).toBeInTheDocument();
     expect(screen.getByText("Authorized excerpt")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button",{name:"Activity"}));
-    expect(screen.getByText("Evidence retrieved")).toBeInTheDocument();
+    expect(screen.getByText("Supporting evidence reviewed")).toBeInTheDocument();
     expect(screen.getByText(/Private reasoning/)).toBeInTheDocument();
   });
 });

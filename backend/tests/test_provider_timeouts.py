@@ -2,6 +2,7 @@ import httpx
 import pytest
 from botocore.exceptions import ReadTimeoutError
 from openai import APITimeoutError
+from pydantic import BaseModel
 
 from app.ai.exceptions import AITimeoutError
 from app.ai.models import AIMessage, AIMessageRole
@@ -38,3 +39,36 @@ def test_bedrock_sdk_timeout_is_normalized(monkeypatch):
     )
     with pytest.raises(AITimeoutError):
         BedrockProvider("test-model").ask(message())
+
+
+def test_openai_structured_response_uses_native_parse(monkeypatch):
+    class Output(BaseModel):
+        value: str
+
+    parsed = Output(value="ok")
+
+    class Responses:
+        def parse(self, **kwargs):
+            assert kwargs["text_format"] is Output
+            return type(
+                "Response",
+                (),
+                {
+                    "output_parsed": parsed,
+                    "output_text": '{"value":"ok"}',
+                    "id": "response-1",
+                    "usage": None,
+                },
+            )()
+
+    monkeypatch.setattr(
+        "app.ai.providers.openai_provider.get_openai_client",
+        lambda: type("Client", (), {"responses": Responses()})(),
+    )
+
+    response, output = OpenAIProvider("test-model").ask_structured(
+        message(), response_model=Output
+    )
+
+    assert response.response_id == "response-1"
+    assert output == parsed

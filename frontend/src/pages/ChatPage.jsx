@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getAuthorizedAgents } from "../services/agentService";
 
 import ChatWindow from "../components/chat/ChatWindow";
 import ChatInput from "../components/chat/ChatInput";
-import CopilotInspector from "../components/copilot/CopilotInspector";
 import RequiredInformationCard from "../components/chat/RequiredInformationCard";
 import ConversationSidebar from "../components/chat/ConversationSidebar";
 import ChatHeader from "../components/chat/ChatHeader";
@@ -20,15 +17,10 @@ export default function ChatPage() {
   const conversation = useConversation();
   const chat = useChat(conversation);
 
-  const { data: agents = [] } = useQuery({
-    queryKey: ["authorized-agents"],
-    queryFn: getAuthorizedAgents,
-  });
-
-  const [agentId, setAgentId] = useState("");
-  const [provider, setProvider] = useState("automatic");
-  const [model, setModel] = useState("automatic");
-  const [workspace, setWorkspace] = useState("Delivery Management");
+  const agentId = "";
+  const provider = "automatic";
+  const model = "automatic";
+  const workspace = "Delivery Management";
   const [deliveryContext,setDeliveryContext]=useState(()=>globalThis.localStorage?.getItem("axiom.copilot.context")||"");
   const [proposal,setProposal]=useState(null);
 
@@ -120,7 +112,7 @@ export default function ChatPage() {
           : model,
 
       workspace,
-      metadata:{delivery_context:deliveryContexts.find(item=>item.id===deliveryContext)||null,response_mode:"structured_delivery"},
+      metadata:{delivery_context:deliveryContexts.find(item=>item.id===deliveryContext)||null,response_mode:"structured_delivery",environment:import.meta.env.MODE},
     });
   }
 
@@ -147,18 +139,7 @@ export default function ChatPage() {
           overflow-hidden
         "
       >
-        <ChatHeader
-          agents={agents}
-          agentId={agentId}
-          setAgentId={setAgentId}
-          provider={provider}
-          setProvider={setProvider}
-          model={model}
-          setModel={setModel}
-          workspace={workspace}
-          setWorkspace={setWorkspace}
-          runtime={chat.runtime}
-        />
+        <ChatHeader runtime={chat.runtime} />
         <DeliveryContextBar selected={deliveryContext} onChange={value=>{setDeliveryContext(value);globalThis.localStorage?.setItem("axiom.copilot.context",value)}}/>
 
         {/* -------------------------------- */}
@@ -213,7 +194,7 @@ export default function ChatPage() {
                 onClick={() =>
                   chat.decideApproval("approve")
                 }
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm"
+                className="rounded-sm bg-[#a00028] px-4 py-2 text-sm font-semibold text-white hover:bg-[#7d001f]"
               >
                 Approve
               </button>
@@ -306,11 +287,6 @@ export default function ChatPage() {
         </div>
       </section>
 
-      {/* -------------------------------- */}
-      {/* Execution Inspector */}
-      {/* -------------------------------- */}
-
-      <CopilotInspector contextId={deliveryContext} messages={chat.messages} runtime={chat.runtime} onContextChange={value=>{setDeliveryContext(value);globalThis.localStorage?.setItem("axiom.copilot.context",value)}} />
       <ProposedActionDrawer proposal={proposal} onClose={()=>setProposal(null)}/>
     </div>
   );

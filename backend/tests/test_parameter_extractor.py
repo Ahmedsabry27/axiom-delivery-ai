@@ -6,6 +6,8 @@ from app.ai.models import AIResponse
 from app.runtime.intent_analyzer import IntentResult
 from app.runtime.parameter_extractor import (
     ExtractedParameter,
+    JiraIssueReadUnderstanding,
+    JiraIssueSearchUnderstanding,
     ParameterExtractionResponse,
     ParameterExtractionResult,
     ParameterExtractor,
@@ -24,6 +26,19 @@ class StubProvider:
             self.payload if isinstance(self.payload, str) else json.dumps(self.payload)
         )
         return AIResponse(text=text, model="normalized-model")
+
+
+class StubStructuredProvider:
+    def __init__(self, payload):
+        self.payload = payload
+        self.calls = []
+
+    def ask_structured(self, messages, *, response_model):
+        self.calls.append((messages, response_model))
+        return (
+            AIResponse(text="{}", model="structured-model"),
+            response_model.model_validate(self.payload),
+        )
 
 
 def intent(
@@ -502,6 +517,303 @@ async def test_runtime_persists_emits_and_reuses_extraction(monkeypatch):
     assert len(calls) == 1
     assert persisted == [{"parameter_extraction": first}]
     assert [event["type"] for event in events] == ["parameter_extraction.completed"]
+
+
+@pytest.mark.asyncio
+async def test_jira_issue_search_uses_schema_extractor_for_filter_combinations(
+    monkeypatch,
+):
+    service = RuntimeExecutionService()
+    response = ParameterExtractionResponse(
+        result=ParameterExtractionResult.model_validate(
+            extraction(
+                intent_name="jira.issue.search",
+                parameters={
+                    "issue_type": parameter("issue_type", "Story"),
+                    "state": parameter("state", "In Progress"),
+                    "project_key": parameter("project_key", "SOAI"),
+                    "assignee": parameter("assignee", "Ahmed"),
+                },
+            )
+        ),
+        provider="openai",
+        model="test",
+        latency_ms=2,
+    )
+    calls = []
+    monkeypatch.setattr(
+        "app.services.runtime_execution_service.parameter_extractor.extract",
+        lambda *args, **kwargs: calls.append((args, kwargs)) or response,
+    )
+    monkeypatch.setattr(service, "_merge_runtime_metadata", lambda *args: None)
+
+    async def ignore_event(*args):
+        return None
+
+    monkeypatch.setattr(service, "publish_event", ignore_event)
+    structured_intent = intent(
+        "jira.issue.search", "jira", "search", "issue"
+    ).model_copy(update={"source": "deterministic"})
+
+    result = await service._extract_parameters_once(
+        "execution-1",
+        "list SOAI stories in progress assigned to Ahmed",
+        structured_intent=structured_intent.model_dump(mode="json"),
+        provider_name="openai",
+        model="test",
+        conversation_context=[],
+        schema_definitions=[],
+        runtime_metadata={},
+    )
+
+    assert len(calls) == 1
+    assert {
+        name: value["value"] for name, value in result["parameters"].items()
+    } == {
+        "issue_type": "Story",
+        "status": "In Progress",
+        "project_key": "SOAI",
+        "assignee": "Ahmed",
+    }
+
+
+def test_jira_structured_understanding_separates_assignee_projection_from_filter(
+    monkeypatch,
+):
+    provider = StubStructuredProvider(
+        {
+            "intent": "jira.issue.search",
+            "project_key": {
+                "value": "SOAI",
+                "source": "user_prompt",
+                "confidence": 1,
+                "explicit": True,
+                "original_text": "project SOAI",
+            },
+            "issue_type": {
+                "value": "Story",
+                "source": "user_prompt",
+                "confidence": 1,
+                "explicit": True,
+                "original_text": "type Story",
+            },
+            "status": {
+                "value": "In Progress",
+                "source": "user_prompt",
+                "confidence": 1,
+                "explicit": True,
+                "original_text": "status In Progress",
+            },
+            "priority": None,
+            "assignee": None,
+            "jql": None,
+            "max_results": None,
+            "presentation": {
+                "format": "auto",
+                "fields": ["key", "summary", "assignee"],
+                "include_count": True,
+            },
+            "unresolved_mentions": [],
+            "warnings": [],
+        }
+    )
+    monkeypatch.setattr(
+        "app.runtime.parameter_extractor.AIProviderFactory.get_provider",
+        lambda **_: provider,
+    )
+
+    result = ParameterExtractor().extract(
+        "get Jira issues in project SOAI type Story status In Progress with their assignees",
+        intent=intent("jira.issue.search", "jira", "search", "issue"),
+        provider_name="openai",
+        model="test",
+    )
+
+    assert provider.calls[0][1] is JiraIssueSearchUnderstanding
+    assert {name: item.value for name, item in result.result.parameters.items()} == {
+        "project_key": "SOAI",
+        "issue_type": "Story",
+        "status": "In Progress",
+    }
+    assert "assignee" not in result.result.parameters
+    assert result.result.presentation is not None
+    assert result.result.presentation.fields == ["key", "summary", "assignee"]
+
+
+def test_jira_structured_understanding_extracts_priority_as_filter(monkeypatch):
+    provider = StubStructuredProvider(
+        {
+            "intent": "jira.issue.search",
+            "project_key": None,
+            "issue_type": None,
+            "status": {
+                "value": "In Progress",
+                "source": "user_prompt",
+                "confidence": 1,
+                "explicit": True,
+                "original_text": "status in progress",
+            },
+            "priority": {
+                "value": "High",
+                "source": "user_prompt",
+                "confidence": 1,
+                "explicit": True,
+                "original_text": "priority high",
+            },
+            "assignee": None,
+            "jql": None,
+            "max_results": None,
+            "presentation": {
+                "format": "auto",
+                "fields": ["key", "summary", "status", "priority"],
+                "include_count": True,
+            },
+            "unresolved_mentions": [],
+            "warnings": [],
+        }
+    )
+    monkeypatch.setattr(
+        "app.runtime.parameter_extractor.AIProviderFactory.get_provider",
+        lambda **_: provider,
+    )
+
+    result = ParameterExtractor().extract(
+        "get a list of issues status in progress WITH PRIORITY HIGH",
+        intent=intent("jira.issue.search", "jira", "search", "issue"),
+        provider_name="openai",
+        model="test",
+    )
+
+    assert {name: item.value for name, item in result.result.parameters.items()} == {
+        "status": "In Progress",
+        "priority": "High",
+    }
+
+
+@pytest.mark.parametrize(
+    ("prompt", "expected_fields"),
+    [
+        (
+            "get the description of this ticket AIGOV-6",
+            ["key", "summary", "description"],
+        ),
+        (
+            "send me a link to open this ticket AIGOV-6",
+            ["key", "summary", "link"],
+        ),
+    ],
+)
+def test_jira_issue_read_structured_understanding_selects_requested_fields(
+    monkeypatch, prompt, expected_fields
+):
+    provider = StubStructuredProvider(
+        {
+            "intent": "jira.issue.read",
+            "issue_key": {
+                "value": "AIGOV-6",
+                "source": "user_prompt",
+                "confidence": 1,
+                "explicit": True,
+                "original_text": "AIGOV-6",
+            },
+            "presentation": {
+                "format": "auto",
+                # Simulate unrelated fields carried over from conversation context.
+                "fields": ["key", "summary", "description", "link"],
+                "include_count": False,
+            },
+            "unresolved_mentions": [],
+            "warnings": [],
+        }
+    )
+    monkeypatch.setattr(
+        "app.runtime.parameter_extractor.AIProviderFactory.get_provider",
+        lambda **_: provider,
+    )
+
+    result = ParameterExtractor().extract(
+        prompt,
+        intent=intent("jira.issue.read", "jira", "read", "issue"),
+        provider_name="openai",
+        model="test",
+    )
+
+    assert provider.calls[0][1] is JiraIssueReadUnderstanding
+    assert result.result.parameters["issue_key"].value == "AIGOV-6"
+    assert result.result.presentation is not None
+    assert result.result.presentation.fields == expected_fields
+
+
+@pytest.mark.asyncio
+async def test_jira_issue_read_uses_schema_extractor_for_presentation(monkeypatch):
+    service = RuntimeExecutionService()
+    response = ParameterExtractionResponse(
+        result=ParameterExtractionResult.model_validate(
+            extraction(
+                intent_name="jira.issue.read",
+                parameters={"issue_key": parameter("issue_key", "AIGOV-6")},
+                presentation={
+                    "format": "auto",
+                    "fields": ["key", "summary", "description"],
+                    "include_count": False,
+                },
+            )
+        ),
+        provider="openai",
+        model="test",
+        latency_ms=2,
+    )
+    calls = []
+    monkeypatch.setattr(
+        "app.services.runtime_execution_service.parameter_extractor.extract",
+        lambda *args, **kwargs: calls.append((args, kwargs)) or response,
+    )
+    monkeypatch.setattr(service, "_merge_runtime_metadata", lambda *args: None)
+
+    async def ignore_event(*args):
+        return None
+
+    monkeypatch.setattr(service, "publish_event", ignore_event)
+    structured_intent = intent(
+        "jira.issue.read", "jira", "read", "issue", {"issue_key": "AIGOV-6"}
+    ).model_copy(update={"source": "deterministic"})
+
+    result = await service._extract_parameters_once(
+        "execution-1",
+        "get the description of this ticket AIGOV-6",
+        structured_intent=structured_intent.model_dump(mode="json"),
+        provider_name="openai",
+        model="test",
+        conversation_context=[],
+        schema_definitions=[],
+        runtime_metadata={},
+    )
+
+    assert len(calls) == 1
+    assert result["presentation"]["fields"] == ["key", "summary", "description"]
+
+
+def test_jira_projection_survives_unstructured_provider_fallback(monkeypatch):
+    provider = StubProvider(
+        extraction(
+            intent_name="jira.issue.search",
+            parameters={"issue_type": parameter("issue_type", "Story")},
+        )
+    )
+    monkeypatch.setattr(
+        "app.runtime.parameter_extractor.AIProviderFactory.get_provider",
+        lambda **_: provider,
+    )
+
+    result = ParameterExtractor().extract(
+        "get stories with their assignees",
+        intent=intent("jira.issue.search", "jira", "search", "issue"),
+        provider_name="bedrock",
+        model="test",
+    )
+
+    assert result.result.presentation is not None
+    assert result.result.presentation.fields == ["key", "summary", "assignee"]
 
 
 def test_extracted_parameter_rejects_incorrect_value_type():

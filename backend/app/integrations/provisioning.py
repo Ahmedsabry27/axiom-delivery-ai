@@ -16,6 +16,11 @@ PERMISSIONS = {
     "jira.get_projects": "jira.project.read",
     "jira.search_issues": "jira.issue.read",
     "jira.get_issue": "jira.issue.read",
+    "jira.get_comments": "jira.comment.read",
+    "jira.get_sprint_health": "jira.sprint.read",
+    "jira.get_sprints": "jira.sprint.read",
+    "jira.get_versions": "jira.release.read",
+    "jira.get_version_issues": "jira.release.read",
     "jira.get_create_metadata": "jira.issue.read",
     "jira.get_transitions": "jira.issue.read",
     "jira.create_issue": "jira.issue.create",
@@ -192,7 +197,11 @@ def disable_connection_capabilities(
 
 
 def sync_connection_assignments(
-    db, connection: IntegrationConnection, actor_id: str
+    db,
+    connection: IntegrationConnection,
+    actor_id: str,
+    *,
+    agent_ids: set[int] | None = None,
 ) -> None:
     capabilities = (
         db.query(IntegrationCapability)
@@ -210,8 +219,12 @@ def sync_connection_assignments(
         .filter_by(connection_id=connection.id, tenant_id=connection.tenant_id)
         .all()
     )
+    managed_agent_ids = {item.agent_id for item in assignments} | set(agent_ids or ())
     for assignment in assignments:
-        assignment.capability_names = sorted(by_name)
+        selected_names = sorted(
+            set(assignment.capability_names or []).intersection(by_name)
+        )
+        assignment.capability_names = selected_names
         agent = (
             db.query(Agent)
             .filter_by(id=assignment.agent_id, tenant_id=connection.tenant_id)
@@ -219,7 +232,8 @@ def sync_connection_assignments(
         )
         if not agent:
             continue
-        for name, capability in by_name.items():
+        for name in selected_names:
+            capability = by_name[name]
             existing = (
                 db.query(AgentToolAssignment)
                 .filter_by(
@@ -230,19 +244,38 @@ def sync_connection_assignments(
                 .first()
             )
             if not existing:
-                db.add(
-                    AgentToolAssignment(
-                        agent_id=agent.id,
-                        agent_version=agent.current_version,
-                        tenant_id=connection.tenant_id,
-                        tool_name=name,
-                        version_restriction=capability.version,
-                        assignment_action="execute",
-                        enabled=True,
-                        risk_mode="write"
-                        if capability.capability_type == "action"
-                        else "read",
-                        approval_required=capability.approval_required,
-                        added_by=actor_id,
-                    )
+                existing = AgentToolAssignment(
+                    agent_id=agent.id,
+                    agent_version=agent.current_version,
+                    tenant_id=connection.tenant_id,
+                    tool_name=name,
+                    version_restriction=capability.version,
+                    assignment_action="execute",
+                    added_by=actor_id,
                 )
+                db.add(existing)
+            existing.agent_version = agent.current_version
+            existing.version_restriction = capability.version
+            existing.enabled = True
+            existing.risk_mode = (
+                "write" if capability.capability_type == "action" else "read"
+            )
+            existing.approval_required = capability.approval_required
+
+    for agent_id in managed_agent_ids:
+        authorized_names = {
+            name
+            for item in db.query(IntegrationAgentAssignment).filter_by(
+                agent_id=agent_id,
+                tenant_id=connection.tenant_id,
+            )
+            for name in (item.capability_names or [])
+        }
+        for tool_assignment in db.query(AgentToolAssignment).filter(
+            AgentToolAssignment.agent_id == agent_id,
+            AgentToolAssignment.tenant_id == connection.tenant_id,
+            AgentToolAssignment.assignment_action == "execute",
+            AgentToolAssignment.tool_name.in_(by_name),
+        ):
+            if tool_assignment.tool_name not in authorized_names:
+                tool_assignment.enabled = False

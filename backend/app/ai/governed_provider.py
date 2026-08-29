@@ -4,6 +4,8 @@ from collections.abc import Generator, MutableMapping, Sequence
 from contextlib import contextmanager
 from contextvars import ContextVar
 
+from pydantic import BaseModel
+
 from app.ai.base import AIProvider
 from app.ai.models import AIMessage, AIResponse, AIStreamEvent
 
@@ -15,7 +17,6 @@ _usage_collector: ContextVar[MutableMapping[str, int] | None] = ContextVar(
 )
 
 
-@contextmanager
 def provider_invocation_authorized() -> bool:
     return _authorized.get()
 
@@ -56,6 +57,24 @@ class GovernedProvider(AIProvider):
                 value = getattr(response.usage, key, 0)
                 collector[key] = collector.get(key, 0) + int(value or 0)
         return response
+
+    def ask_structured(
+        self,
+        messages: Sequence[AIMessage],
+        *,
+        response_model: type[BaseModel],
+    ) -> tuple[AIResponse, BaseModel]:
+        self._require_reservation()
+        structured = getattr(self._provider, "ask_structured", None)
+        if structured is None:
+            raise RuntimeError("Configured provider does not support structured output")
+        response, parsed = structured(messages, response_model=response_model)
+        collector = _usage_collector.get()
+        if collector is not None and response.usage is not None:
+            for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+                value = getattr(response.usage, key, 0)
+                collector[key] = collector.get(key, 0) + int(value or 0)
+        return response, parsed
 
     def stream(
         self, messages: Sequence[AIMessage]

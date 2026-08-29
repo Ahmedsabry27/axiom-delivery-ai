@@ -38,6 +38,7 @@ from app.database.models.agent_assignment import (
     AgentToolAssignment,
 )
 from app.database.models.governance import GovernedModel, ModelPrice, UsageRecord
+from app.database.models.integration import IntegrationSourceRecord
 from app.database.models.tool import ToolDefinition, ToolExecution
 from app.database.session import SessionLocal
 from app.events.runtime_events import (
@@ -1406,7 +1407,35 @@ class RuntimeExecutionService:
         }
         base_missing = self._required_fields("", inputs, [create_definition])
         if not inputs.get("project_key"):
-            await self._pause_for_input(execution_id, base_missing, inputs)
+            project_result = await self._execute_runtime_tool(
+                execution_id,
+                execution,
+                context,
+                permissions,
+                tenant_id,
+                "jira.get_projects",
+                {},
+                stage="projects",
+            )
+            projects = project_result.get("values") or project_result.get("projects") or []
+            options = [
+                {
+                    "label": str(item.get("name") or item.get("key")),
+                    "value": str(item.get("key")),
+                }
+                for item in projects
+                if isinstance(item, dict) and item.get("key")
+            ]
+            project_field = next(
+                field for field in base_missing if field["name"] == "project_key"
+            )
+            project_field = {
+                **project_field,
+                "type": "select" if options else "text",
+                "options": options,
+                "description": "Project from the connected Jira workspace",
+            }
+            await self._pause_for_input(execution_id, [project_field], inputs)
             return
         metadata_inputs = {"project_key": inputs["project_key"]}
         if inputs.get("issue_type_id"):
@@ -1504,6 +1533,21 @@ class RuntimeExecutionService:
             for key, value in inputs.items()
             if key not in known and value not in (None, "", [])
         }
+        if not self._runtime_metadata(execution_id).get("approval_granted"):
+            await self._pause_for_approval(
+                execution_id,
+                action_inputs,
+                action="jira.create_issue",
+                name="Approve Jira issue creation",
+                description="Creating a Jira issue is a governed external write action.",
+                summary=(
+                    f"Create {action_inputs.get('issue_type', 'issue')} in "
+                    f"{action_inputs.get('project_key')}: "
+                    f"{action_inputs.get('summary')}"
+                ),
+                business_impact="Creates a new issue in the connected Jira project",
+            )
+            return
         issue = await self._execute_runtime_tool(
             execution_id,
             execution,
@@ -1803,7 +1847,16 @@ class RuntimeExecutionService:
         return next(iter(unique))
 
     async def _pause_for_approval(
-        self, execution_id: str, inputs: dict[str, Any]
+        self,
+        execution_id: str,
+        inputs: dict[str, Any],
+        *,
+        action: str,
+        name: str,
+        description: str,
+        summary: str,
+        business_impact: str,
+        risk: str = "medium",
     ) -> None:
         db = SessionLocal()
         try:
@@ -1814,7 +1867,12 @@ class RuntimeExecutionService:
                 execution_id=record.id,
                 tenant_id=record.tenant_id,
                 kind="approval",
-                schema={"type": "approval", "action": "send_email"},
+                schema={
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": False,
+                    "action": action,
+                },
                 known_values=inputs,
                 required_role="runtime.approver",
                 expires_at=datetime.now(UTC).replace(tzinfo=None) + timedelta(hours=4),
@@ -1839,16 +1897,16 @@ class RuntimeExecutionService:
             execution_id,
             {
                 "type": "approval_required",
-                "name": "Send report approval",
-                "description": "Sending the generated report is a governed business action.",
+                "name": name,
+                "description": description,
                 "status": "waiting",
                 "continuation_id": continuation_id,
-                "action": "send_email",
-                "risk": "medium",
-                "business_impact": "Sends report data to external recipients",
+                "action": action,
+                "risk": risk,
+                "business_impact": business_impact,
                 "required_role": "runtime.approver",
-                "requested_parameters": {"recipients": inputs.get("recipients")},
-                "summary": "Approve sending the deployment report to the confirmed recipients.",
+                "requested_parameters": inputs,
+                "summary": summary,
                 "final": False,
             },
         )
@@ -2006,7 +2064,7 @@ class RuntimeExecutionService:
         ]
         if missing:
             raise ValueError(f"Missing required values: {', '.join(missing)}")
-        if not agent_execution_id:
+        if not agent_execution_id and continuation.kind != "approval":
             try:
                 validate_json(
                     {**continuation.known_values, **values},
@@ -2587,6 +2645,16 @@ class RuntimeExecutionService:
                 visible_tool_definitions=visible_tool_definitions,
                 runtime_metadata=runtime_metadata,
             )
+            if self._requires_direct_response(structured_analysis):
+                await self._execute_direct_response(
+                    execution_id,
+                    execution,
+                    message,
+                    provider_name,
+                    model,
+                    started_at,
+                )
+                return
             parameter_extraction = await self._extract_parameters_once(
                 execution_id,
                 message,
@@ -2603,6 +2671,11 @@ class RuntimeExecutionService:
                 parameter_extraction=parameter_extraction,
                 schema_definitions=visible_tool_definitions,
                 runtime_metadata=runtime_metadata,
+            )
+            parameter_state = self._enforce_explicit_jira_create_inputs(
+                execution_id,
+                message,
+                parameter_state,
             )
             input_requirements = await self._evaluate_input_requirements_once(
                 execution_id,
@@ -2635,7 +2708,11 @@ class RuntimeExecutionService:
                     return
                 await self._pause_for_input(
                     execution_id,
-                    self._requirement_fields(input_requirements),
+                    self._enrich_jira_requirement_fields(
+                        tenant_id,
+                        structured_analysis.get("intent"),
+                        self._requirement_fields(input_requirements),
+                    ),
                     {
                         name: item.get("value")
                         for name, item in parameter_state.get("parameters", {}).items()
@@ -2673,11 +2750,17 @@ class RuntimeExecutionService:
                 return
             if capability_resolution.get("status") != "RESOLVED":
                 resolution_status = capability_resolution.get("status", "UNAVAILABLE")
+                unavailable_message = (
+                    "No enabled Jira connection can create issues in this workspace. "
+                    "Connect and enable Jira under Integrations, then retry the request."
+                    if structured_analysis.get("intent") == "jira.issue.create"
+                    else "No enabled capability is currently available for this request."
+                )
                 safe_messages = {
                     "UNAUTHORIZED": "You don't have permission to perform this action.",
                     "UNHEALTHY": "The required integration is currently unavailable.",
                     "AMBIGUOUS": "Multiple capabilities are available; a specific connection is required.",
-                    "UNAVAILABLE": "No enabled capability is currently available for this request.",
+                    "UNAVAILABLE": unavailable_message,
                 }
                 self.transition_execution(
                     execution_id,
@@ -2817,6 +2900,7 @@ class RuntimeExecutionService:
                 resolved_inputs,
                 selected_agent,
                 implementation_name,
+                presentation=parameter_extraction.get("presentation"),
             )
             return
 
@@ -3294,6 +3378,15 @@ class RuntimeExecutionService:
             duration_ms = round(
                 (datetime.now(UTC) - started_at).total_seconds() * 1000, 2
             )
+            logger.exception(
+                "Runtime execution pipeline failed",
+                extra={
+                    "execution_id": execution_id,
+                    "workflow_id": str(execution.workflow_id),
+                    "error_type": type(exc).__name__,
+                    "duration_ms": duration_ms,
+                },
+            )
             safe_error = self._safe_error_message(exc)
             terminal_status = (
                 "TIMED_OUT"
@@ -3422,6 +3515,68 @@ class RuntimeExecutionService:
         existing = metadata.get("parameter_extraction")
         if isinstance(existing, dict) and existing:
             return existing
+        jira_read_intents = {
+            "jira.project.search",
+            "jira.issue.create_metadata.read",
+            "jira.issue.transition.read",
+        }
+        if (
+            structured_intent.get("source") == "deterministic"
+            and structured_intent.get("intent") in jira_read_intents
+        ):
+            parameters = {
+                name: {
+                    "name": name,
+                    "value": value,
+                    "value_type": (
+                        "boolean"
+                        if isinstance(value, bool)
+                        else "integer"
+                        if isinstance(value, int)
+                        else "number"
+                        if isinstance(value, float)
+                        else "array"
+                        if isinstance(value, list)
+                        else "object"
+                        if isinstance(value, dict)
+                        else "string"
+                    ),
+                    "source": "user_prompt",
+                    "confidence": 1.0,
+                    "explicit": True,
+                    "normalized": False,
+                    "original_text": str(value),
+                }
+                for name, value in (structured_intent.get("entities") or {}).items()
+            }
+            parameter_extraction = {
+                "intent": structured_intent.get("intent"),
+                "parameters": parameters,
+                "unresolved_mentions": [],
+                "warnings": [],
+                "source": "fallback",
+                "error_code": None,
+                "provider": "deterministic",
+                "model": "rules-v1",
+                "latency_ms": 0,
+                "usage": None,
+            }
+            self._merge_runtime_metadata(
+                execution_id, {"parameter_extraction": parameter_extraction}
+            )
+            await self.publish_event(
+                execution_id,
+                {
+                    "type": "parameter_extraction.completed",
+                    "name": "Parameter Extraction",
+                    "step_id": "parameter-extraction",
+                    "description": "Jira read parameters resolved",
+                    "status": "completed",
+                    "parameter_extraction": parameter_extraction,
+                    "final": False,
+                },
+            )
+            return parameter_extraction
         extracted = await asyncio.to_thread(
             parameter_extractor.extract,
             message,
@@ -3473,15 +3628,8 @@ class RuntimeExecutionService:
                 (definition.get("function") or {}).get("parameters") or {}
             ).get("properties") or {}
             for name, schema in properties.items():
-                schema_type = schema.get("type")
-                if schema_type in {
-                    "string",
-                    "integer",
-                    "number",
-                    "boolean",
-                    "array",
-                    "object",
-                }:
+                schema_type = self._expected_parameter_type(schema.get("type"))
+                if schema_type:
                     expected_types.setdefault(name, schema_type)
         state = parameter_reconciler.reconcile(
             structured_intent,
@@ -3510,6 +3658,30 @@ class RuntimeExecutionService:
             },
         )
         return state
+
+    @staticmethod
+    def _expected_parameter_type(schema_type: Any) -> str | None:
+        """Return the concrete type from JSON Schema scalar or union syntax."""
+        supported = {
+            "string",
+            "integer",
+            "number",
+            "boolean",
+            "array",
+            "object",
+        }
+        if isinstance(schema_type, str):
+            return schema_type if schema_type in supported else None
+        if isinstance(schema_type, list):
+            return next(
+                (
+                    candidate
+                    for candidate in schema_type
+                    if isinstance(candidate, str) and candidate in supported
+                ),
+                None,
+            )
+        return None
 
     async def _evaluate_input_requirements_once(
         self,
@@ -3667,7 +3839,7 @@ class RuntimeExecutionService:
             context = {
                 "environment": metadata.get("environment")
                 or (metadata.get("inputs") or {}).get("environment")
-                or "production"
+                or settings.APP_ENV
             }
             result = agent_router.route(
                 db,
@@ -3785,6 +3957,165 @@ class RuntimeExecutionService:
         return fields
 
     @staticmethod
+    def _enrich_jira_requirement_fields(
+        tenant_id: str, intent: str | None, fields: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        if intent != "jira.issue.create" or not any(
+            field.get("name") == "project_key" for field in fields
+        ):
+            return fields
+        db = SessionLocal()
+        try:
+            rows = (
+                db.query(IntegrationSourceRecord)
+                .filter_by(
+                    tenant_id=tenant_id,
+                    provider="atlassian",
+                    external_entity_type="project",
+                    data_status="CURRENT",
+                )
+                .order_by(IntegrationSourceRecord.title)
+                .all()
+            )
+            options = [
+                {"label": row.title, "value": (row.safe_payload or {}).get("key")}
+                for row in rows
+                if (row.safe_payload or {}).get("key")
+            ]
+        finally:
+            db.close()
+        return [
+            {
+                **field,
+                "type": "select",
+                "options": options,
+                "description": "Project from the latest Jira synchronization",
+            }
+            if field.get("name") == "project_key" and options
+            else field
+            for field in fields
+        ]
+
+    @staticmethod
+    def _requires_direct_response(structured_intent: dict[str, Any]) -> bool:
+        """Keep non-action prompts out of the governed tool execution pipeline."""
+        intent = structured_intent.get("intent")
+        if structured_intent.get("error_code") or not intent:
+            return True
+        if intent in requirement_schema_provider.supported_intents():
+            return False
+        # Unknown enterprise intents must continue through the requirement gate
+        # so the runtime fails closed instead of treating them as casual chat.
+        return str(intent).startswith("general.")
+
+    def _enforce_explicit_jira_create_inputs(
+        self,
+        execution_id: str,
+        message: str,
+        parameter_state: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Reject guessed or cross-conversation values for a Jira write."""
+        if parameter_state.get("intent") != "jira.issue.create":
+            return parameter_state
+        metadata = self._runtime_metadata(execution_id)
+        if metadata.get("inputs") or metadata.get("approval_granted"):
+            return parameter_state
+        current_request = " ".join(message.casefold().split())
+        parameters = dict(parameter_state.get("parameters") or {})
+        rejected = []
+        for name in ("project_key", "issue_type", "summary"):
+            parameter = parameters.get(name)
+            if not parameter:
+                continue
+            original = parameter.get("original_text")
+            attributable = (
+                parameter.get("source") == "user_prompt"
+                and isinstance(original, str)
+                and " ".join(original.casefold().split()) in current_request
+            )
+            if not attributable:
+                parameters.pop(name, None)
+                rejected.append(name)
+        if not rejected:
+            return parameter_state
+        sanitized = {
+            **parameter_state,
+            "parameters": parameters,
+            "warnings": [
+                *(parameter_state.get("warnings") or []),
+                "Jira write fields not explicitly present in the current request were ignored: "
+                + ", ".join(rejected),
+            ],
+        }
+        self._merge_runtime_metadata(execution_id, {"parameter_state": sanitized})
+        return sanitized
+
+    async def _execute_direct_response(
+        self,
+        execution_id: str,
+        execution: RuntimeExecution,
+        message: str,
+        provider_name: str,
+        model: str,
+        started_at: datetime,
+    ) -> None:
+        """Generate a normal Copilot answer when no executable action was requested."""
+        await self.publish_step(
+            execution_id,
+            name="Response Generation",
+            description="Generating a governed conversational response",
+            status="running",
+            agent="Axiom Delivery Copilot",
+        )
+        response = await asyncio.to_thread(
+            self._generate_response,
+            execution.conversation_id,
+            execution.user_id,
+            message,
+            provider_name,
+            model,
+            execution.tenant_id,
+            execution_id,
+            execution.runtime_metadata or {},
+        )
+        duration_ms = round(
+            (datetime.now(UTC) - started_at).total_seconds() * 1000, 2
+        )
+        usage = (
+            {
+                "prompt_tokens": response.usage.prompt_tokens,
+                "completion_tokens": response.usage.completion_tokens,
+                "total_tokens": response.usage.total_tokens,
+            }
+            if response.usage
+            else {}
+        )
+        await self.publish_event(
+            execution_id,
+            {
+                "type": "metric",
+                "name": "Provider Metrics",
+                "status": "completed",
+                "provider": provider_name,
+                "model": response.model,
+                "metadata": {
+                    "duration_ms": duration_ms,
+                    "provider_latency_ms": round(
+                        response.latency_seconds * 1000, 2
+                    ),
+                    "token_usage": usage,
+                },
+            },
+        )
+        self._complete_execution(
+            execution_id,
+            status="COMPLETED",
+            agent="Axiom Delivery Copilot",
+            message=response.text,
+            duration_ms=duration_ms,
+        )
+
+    @staticmethod
     def _budget_context(execution: RuntimeExecution, message: str, model: str):
         from app.governance.budget_enforcement import BudgetContext
 
@@ -3821,10 +4152,15 @@ class RuntimeExecutionService:
         execution_id: str,
         runtime_metadata: dict[str, Any],
     ):
+        from app.ai.governed_provider import provider_invocation_authorized
+
         db = SessionLocal()
         try:
             budget_context = None
-            if settings.BUDGET_ENFORCEMENT_ENABLED:
+            if (
+                settings.BUDGET_ENFORCEMENT_ENABLED
+                and not provider_invocation_authorized()
+            ):
                 from app.governance.budget_enforcement import BudgetContext
 
                 scope = runtime_metadata.get("scope") or {}
@@ -3943,6 +4279,7 @@ class RuntimeExecutionService:
         inputs: dict[str, Any],
         selected: dict[str, Any],
         implementation_name: str,
+        presentation: dict[str, Any] | None = None,
     ) -> None:
         metadata = self._runtime_metadata(execution_id)
         identity = self._identity(metadata)
@@ -3966,6 +4303,7 @@ class RuntimeExecutionService:
                     conversation_id=str(execution.conversation_id),
                     runtime_execution_id=execution_id,
                     selected_tool=implementation_name,
+                    presentation=presentation,
                 ),
                 identity=identity,
             )

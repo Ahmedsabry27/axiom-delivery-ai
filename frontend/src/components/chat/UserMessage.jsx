@@ -36,8 +36,8 @@ export default function UserMessage({ message }) {
 
         <div
           className="
-          rounded-[28px]
-          bg-emerald-600
+          rounded-sm
+          bg-[#a00028]
           px-6
           py-4
           text-white

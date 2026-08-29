@@ -3,7 +3,12 @@ from uuid import uuid4
 import pytest
 
 from app.database.models.action import Action
-from app.database.models.integration import IntegrationCapability, IntegrationConnection
+from app.database.models.agent import Agent
+from app.database.models.integration import (
+    IntegrationAgentAssignment,
+    IntegrationCapability,
+    IntegrationConnection,
+)
 from app.database.models.tool import ToolDefinition
 from app.database.session import SessionLocal
 from app.models.runtime_execution import RuntimeExecution, RuntimeExecutionEvent
@@ -271,6 +276,39 @@ def test_input_compatibility_ranks_compatible_candidate(db_session):
     result = resolve(db_session, permissions={"jira.issue.create"})
     assert result.status == "RESOLVED"
     assert result.selected.integration_connection_id == first.id
+
+
+def test_integration_agent_eligibility_is_scoped_per_capability(db_session):
+    connection = jira_connection(db_session)
+    jira_capability(db_session, connection, "jira.search_issues")
+    jira_capability(db_session, connection, "jira.get_issue")
+    agent = Agent(tenant_id="tenant-a", slug="jira-reader", name="Jira Reader")
+    db_session.add(agent)
+    db_session.flush()
+    db_session.add(
+        IntegrationAgentAssignment(
+            connection_id=connection.id,
+            agent_id=agent.id,
+            tenant_id="tenant-a",
+            capability_names=["jira.search_issues"],
+            created_by="test",
+        )
+    )
+    db_session.commit()
+
+    search = resolve(
+        db_session,
+        name="jira.issue.search",
+        permissions={"jira.issue.read"},
+    )
+    read = resolve(
+        db_session,
+        name="jira.issue.read",
+        permissions={"jira.issue.read"},
+    )
+
+    assert search.selected.eligible_agent_ids == [str(agent.id)]
+    assert read.selected.eligible_agent_ids == []
 
 
 def test_explicit_agent_without_capability_is_not_silently_ignored(db_session):

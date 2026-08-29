@@ -13,6 +13,7 @@ export default function ChatWindow({
   const scrollRef = useRef(null);
 
   const [newActivity, setNewActivity] = useState(false);
+  const hasInlineRuntime = messages.some((message) => message.metadata?.execution_id);
 
   // -----------------------------------------
   // Auto Scroll
@@ -113,7 +114,7 @@ export default function ChatWindow({
             Runtime Loading
         ------------------------------------- */}
 
-        {loading && (
+        {loading && !hasInlineRuntime && (
           <div
             className="
               mx-auto

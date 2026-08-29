@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import csv
 import hashlib
+import io
+import json
 import logging
+import re
 import secrets
 import time
 from dataclasses import dataclass
@@ -62,6 +66,7 @@ class ExecutionRequest:
     test_mode: bool = False
     runtime_execution_id: str | None = None
     selected_tool: str | None = None
+    presentation: dict[str, Any] | None = None
 
 
 class AgentExecutionService:
@@ -74,6 +79,35 @@ class AgentExecutionService:
     @staticmethod
     def _safe_summary(value: str) -> str:
         return " ".join(value.split())[:500]
+
+    @staticmethod
+    def _jira_document_text(value: Any) -> str:
+        """Convert Jira plain text or Atlassian Document Format to readable text."""
+        if isinstance(value, str):
+            return value.strip()
+        if isinstance(value, list):
+            return "".join(
+                AgentExecutionService._jira_document_text(item) for item in value
+            )
+        if not isinstance(value, dict):
+            return ""
+        if isinstance(value.get("text"), str):
+            return value["text"]
+        if value.get("type") == "hardBreak":
+            return "\n"
+        content = "".join(
+            AgentExecutionService._jira_document_text(item)
+            for item in value.get("content") or []
+        )
+        if value.get("type") in {
+            "paragraph",
+            "heading",
+            "listItem",
+            "bulletList",
+            "orderedList",
+        }:
+            content = f"{content.rstrip()}\n"
+        return re.sub(r"\n{3,}", "\n\n", content).strip()
 
     @staticmethod
     def _serialize(
@@ -333,6 +367,7 @@ class AgentExecutionService:
                 "limits": metadata.get("execution_limits", {}),
                 "environment": request.environment,
                 "selected_tool": request.selected_tool,
+                "presentation": request.presentation or {},
             },
         )
         db.add(row)
@@ -571,6 +606,384 @@ class AgentExecutionService:
         db.commit()
         return row
 
+    @staticmethod
+    def _tool_result_message(
+        tool_name: str,
+        data: dict[str, Any],
+        presentation: dict[str, Any] | None = None,
+    ) -> str:
+        """Render integration reads as useful, safe chat responses."""
+        if tool_name == "jira.get_projects":
+            projects = data.get("values") or []
+            if not projects:
+                return "No Jira projects are accessible to the connected account."
+            lines = [f"I found {len(projects)} Jira project(s):"]
+            lines.extend(
+                f"- **{item.get('key', '—')}** — {item.get('name', 'Unnamed project')}"
+                for item in projects
+            )
+            return "\n".join(lines)
+        if tool_name == "jira.get_versions":
+            releases = data.get("releases") or []
+            if not releases:
+                return "No planned Jira releases were found in the accessible project scope."
+            lines = [f"I found {len(releases)} planned Jira release(s):"]
+            for release in releases:
+                date = release.get("release_date") or "No release date"
+                overdue = " · Overdue" if release.get("overdue") else ""
+                link = release.get("browse_url")
+                name = str(release.get("name") or "Unnamed release")
+                identity = f"[{name}]({link})" if link else f"**{name}**"
+                lines.append(
+                    f"- {identity} — {release.get('project_key', '—')} · {date}{overdue}"
+                )
+            return "\n".join(lines)
+        if tool_name == "jira.get_version_issues":
+            release = data.get("release") or {}
+            issues = data.get("issues") or []
+            release_name = release.get("name") or "the requested release"
+            if not issues:
+                return f"No Jira tickets are assigned to **{release_name}**."
+            lines = [
+                f"I found {len(issues)} Jira ticket(s) in **{release_name}** "
+                f"({release.get('project_key', '—')}):"
+            ]
+            for issue in issues:
+                fields = issue.get("fields") or {}
+                key = issue.get("key") or "—"
+                link = issue.get("browse_url")
+                identity = f"[{key}]({link})" if link else f"**{key}**"
+                status = (fields.get("status") or {}).get("name") or "Unknown status"
+                lines.append(
+                    f"- {identity} — {fields.get('summary') or 'Untitled'} · {status}"
+                )
+            return "\n".join(lines)
+        if tool_name == "jira.search_issues":
+            issues = data.get("issues") or []
+            if not issues:
+                return "No Jira issues matched the request."
+
+            spec = presentation or {}
+            allowed_fields = {
+                "key",
+                "summary",
+                "project",
+                "issue_type",
+                "status",
+                "priority",
+                "assignee",
+            }
+            requested_fields = [
+                field
+                for field in spec.get("fields") or []
+                if field in allowed_fields
+            ]
+            output_fields = requested_fields or [
+                "key",
+                "summary",
+                "issue_type",
+                "status",
+            ]
+            labels = {
+                "key": "Key",
+                "summary": "Summary",
+                "project": "Project",
+                "issue_type": "Type",
+                "status": "Status",
+                "priority": "Priority",
+                "assignee": "Assignee",
+            }
+
+            rows = []
+            for item in issues:
+                fields = item.get("fields") or {}
+                project = fields.get("project") or {}
+                assignee = fields.get("assignee") or {}
+                rows.append(
+                    {
+                        "key": item.get("key") or "—",
+                        "summary": fields.get("summary") or "Untitled",
+                        "project": project.get("key")
+                        or project.get("name")
+                        or "Unknown project",
+                        "issue_type": (fields.get("issuetype") or {}).get("name")
+                        or "Issue",
+                        "status": (fields.get("status") or {}).get("name")
+                        or "Unknown status",
+                        "priority": (fields.get("priority") or {}).get("name")
+                        or "No priority",
+                        "assignee": assignee.get("displayName")
+                        or assignee.get("name")
+                        or assignee.get("emailAddress")
+                        or "Unassigned",
+                    }
+                )
+
+            prefix = (
+                f"I found {len(rows)} Jira issue(s):"
+                if spec.get("include_count", True)
+                else ""
+            )
+            output_format = spec.get("format") or "auto"
+            if output_format == "auto":
+                output_format = "table" if requested_fields else "list"
+
+            if output_format == "json":
+                payload = [
+                    {field: row[field] for field in output_fields} for row in rows
+                ]
+                body = f"```json\n{json.dumps(payload, indent=2)}\n```"
+                return "\n\n".join(part for part in (prefix, body) if part)
+
+            if output_format == "csv":
+                stream = io.StringIO()
+                writer = csv.DictWriter(stream, fieldnames=output_fields)
+                writer.writeheader()
+                writer.writerows(
+                    {field: row[field] for field in output_fields} for row in rows
+                )
+                body = f"```csv\n{stream.getvalue().strip()}\n```"
+                return "\n\n".join(part for part in (prefix, body) if part)
+
+            if output_format == "summary":
+                status_counts: dict[str, int] = {}
+                assignee_counts: dict[str, int] = {}
+                for row in rows:
+                    status_counts[row["status"]] = status_counts.get(row["status"], 0) + 1
+                    assignee_counts[row["assignee"]] = (
+                        assignee_counts.get(row["assignee"], 0) + 1
+                    )
+                body = "\n".join(
+                    [
+                        "- Statuses: "
+                        + ", ".join(
+                            f"{name}: {count}"
+                            for name, count in sorted(status_counts.items())
+                        ),
+                        "- Assignees: "
+                        + ", ".join(
+                            f"{name}: {count}"
+                            for name, count in sorted(assignee_counts.items())
+                        ),
+                    ]
+                )
+                return "\n".join(part for part in (prefix, body) if part)
+
+            if output_format == "table":
+                header = "| " + " | ".join(labels[field] for field in output_fields) + " |"
+                divider = "| " + " | ".join("---" for _ in output_fields) + " |"
+                table_rows = [
+                    "| "
+                    + " | ".join(
+                        str(row[field]).replace("|", "\\|").replace("\n", " ")
+                        for field in output_fields
+                    )
+                    + " |"
+                    for row in rows
+                ]
+                body = "\n".join([header, divider, *table_rows])
+                return "\n\n".join(part for part in (prefix, body) if part)
+
+            lines = [prefix] if prefix else []
+            for row in rows:
+                identity = ""
+                if "key" in output_fields:
+                    identity = f"**{row['key']}**"
+                if "summary" in output_fields:
+                    identity = f"{identity} — {row['summary']}" if identity else row["summary"]
+                details = [
+                    f"{labels[field]}: {row[field]}"
+                    for field in output_fields
+                    if field not in {"key", "summary"}
+                ]
+                suffix = f" ({', '.join(details)})" if details else ""
+                lines.append(f"- {identity or 'Jira issue'}{suffix}")
+            return "\n".join(lines)
+        if tool_name == "jira.get_issue":
+            fields = data.get("fields") or {}
+            spec = presentation or {}
+            allowed_fields = {
+                "key",
+                "summary",
+                "project",
+                "issue_type",
+                "status",
+                "priority",
+                "assignee",
+                "description",
+                "link",
+            }
+            requested_fields = [
+                field for field in spec.get("fields") or [] if field in allowed_fields
+            ]
+            output_fields = requested_fields or [
+                "key",
+                "summary",
+                "issue_type",
+                "status",
+                "project",
+            ]
+            key = data.get("key") or "Jira issue"
+            summary = fields.get("summary") or "Untitled"
+            values = {
+                "project": (fields.get("project") or {}).get("name")
+                or (fields.get("project") or {}).get("key")
+                or "Unknown project",
+                "issue_type": (fields.get("issuetype") or {}).get("name") or "Issue",
+                "status": (fields.get("status") or {}).get("name") or "Unknown status",
+                "priority": (fields.get("priority") or {}).get("name") or "No priority",
+                "assignee": (fields.get("assignee") or {}).get("displayName")
+                or (fields.get("assignee") or {}).get("name")
+                or (fields.get("assignee") or {}).get("emailAddress")
+                or "Unassigned",
+            }
+            if "summary" in output_fields:
+                heading = f"**{key}** — {summary}"
+            else:
+                heading = f"**{key}**"
+            parts = [heading]
+            labels = {
+                "project": "Project",
+                "issue_type": "Type",
+                "status": "Status",
+                "priority": "Priority",
+                "assignee": "Assignee",
+            }
+            details = [
+                f"- {labels[field]}: {values[field]}"
+                for field in output_fields
+                if field in labels
+            ]
+            if details:
+                parts.append("\n".join(details))
+            if "description" in output_fields:
+                description = AgentExecutionService._jira_document_text(
+                    fields.get("description")
+                )
+                parts.append(
+                    f"**Description**\n\n{description}"
+                    if description
+                    else "**Description**\n\nNo description is set for this issue."
+                )
+            if "link" in output_fields:
+                browse_url = str(data.get("browse_url") or "")
+                parts.append(
+                    f"[Open {key} in Jira]({browse_url})"
+                    if browse_url.startswith("https://")
+                    else "A Jira link is not available for this issue."
+                )
+            return "\n\n".join(parts)
+        if tool_name == "jira.get_comments":
+            comments = data.get("comments") or []
+            issue_key = data.get("issue_key") or "the Jira issue"
+            if not comments:
+                return f"No comments have been added to **{issue_key}**."
+            lines = [f"I found {len(comments)} comment(s) on **{issue_key}**:"]
+            for comment in comments:
+                author = (comment.get("author") or {}).get("displayName") or "Unknown author"
+                created = str(comment.get("created") or "Unknown date")
+                text = AgentExecutionService._jira_document_text(comment.get("body"))
+                lines.append(f"- **{author}** · {created}\n  {text or 'Empty comment'}")
+            browse_url = str(data.get("browse_url") or "")
+            if browse_url.startswith("https://"):
+                lines.append(f"[Open {issue_key} in Jira]({browse_url})")
+            return "\n\n".join(lines)
+        if tool_name == "jira.get_sprint_health":
+            sprint = data.get("sprint") or {}
+            metrics = data.get("metrics") or {}
+            lines = [
+                f"## Sprint health: {sprint.get('name', 'Jira sprint')}",
+                f"**Assessment:** {data.get('health', 'UNKNOWN')} · "
+                f"**Confidence:** {data.get('confidence', 'LOW')}",
+                "### Performance",
+                f"- Completed: {metrics.get('completed', 0)} of {metrics.get('issues', 0)} issues "
+                + (
+                    f"({metrics['completion_rate']}%)"
+                    if metrics.get("completion_rate") is not None
+                    else "(completion rate unknown)"
+                ),
+                f"- Blockers: {metrics.get('blockers', 0)}",
+                f"- Linked dependencies: {metrics.get('dependencies', 0)}",
+                f"- Overdue open work: {metrics.get('overdue', 0)}",
+                f"- Defects in sprint: {metrics.get('defects', 0)}",
+            ]
+            for title, key in (
+                ("Blockers", "blockers"),
+                ("Dependencies", "dependencies"),
+                ("Overdue work", "overdue"),
+                ("Defects", "defects"),
+            ):
+                items = data.get(key) or []
+                lines.append(f"### {title}")
+                if not items:
+                    lines.append("- None found in the retrieved Jira fields.")
+                for item in items:
+                    identity = (
+                        f"[{item['key']}]({item['browse_url']})"
+                        if item.get("browse_url")
+                        else f"**{item.get('key', '—')}**"
+                    )
+                    lines.append(
+                        f"- {identity} — {item.get('summary', 'Untitled')} · "
+                        f"{item.get('status', 'Unknown')}"
+                    )
+            lines.append("### Missing information")
+            lines.extend(f"- {item}" for item in data.get("missing_information") or [])
+            lines.append("### Recommended actions")
+            lines.extend(
+                f"{index}. {item}"
+                for index, item in enumerate(data.get("recommended_actions") or [], 1)
+            )
+            evidence = data.get("evidence") or {}
+            lines.extend(
+                [
+                    "### Jira evidence",
+                    f"- Live Jira Agile API retrieval: {evidence.get('retrieved_at', 'Unknown')}",
+                    f"- Sprint ID: {evidence.get('sprint_id', 'Unknown')}",
+                    f"- Retrieved issues: {evidence.get('issue_count', 0)}",
+                    f"- Partial result: {'Yes' if evidence.get('partial') else 'No'}",
+                ]
+            )
+            return "\n\n".join(lines)
+        if tool_name == "jira.get_sprints":
+            sprints = data.get("sprints") or []
+            state = data.get("state") or "active"
+            if not sprints:
+                return f"No {state} Jira sprints were found in the accessible boards."
+            lines = [f"I found {len(sprints)} {state} Jira sprint(s):"]
+            for sprint in sprints:
+                dates = ""
+                if sprint.get("start_date") or sprint.get("end_date"):
+                    dates = (
+                        f" · {sprint.get('start_date') or 'Unknown start'} → "
+                        f"{sprint.get('end_date') or 'Unknown end'}"
+                    )
+                lines.append(
+                    f"- **{sprint.get('name', 'Unnamed sprint')}** — "
+                    f"{sprint.get('board_name', 'Unnamed board')}{dates}"
+                )
+                if sprint.get("goal"):
+                    lines.append(f"  Goal: {sprint['goal']}")
+            return "\n".join(lines)
+        if tool_name == "jira.get_create_metadata":
+            issue_types = data.get("issue_types") or []
+            names = [item.get("name") for item in issue_types if item.get("name")]
+            return (
+                f"Available Jira issue types for **{data.get('project_key', 'this project')}**: "
+                + ", ".join(names)
+                if names
+                else "No Jira issue types were returned for this project."
+            )
+        if tool_name == "jira.get_transitions":
+            transitions = data.get("transitions") or []
+            names = [item.get("name") for item in transitions if item.get("name")]
+            return (
+                "Available Jira transitions: " + ", ".join(names)
+                if names
+                else "No Jira transitions are currently available for this issue."
+            )
+        return str(data.get("report") or data.get("message") or "Execution completed.")
+
     async def _run(
         self,
         db: Session,
@@ -781,7 +1194,11 @@ class AgentExecutionService:
                     else "Tool execution failed",
                 )
             result = {
-                "message": envelope.data.get("report", "Execution completed"),
+                "message": self._tool_result_message(
+                    selected.tool_name,
+                    envelope.data,
+                    (row.runtime_metadata or {}).get("presentation"),
+                ),
                 "citations": citations,
                 "instruction_effect": str(metadata.get("instructions", ""))[:160],
             }

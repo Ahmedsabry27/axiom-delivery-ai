@@ -38,6 +38,11 @@ LEGACY_SEMANTIC_CAPABILITIES: dict[str, str] = {
     "jira.get_projects": "jira.project.search",
     "jira.search_issues": "jira.issue.search",
     "jira.get_issue": "jira.issue.read",
+    "jira.get_comments": "jira.issue.comment.read",
+    "jira.get_sprint_health": "jira.sprint.health.assess",
+    "jira.get_sprints": "jira.sprint.search",
+    "jira.get_versions": "jira.release.search",
+    "jira.get_version_issues": "jira.release.issue.search",
     "jira.get_create_metadata": "jira.issue.create_metadata.read",
     "jira.get_transitions": "jira.issue.transition.read",
     "jira.create_issue": "jira.issue.create",
@@ -200,9 +205,12 @@ class CapabilityResolver:
             .filter_by(tenant_id=tenant_id)
             .all()
         }
-        assignments: dict[str, list[str]] = {}
+        assignments: dict[tuple[str, str], list[str]] = {}
         for row in db.query(IntegrationAgentAssignment).filter_by(tenant_id=tenant_id):
-            assignments.setdefault(row.connection_id, []).append(str(row.agent_id))
+            for capability_name in row.capability_names or []:
+                assignments.setdefault(
+                    (row.connection_id, capability_name), []
+                ).append(str(row.agent_id))
         descriptors: list[CapabilityDescriptor] = []
         backed_names: set[tuple[str, str]] = set()
         for capability in db.query(IntegrationCapability).filter_by(
@@ -241,7 +249,9 @@ class CapabilityResolver:
                     risk_level=capability.risk_level,
                     approval_required=capability.approval_required,
                     version=capability.version,
-                    eligible_agent_ids=assignments.get(capability.connection_id, []),
+                    eligible_agent_ids=assignments.get(
+                        (capability.connection_id, capability.external_name), []
+                    ),
                 )
             )
         for tool in db.query(ToolDefinition).filter(

@@ -6,6 +6,7 @@ from collections.abc import Generator, Sequence
 from typing import Any
 
 from openai import APITimeoutError, AuthenticationError, RateLimitError
+from pydantic import BaseModel
 
 from app.ai.adapters.openai_adapter import OpenAIAdapter
 from app.ai.base import AIProvider
@@ -123,6 +124,56 @@ class OpenAIProvider(AIProvider):
                 },
             )
 
+            raise AIUnknownError(str(ex)) from ex
+
+    def ask_structured(
+        self,
+        messages: Sequence[AIMessage],
+        *,
+        response_model: type[BaseModel],
+    ) -> tuple[AIResponse, BaseModel]:
+        """Generate and validate a response against a Pydantic output contract."""
+        start = time.perf_counter()
+
+        try:
+            response = get_openai_client().responses.parse(
+                model=self.model,
+                input=OpenAIAdapter.to_input(messages),
+                text_format=response_model,
+            )
+            parsed = response.output_parsed
+            if parsed is None:
+                raise ValueError("OpenAI returned no structured output")
+
+            latency = time.perf_counter() - start
+            openai_requests_total.inc()
+            openai_latency_seconds.observe(latency)
+            usage = self._build_usage(response)
+            return (
+                AIResponse(
+                    text=response.output_text or "",
+                    response_id=response.id,
+                    model=self.model,
+                    latency_seconds=latency,
+                    usage=usage,
+                ),
+                parsed,
+            )
+        except APITimeoutError as ex:
+            openai_errors_total.inc()
+            raise AITimeoutError("OpenAI request timed out") from ex
+        except RateLimitError as ex:
+            openai_errors_total.inc()
+            raise AIRateLimitError(str(ex)) from ex
+        except AuthenticationError as ex:
+            openai_errors_total.inc()
+            raise AIAuthenticationError(str(ex)) from ex
+        except Exception as ex:
+            openai_errors_total.inc()
+            logger.exception(
+                "Unexpected OpenAI structured request failure",
+                extra={"provider": "openai", "model": self.model},
+            )
             raise AIUnknownError(str(ex)) from ex
 
     def stream(

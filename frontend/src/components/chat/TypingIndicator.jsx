@@ -9,23 +9,23 @@ export default function TypingIndicator() {
         <Avatar role="assistant" />
 
         {/* Thinking Bubble */}
-        <div className="flex-1 rounded-3xl bg-card px-8 py-6 shadow-sm ring-1 ring-border/50">
+        <div className="flex-1 rounded-sm border border-stone-200 bg-white px-8 py-6 shadow-sm">
 
           <div className="flex items-center gap-4">
 
             <div className="flex gap-2">
               <span
-                className="h-2.5 w-2.5 animate-bounce rounded-full bg-emerald-500"
+                className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#a00028]"
                 style={{ animationDelay: "0ms" }}
               />
 
               <span
-                className="h-2.5 w-2.5 animate-bounce rounded-full bg-emerald-500"
+                className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#a00028]"
                 style={{ animationDelay: "150ms" }}
               />
 
               <span
-                className="h-2.5 w-2.5 animate-bounce rounded-full bg-emerald-500"
+                className="h-2.5 w-2.5 animate-bounce rounded-full bg-[#a00028]"
                 style={{ animationDelay: "300ms" }}
               />
             </div>

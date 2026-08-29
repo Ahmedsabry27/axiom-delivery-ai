@@ -1,5 +1,10 @@
 # Axiom Delivery AI
 
+Jira integration security and current Jira Intelligence Agent qualification are
+documented in [the AX-JIRA-01 guide](docs/AX-JIRA-01-jira-intelligence-agent.md)
+and [outcome](docs/AX-JIRA-01-outcome.md). Jira Cloud is the currently evidenced
+deployment target; comprehensive AX-JIRA-01 qualification remains incomplete.
+
 Detailed current-state and target AWS architecture diagrams are available in the [architecture pack](docs/architecture/README.md).
 
 Production-readiness status: **NO-GO FOR AX-EP05**. See `docs/AX-H02-final-gap-closure-report.md` for verified results and remaining blockers.

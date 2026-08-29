@@ -1,19 +1,6 @@
-import { getAccessToken } from "../services/auth";
+import api from "../services/api";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/conversations`;
-
-// --------------------------------------------------
-// Helper
-// --------------------------------------------------
-
-async function getAuthHeaders() {
-  const token = await getAccessToken();
-
-  return {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-}
+const API_URL = "/conversations";
 
 // --------------------------------------------------
 // Create Conversation
@@ -22,19 +9,8 @@ async function getAuthHeaders() {
 export async function createConversation(
   title = "New Conversation"
 ) {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify({
-      title,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create conversation");
-  }
-
-  return response.json();
+  const response = await api.post(API_URL, { title });
+  return response.data;
 }
 
 // --------------------------------------------------
@@ -42,19 +18,8 @@ export async function createConversation(
 // --------------------------------------------------
 
 export async function getConversations() {
-  const token = await getAccessToken();
-
-  const response = await fetch(API_URL, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to load conversations");
-  }
-
-  return response.json();
+  const response = await api.get(API_URL);
+  return response.data;
 }
 
 // --------------------------------------------------
@@ -62,19 +27,8 @@ export async function getConversations() {
 // --------------------------------------------------
 
 export async function getConversation(id) {
-  const token = await getAccessToken();
-
-  const response = await fetch(`${API_URL}/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Conversation not found");
-  }
-
-  return response.json();
+  const response = await api.get(`${API_URL}/${id}`);
+  return response.data;
 }
 
 // --------------------------------------------------
@@ -84,24 +38,8 @@ export async function getConversation(id) {
 export async function getMessages(
   conversationId
 ) {
-  const token = await getAccessToken();
-
-  const response = await fetch(
-    `${API_URL}/${conversationId}/messages`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      "Failed to load messages"
-    );
-  }
-
-  return response.json();
+  const response = await api.get(`${API_URL}/${conversationId}/messages`);
+  return response.data;
 }
 
 // --------------------------------------------------
@@ -109,19 +47,7 @@ export async function getMessages(
 // --------------------------------------------------
 
 export async function deleteConversation(id) {
-  const token = await getAccessToken();
-
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Delete failed");
-  }
-
+  await api.delete(`${API_URL}/${id}`);
   return true;
 }
 
@@ -133,22 +59,6 @@ export async function updateConversationTitle(
   id,
   title
 ) {
-  const response = await fetch(
-    `${API_URL}/${id}`,
-    {
-      method: "PATCH",
-      headers: await getAuthHeaders(),
-      body: JSON.stringify({
-        title,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      "Failed to update conversation title"
-    );
-  }
-
-  return response.json();
+  const response = await api.patch(`${API_URL}/${id}`, { title });
+  return response.data;
 }

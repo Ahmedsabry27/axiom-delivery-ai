@@ -6,15 +6,15 @@ export default function Avatar({
 }) {
   const sizes = {
     sm: {
-      container: "h-8 w-8 rounded-xl",
+      container: "h-8 w-8 rounded-sm",
       icon: "h-4 w-4",
     },
     md: {
-      container: "h-10 w-10 rounded-2xl",
+      container: "h-10 w-10 rounded-sm",
       icon: "h-5 w-5",
     },
     lg: {
-      container: "h-12 w-12 rounded-2xl",
+      container: "h-12 w-12 rounded-sm",
       icon: "h-6 w-6",
     },
   };
@@ -48,7 +48,7 @@ export default function Avatar({
         shrink-0
         items-center
         justify-center
-        bg-emerald-600
+        bg-[#a00028]
         text-white
         shadow-sm
       `}

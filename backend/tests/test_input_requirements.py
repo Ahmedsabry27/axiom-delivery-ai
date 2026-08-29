@@ -339,6 +339,17 @@ def test_jira_report_never_uses_deployment_report_schema():
     )
 
 
+def test_jira_read_intents_use_connector_contracts():
+    provider = RequirementSchemaProvider()
+    projects = provider.get("jira.project.search", [])
+    issues = provider.get("jira.issue.search", [])
+    issue = provider.get("jira.issue.read", [])
+
+    assert projects is not None and projects.fields == {}
+    assert issues is not None and issues.intent == "jira.issue.search"
+    assert issue is not None and issue.fields["issue_key"].required is True
+
+
 def test_deployment_partial_asks_only_for_actual_missing_fields():
     schema = RequirementSchemaProvider().get(
         "deployment.report.generate", KNOWN_DEFINITIONS

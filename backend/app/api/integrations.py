@@ -19,7 +19,6 @@ from app.api.tools import identity
 from app.auth.dependencies import get_current_user
 from app.database.dependencies import get_db
 from app.database.models.agent import Agent
-from app.database.models.agent_assignment import AgentToolAssignment
 from app.database.models.audit import AuditLog
 from app.database.models.integration import (
     IntegrationAgentAssignment,
@@ -1225,28 +1224,8 @@ def assign_agent(
         )
         db.add(assignment)
     assignment.capability_names = payload.capability_names
-    for name in payload.capability_names:
-        cap = valid[name]
-        tool_assignment = (
-            db.query(AgentToolAssignment)
-            .filter_by(agent_id=agent.id, tool_name=name, assignment_action="execute")
-            .first()
-        )
-        if not tool_assignment:
-            db.add(
-                AgentToolAssignment(
-                    agent_id=agent.id,
-                    agent_version=agent.current_version,
-                    tenant_id=ctx.tenant_id,
-                    tool_name=name,
-                    version_restriction=cap.version,
-                    assignment_action="execute",
-                    enabled=True,
-                    risk_mode="write" if cap.capability_type == "action" else "read",
-                    approval_required=cap.approval_required,
-                    added_by=ctx.actor_id,
-                )
-            )
+    db.flush()
+    sync_connection_assignments(db, row, ctx.actor_id, agent_ids={agent.id})
     audit(
         db,
         ctx,
@@ -1274,6 +1253,8 @@ def unassign_agent(
     )
     if assignment:
         db.delete(assignment)
+        db.flush()
+        sync_connection_assignments(db, row, ctx.actor_id, agent_ids={agent_id})
     audit(db, ctx, "integration.agent.unassigned", row, {"agent_id": agent_id})
     db.commit()
     return {"assigned": False}
@@ -1508,34 +1489,48 @@ async def synchronize(
             },
         )
     if not row.configuration.get("simulator", False):
-        if row.connector_type == "jira":
-            from scripts.sync_jira_delivery_portfolio import main as project_live_jira
-            from scripts.sync_real_jira import main as sync_live_jira
+        try:
+            if row.connector_type == "jira":
+                from scripts.sync_jira_delivery_portfolio import (
+                    main as project_live_jira,
+                )
+                from scripts.sync_real_jira import main as sync_live_jira
 
-            await sync_live_jira()
-            await asyncio.to_thread(project_live_jira)
-        elif row.connector_type == "confluence":
-            from scripts.sync_real_confluence import main as sync_live_confluence
+                await sync_live_jira()
+                await asyncio.to_thread(project_live_jira)
+            elif row.connector_type == "confluence":
+                from scripts.sync_real_confluence import main as sync_live_confluence
 
-            await asyncio.to_thread(sync_live_confluence)
-        elif row.connector_type == "outlook_calendar":
-            from scripts.sync_real_outlook import main as sync_live_outlook
+                await asyncio.to_thread(sync_live_confluence)
+            elif row.connector_type == "outlook_calendar":
+                from scripts.sync_real_outlook import main as sync_live_outlook
 
-            await asyncio.to_thread(sync_live_outlook)
-        elif row.connector_type == "microsoft_teams":
-            from scripts.sync_real_outlook import main as sync_live_outlook
-            from scripts.sync_real_teams import main as sync_live_teams
+                await asyncio.to_thread(sync_live_outlook)
+            elif row.connector_type == "microsoft_teams":
+                from scripts.sync_real_outlook import main as sync_live_outlook
+                from scripts.sync_real_teams import main as sync_live_teams
 
-            await asyncio.to_thread(sync_live_outlook)
-            await asyncio.to_thread(sync_live_teams)
-        else:
+                await asyncio.to_thread(sync_live_outlook)
+                await asyncio.to_thread(sync_live_teams)
+            else:
+                raise HTTPException(
+                    422,
+                    {
+                        "code": "LIVE_SYNC_UNAVAILABLE",
+                        "message": "No live synchronization adapter is configured; simulator fallback is blocked",
+                    },
+                )
+        except SystemExit as exc:
+            # Import scripts are also CLI entry points and historically used
+            # SystemExit for validation failures. Letting that escape an ASGI
+            # request terminates Uvicorn and leaves every frontend query stuck.
             raise HTTPException(
                 422,
                 {
-                    "code": "LIVE_SYNC_UNAVAILABLE",
-                    "message": "No live synchronization adapter is configured; simulator fallback is blocked",
+                    "code": "LIVE_SYNC_CONFIGURATION_INVALID",
+                    "message": str(exc) or "Live synchronization is not configured",
                 },
-            )
+            ) from None
         db.expire_all()
         completed = (
             db.query(IntegrationSyncRun)

@@ -9,6 +9,7 @@ from app.runtime.intent_analyzer import (
     IntentAnalyzer,
     IntentResult,
     _bounded_context,
+    _deterministic_intent,
 )
 from app.services.runtime_execution_service import RuntimeExecutionService
 
@@ -28,6 +29,107 @@ class StubProvider:
             model="test-model",
             usage=AIUsage(prompt_tokens=10, completion_tokens=5, total_tokens=15),
         )
+
+
+def test_obvious_jira_create_request_uses_deterministic_intent():
+    result = _deterministic_intent("Can you create a Jira ticket?")
+
+    assert result is not None
+    assert result.intent == "jira.issue.create"
+    assert result.source == "deterministic"
+    assert result.ambiguous is False
+
+
+@pytest.mark.parametrize(
+    ("prompt", "intent", "entities"),
+    [
+        ("List Jira projects", "jira.project.search", {}),
+        ("Show me the Jira issues", "jira.issue.search", {}),
+        ("Get Jira KAN-42", "jira.issue.read", {"issue_key": "KAN-42"}),
+        (
+            "can u get the comments added to this ticket AIDP-1",
+            "jira.issue.comment.read",
+            {"issue_key": "AIDP-1"},
+        ),
+        (
+            "Assess the health of Sprint 2 – AI Insights Delivery using sprint performance, blockers, dependencies, overdue work and defect trends.",
+            "jira.sprint.health.assess",
+            {"sprint_name": "Sprint 2 – AI Insights Delivery"},
+        ),
+        (
+            "what are the sprints in progress",
+            "jira.sprint.search",
+            {"state": "active"},
+        ),
+        (
+            "can u provide a report on Sprint 2 – AI Insights Delivery",
+            "jira.sprint.health.assess",
+            {"sprint_name": "Sprint 2 – AI Insights Delivery"},
+        ),
+        (
+            "can u provide a report on OPSINT S2 Integrated",
+            "jira.sprint.health.assess",
+            {"sprint_name": "OPSINT S2 Integrated"},
+        ),
+        ("WHAT ARE THE PLANNED RELEASES ON JIRA", "jira.release.search", {}),
+        (
+            "WHAT ARE THE TICKETS IN THIS RELEASE Phase 5 — Portfolio Intelligence",
+            "jira.release.issue.search",
+            {"release_name": "Phase 5 — Portfolio Intelligence"},
+        ),
+    ],
+)
+def test_jira_read_requests_use_deterministic_intents(prompt, intent, entities):
+    result = _deterministic_intent(prompt)
+    assert result is not None
+    assert result.intent == intent
+    assert result.entities == entities
+    assert result.source == "deterministic"
+
+
+@pytest.mark.parametrize(
+    ("prompt", "issue_type"),
+    [
+        ("Get a list of Jira issues type task", "Task"),
+        ("Get a list oof Jira issues type task", "Task"),
+        ("Show Jira bugs", "Bug"),
+        ("Find Jira stories", "Story"),
+        ("List Jira issues, issue type is sub-task", "Subtask"),
+    ],
+)
+def test_jira_issue_search_extracts_explicit_issue_type(prompt, issue_type):
+    result = _deterministic_intent(prompt)
+
+    assert result is not None
+    assert result.intent == "jira.issue.search"
+    assert result.entities == {"issue_type": issue_type}
+
+
+def test_jira_issue_search_followup_inherits_recent_conversation_domain():
+    result = _deterministic_intent(
+        "get a list of issues types story",
+        conversation_context=[
+            {"role": "user", "content": "Show me Jira issues"},
+            {"role": "assistant", "content": "I found 27 Jira issues."},
+        ],
+    )
+
+    assert result is not None
+    assert result.intent == "jira.issue.search"
+    assert result.entities == {"issue_type": "Story"}
+
+
+def test_domainless_issue_search_is_not_assumed_to_be_jira_without_context():
+    assert _deterministic_intent("get a list of issues types story") is None
+
+
+def test_jira_issue_search_with_project_filter_is_not_project_list_intent():
+    result = _deterministic_intent(
+        "get Jira issues in project SOAI type Story status In Progress"
+    )
+
+    assert result is not None
+    assert result.intent == "jira.issue.search"
 
 
 def result_payload(**overrides):
@@ -141,7 +243,7 @@ def test_normalizes_unique_model_synonym_to_registered_migrated_intent(monkeypat
     result = (
         IntentAnalyzer()
         .analyze(
-            "Create Jira ticket",
+                "Please process this request",
             provider_name="openai",
             model="test-model",
             migrated_intents=["deployment.report.generate", "jira.issue.create"],

@@ -345,6 +345,7 @@ async def test_natural_jira_search_resolves_and_plans_read_only(db_session) -> N
                 "project_key": "KAN",
                 "issue_type": "Bug",
                 "status": "Open",
+                "priority": "High",
                 "assignee": "Ahmed",
             }.items()
         },
@@ -399,9 +400,10 @@ async def test_natural_jira_search_resolves_and_plans_read_only(db_session) -> N
         "project_key": "KAN",
         "issue_type": "Bug",
         "status": "Open",
+        "priority": "High",
         "assignee": "Ahmed",
     }
     assert JiraConnector._search_jql(task.parameters) == (
         'project = "KAN" AND issuetype = "Bug" AND status = "Open" '
-        'AND assignee = "Ahmed"'
+        'AND priority = "High" AND assignee = "Ahmed"'
     )
