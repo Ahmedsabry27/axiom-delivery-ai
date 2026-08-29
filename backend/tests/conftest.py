@@ -1,8 +1,13 @@
-import os
+# ruff: noqa: E402
 
-os.environ["DATABASE_URL"] = (
-    f"sqlite+pysqlite:////private/tmp/ai_delivery_platform_tests_{os.getpid()}.db"
+import os
+import tempfile
+from pathlib import Path
+
+test_database_path = Path(tempfile.gettempdir()) / (
+    f"ai_delivery_platform_tests_{os.getpid()}.db"
 )
+os.environ["DATABASE_URL"] = f"sqlite+pysqlite:///{test_database_path.as_posix()}"
 os.environ["TRUSTED_HOSTS"] = ""
 os.environ["RUN_SCHEMA_CREATE"] = "false"
 
