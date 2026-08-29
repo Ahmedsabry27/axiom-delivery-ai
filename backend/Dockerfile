@@ -1,5 +1,7 @@
 FROM python:3.12-alpine
 
+LABEL org.opencontainers.image.source="https://github.com/Ahmedsabry27/axiom-delivery-ai"
+
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
