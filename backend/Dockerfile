@@ -8,6 +8,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     APP_ENV=production \
     PORT=8080
 
+RUN apk upgrade --no-cache
+
 RUN addgroup -S app && adduser -S -G app -h /app app
 
 COPY requirements.txt requirements-prod.txt ./
