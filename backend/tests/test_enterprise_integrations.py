@@ -112,7 +112,7 @@ async def test_jira_test_connection_and_project_discovery_make_real_requests(
     capabilities, metadata = await connector.discover_capabilities(connection(), secret)
     assert result == {"healthy": True, "account": "Automation Bot", "account_id": "abc"}
     assert metadata["projects"][0]["key"] == "COPILOT"
-    assert len(capabilities) == 10
+    assert len(capabilities) == 15
     assert seen == ["/rest/api/3/myself", "/rest/api/3/project/search"]
 
 
