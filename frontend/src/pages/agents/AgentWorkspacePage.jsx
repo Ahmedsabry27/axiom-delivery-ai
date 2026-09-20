@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Activity, ArrowLeft, Bot, BrainCircuit, Database, FlaskConical, Gauge, KeyRound, Play, RefreshCw, Settings2, ShieldCheck, Wrench } from "lucide-react";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Activity, ArrowLeft, Bot, BrainCircuit, Database, FlaskConical, Gauge, KeyRound, Pencil, Play, RefreshCw, Settings2, ShieldCheck, Trash2, Wrench } from "lucide-react";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import AgentDeletionDialog from "../../components/agents/AgentDeletionDialog";
 import AgentTestConsole from "../../components/agents/AgentTestConsole";
 import { getActivity, getAgent, getAgentAnalytics, getAgentEvaluations, getAgentExecutions, getAgentOptions, getAssignments, getEffectiveAccess, getVersions, lifecycleAgent, saveAssignments, updateAgent } from "../../services/agentService";
 
@@ -15,7 +16,12 @@ const input = "mt-1 w-full rounded-xl border border-stone-300 bg-white px-3 py-2
 export default function AgentWorkspacePage() {
   const { agentId, tab } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const client = useQueryClient();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [lifecycleBusy, setLifecycleBusy] = useState(false);
   const active = tab || "overview";
   const query = useQuery({ queryKey: ["agent", agentId], queryFn: () => getAgent(agentId), retry: false });
   if (!tab) return <Navigate replace to={`/agents/${agentId}/overview`} />;
@@ -23,13 +29,18 @@ export default function AgentWorkspacePage() {
   if (query.isLoading) return <main className="p-8 text-stone-600" aria-live="polite">Loading agent workspace…</main>;
   if (query.error) { const status = query.error.response?.status; return <main className="min-h-full bg-[#faf8f5] p-8"><h1 className="font-display text-3xl font-bold">{status === 403 ? "Access denied" : "Agent not found"}</h1><p className="mt-2 text-stone-600">This agent is unavailable or outside your authorized tenant scope.</p><Link to="/agents" className="mt-5 inline-block text-[#a00028]">Return to agents</Link></main>; }
   const agent = query.data;
-  const refresh = () => client.invalidateQueries({ queryKey: ["agent", agentId] });
-  async function lifecycle(action) { if (["disable", "archive"].includes(action) && !window.confirm(`${action} this agent?`)) return; await lifecycleAgent(agent.id, action, agent.lock_version, { confirmed: action === "archive", change_note: `${action} from Agent workspace` }); refresh(); }
+  const returnTo = location.state?.from || "/agents";
+  const refresh = async () => { await Promise.all([client.invalidateQueries({ queryKey: ["agent", agentId] }), client.invalidateQueries({ queryKey: ["agents"] })]); };
+  async function lifecycle(action) { if (action === "disable" && !window.confirm("Disable this agent?")) return; setLifecycleBusy(true); setNotice(""); setActionError(""); try { await lifecycleAgent(agent.id, action, agent.lock_version, { change_note: `${action} from Agent workspace` }); setNotice(`Agent ${action} completed.`); await refresh(); } catch (error) { setActionError(error.response?.data?.detail?.message || `Unable to ${action} agent.`); } finally { setLifecycleBusy(false); } }
+  async function deletionCompleted(action) { await refresh(); if (action === "deleted" || action === "archived") navigate(returnTo, { replace: true }); }
   return <main className="min-h-full bg-[#faf8f5] p-4 text-stone-900 md:p-8">
-    <Link to="/agents" className="inline-flex items-center gap-2 text-sm font-semibold text-stone-600 hover:text-[#a00028]"><ArrowLeft size={16} />Agents</Link>
-    <header className="mt-5 flex flex-wrap items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-xl bg-[#a00028] text-white"><Bot /></div><div><h1 className="font-display text-3xl font-bold">{agent.name}</h1><p className="text-sm text-stone-500">{agent.slug} · version {agent.published_version || agent.current_version}</p></div><Status value={agent.lifecycle_status} /></div><p className="mt-3 max-w-3xl text-stone-600">{agent.description || "No description has been provided."}</p></div><div className="flex flex-wrap gap-2"><button onClick={() => query.refetch()} className="rounded-xl border border-stone-300 bg-white p-2.5" aria-label="Refresh agent"><RefreshCw size={17} /></button>{agent.permissions?.publish && agent.lifecycle_status === "draft" && <button onClick={() => lifecycle("publish")} className="rounded-xl bg-[#a00028] px-4 py-2 text-sm font-semibold text-white">Publish</button>}{agent.permissions?.disable && agent.lifecycle_status === "enabled" && <button onClick={() => lifecycle("disable")} className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold">Pause</button>}</div></header>
-    <nav className="mt-6 overflow-x-auto border-b border-stone-300" aria-label="Agent sections"><div className="flex min-w-max gap-1">{tabs.map(([key, label, Icon]) => <Link key={key} to={`/agents/${agentId}/${key}`} aria-current={active === key ? "page" : undefined} className={`inline-flex items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold ${active === key ? "border-[#a00028] text-[#a00028]" : "border-transparent text-stone-500 hover:text-stone-900"}`}><Icon size={15} />{label}</Link>)}</div></nav>
-    <section className="mt-6">{active === "overview" && <Overview agent={agent} />}{active === "configuration" && <Configuration agent={agent} onSaved={refresh} />}{active === "capabilities" && <Assignments agent={agent} kind="tools" />}{active === "knowledge" && <Assignments agent={agent} kind="knowledge" />}{active === "models" && <Models agent={agent} onSaved={refresh} />}{active === "evaluations" && <Evaluations agent={agent} />}{active === "executions" && <Executions agent={agent} navigate={navigate} />}{active === "versions" && <Versions agent={agent} />}{active === "access" && <Access agent={agent} />}{active === "test" && <AgentTestConsole agent={{ ...agent, uuid: agent.id }} />}</section>
+    <Link to={returnTo} className="inline-flex items-center gap-2 text-sm font-semibold text-stone-600 hover:text-[#a00028]"><ArrowLeft size={16} />Agents</Link>
+    <header className="mt-5 flex flex-wrap items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-xl bg-[#a00028] text-white"><Bot /></div><div><h1 className="font-display text-3xl font-bold">{agent.name}</h1><p className="text-sm text-stone-500">{agent.slug} · version {agent.published_version || agent.current_version}</p></div><Status value={agent.lifecycle_status} /></div><p className="mt-3 max-w-3xl text-stone-600">{agent.description || "No description has been provided."}</p></div><div className="flex flex-wrap gap-2"><button onClick={() => query.refetch()} className="rounded-xl border border-stone-300 bg-white p-2.5" aria-label="Refresh agent"><RefreshCw size={17} /></button>{agent.permissions?.edit && agent.lifecycle_status !== "archived" && active !== "configuration" && <Link to={`/agents/${agent.id}/configuration`} state={{ from: returnTo }} className="inline-flex items-center gap-2 rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold"><Pencil size={16} />Edit</Link>}{agent.permissions?.publish && agent.lifecycle_status === "draft" && <button disabled={lifecycleBusy} onClick={() => lifecycle("publish")} className="rounded-xl bg-[#a00028] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Publish</button>}{agent.permissions?.disable && agent.lifecycle_status === "enabled" && <button disabled={lifecycleBusy} onClick={() => lifecycle("disable")} className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold disabled:opacity-50">Disable</button>}{(agent.permissions?.delete || agent.permissions?.archive) && <button onClick={() => setDeleteOpen(true)} className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700"><Trash2 size={16} />Delete or archive</button>}</div></header>
+    {notice && <p role="status" className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">{notice}</p>}
+    {actionError && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">{actionError}</p>}
+    <nav className="mt-6 overflow-x-auto border-b border-stone-300" aria-label="Agent sections"><div className="flex min-w-max gap-1">{tabs.map(([key, label, Icon]) => <Link key={key} to={`/agents/${agentId}/${key}`} state={{ from: returnTo }} aria-current={active === key ? "page" : undefined} className={`inline-flex items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold ${active === key ? "border-[#a00028] text-[#a00028]" : "border-transparent text-stone-500 hover:text-stone-900"}`}><Icon size={15} />{label}</Link>)}</div></nav>
+    <section className="mt-6">{active === "overview" && <Overview agent={agent} />}{active === "configuration" && <Configuration agent={agent} onSaved={refresh} returnTo={returnTo} />}{active === "capabilities" && <Assignments agent={agent} kind="tools" />}{active === "knowledge" && <Assignments agent={agent} kind="knowledge" />}{active === "models" && <Models agent={agent} onSaved={refresh} />}{active === "evaluations" && <Evaluations agent={agent} />}{active === "executions" && <Executions agent={agent} navigate={navigate} />}{active === "versions" && <Versions agent={agent} />}{active === "access" && <Access agent={agent} />}{active === "test" && <AgentTestConsole agent={{ ...agent, uuid: agent.id }} />}</section>
+    <AgentDeletionDialog agent={agent} open={deleteOpen} onOpenChange={setDeleteOpen} onCompleted={deletionCompleted} />
   </main>;
 }
 
@@ -39,7 +50,84 @@ function Data({ rows }) { return <dl className="divide-y divide-stone-200 text-s
 
 function Overview({ agent }) { const activity = useQuery({ queryKey: ["agent", agent.id, "activity"], queryFn: () => getActivity(agent.id) }); const analytics = useQuery({ queryKey: ["agent", agent.id, "analytics", "overview"], queryFn: () => getAgentAnalytics(agent.id, {}) }); return <div className="space-y-4"><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><Panel title="Lifecycle"><Data rows={{ Status: agent.lifecycle_status, Health: agent.operational_health, "Current version": agent.current_version, "Published version": agent.published_version || "None" }} /></Panel><Panel title="Model"><Data rows={{ Provider: agent.model_provider || "Not selected", Model: agent.model || "Not selected", Planner: agent.planner_configuration?.name || "default" }} /></Panel><Panel title="Execution health"><Data rows={{ Executions: analytics.data?.total_executions ?? "—", "Success rate": analytics.data?.success_rate == null ? "—" : `${analytics.data.success_rate}%`, "Average duration": analytics.data ? `${analytics.data.average_duration_ms} ms` : "—" }} /></Panel><Panel title="Governance"><Data rows={{ Owner: agent.owner_id, "Cost limit": agent.execution_limits?.cost_limit ?? "Not set", "Risk limit": agent.execution_limits?.risk_limit || "read", "Lock version": agent.lock_version }} /></Panel></div><Panel title="Purpose and responsibilities"><p className="text-sm leading-6 text-stone-700">{agent.instructions || "Instructions have not been configured."}</p></Panel><Panel title="Recent changes" subtitle="Immutable agent activity"><ol className="space-y-3">{(activity.data?.items || []).slice(0, 6).map((item) => <li key={item.id} className="border-l-2 border-[#a00028] pl-3 text-sm"><strong>{item.event_type}</strong><span className="block text-stone-500">{item.actor_id} · {new Date(item.created_at).toLocaleString()}</span></li>)}{!activity.data?.items?.length && <li className="text-sm text-stone-500">No recent changes.</li>}</ol></Panel></div>; }
 
-function Configuration({ agent, onSaved }) { const original = useMemo(() => ({ name: agent.name, description: agent.description || "", instructions: agent.instructions || "", max_steps: agent.execution_limits?.max_steps || 20, timeout_seconds: agent.execution_limits?.timeout_seconds || 120 }), [agent]); const [form, setForm] = useState(original); const [message, setMessage] = useState(""); useEffect(() => setForm(original), [original]); const editable = agent.lifecycle_status === "draft" && agent.permissions?.edit; async function save(event) { event.preventDefault(); try { await updateAgent(agent.id, { name: form.name, description: form.description, instructions: form.instructions, execution_limits: { ...agent.execution_limits, max_steps: Number(form.max_steps), timeout_seconds: Number(form.timeout_seconds) }, change_note: "Configuration updated" }, agent.lock_version); setMessage("Configuration saved as a new immutable draft version."); onSaved(); } catch (error) { setMessage(error.response?.status === 409 ? "This agent changed. Refresh before saving." : "Configuration could not be saved."); } } return <Panel title="Configuration" subtitle={editable ? `Draft record version ${agent.lock_version}` : "Published versions are read-only. Create a draft version to edit."}><form onSubmit={save} className="grid gap-4 md:grid-cols-2"><label className="text-sm font-semibold">Name<input disabled={!editable} className={input} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} /></label><label className="text-sm font-semibold">Description<input disabled={!editable} className={input} value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} /></label><label className="text-sm font-semibold md:col-span-2">System instructions<textarea disabled={!editable} className={`${input} min-h-48`} value={form.instructions} onChange={(event) => setForm({ ...form, instructions: event.target.value })} /></label><label className="text-sm font-semibold">Maximum steps<input disabled={!editable} type="number" min="1" max="100" className={input} value={form.max_steps} onChange={(event) => setForm({ ...form, max_steps: event.target.value })} /></label><label className="text-sm font-semibold">Timeout seconds<input disabled={!editable} type="number" min="1" max="3600" className={input} value={form.timeout_seconds} onChange={(event) => setForm({ ...form, timeout_seconds: event.target.value })} /></label>{editable && <button className="w-fit rounded-xl bg-[#a00028] px-4 py-2 text-sm font-semibold text-white">Save configuration</button>}{message && <p role="status" className="text-sm text-stone-600">{message}</p>}</form></Panel>; }
+function Configuration({ agent, onSaved, returnTo }) {
+  const original = useMemo(() => ({
+    name: agent.name,
+    description: agent.description || "",
+    owner_id: agent.owner_id || "",
+    instructions: agent.instructions || "",
+    environment: agent.environment_restrictions?.[0] || "development",
+    max_steps: agent.execution_limits?.max_steps || 20,
+    timeout_seconds: agent.execution_limits?.timeout_seconds || 120,
+  }), [agent]);
+  const [form, setForm] = useState(original);
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [saving, setSaving] = useState(false);
+  useEffect(() => setForm(original), [original]);
+  const dirty = JSON.stringify(form) !== JSON.stringify(original);
+  useEffect(() => {
+    const warn = (event) => { if (!dirty) return; event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  const editable = agent.lifecycle_status !== "archived" && agent.permissions?.edit;
+  function set(name, value) { setForm((current) => ({ ...current, [name]: value })); setErrors((current) => ({ ...current, [name]: undefined })); }
+  async function save(event) {
+    event.preventDefault();
+    if (saving) return;
+    const nextErrors = {};
+    if (form.name.trim().length < 2) nextErrors.name = "Enter at least two characters.";
+    if (!form.owner_id.trim()) nextErrors.owner_id = "Owner is required.";
+    if (Number(form.max_steps) < 1 || Number(form.max_steps) > 100) nextErrors.max_steps = "Enter a value from 1 to 100.";
+    if (Number(form.timeout_seconds) < 1 || Number(form.timeout_seconds) > 3600) nextErrors.timeout_seconds = "Enter a value from 1 to 3600.";
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length) return;
+    setSaving(true);
+    setMessage("");
+    setSaveError("");
+    try {
+      await updateAgent(agent.id, {
+        name: form.name.trim(),
+        description: form.description,
+        owner_id: form.owner_id.trim(),
+        instructions: form.instructions,
+        execution_limits: {
+          ...agent.execution_limits,
+          max_steps: Number(form.max_steps),
+          timeout_seconds: Number(form.timeout_seconds),
+          environments: [form.environment],
+        },
+        change_note: "Configuration updated from Agent editor",
+      }, agent.lock_version);
+      setMessage(agent.published_version ? `Draft version ${agent.current_version + 1} saved. Published version ${agent.published_version} remains immutable.` : "Agent changes saved.");
+      await onSaved();
+    } catch (error) {
+      const detail = error.response?.data?.detail;
+      setSaveError(error.response?.status === 409 ? "This agent changed. Refresh before saving." : detail?.message || "Configuration could not be saved.");
+    } finally {
+      setSaving(false);
+    }
+  }
+  return <Panel title="Edit agent" subtitle={editable ? agent.published_version ? `Changes create a new draft; published version ${agent.published_version} remains active.` : `Editing draft version ${agent.current_version}.` : "You do not have permission to edit this agent."}>
+    <form onSubmit={save} className="grid gap-4 md:grid-cols-2">
+      <Field label="Name" error={errors.name}><input disabled={!editable} className={input} value={form.name} onChange={(event) => set("name", event.target.value)} /></Field>
+      <Field label="Owner" error={errors.owner_id}><input disabled={!editable} className={input} value={form.owner_id} onChange={(event) => set("owner_id", event.target.value)} /></Field>
+      <Field label="Description" className="md:col-span-2"><textarea disabled={!editable} className={`${input} min-h-24`} value={form.description} onChange={(event) => set("description", event.target.value)} /></Field>
+      <Field label="System instructions" className="md:col-span-2"><textarea disabled={!editable} className={`${input} min-h-48`} value={form.instructions} onChange={(event) => set("instructions", event.target.value)} /></Field>
+      <Field label="Environment"><select disabled={!editable} className={input} value={form.environment} onChange={(event) => set("environment", event.target.value)}>{["development", "staging", "production"].map((value) => <option key={value}>{value}</option>)}</select></Field>
+      <Field label="Maximum steps" error={errors.max_steps}><input disabled={!editable} type="number" min="1" max="100" className={input} value={form.max_steps} onChange={(event) => set("max_steps", event.target.value)} /></Field>
+      <Field label="Timeout seconds" error={errors.timeout_seconds}><input disabled={!editable} type="number" min="1" max="3600" className={input} value={form.timeout_seconds} onChange={(event) => set("timeout_seconds", event.target.value)} /></Field>
+      <div className="rounded-xl border border-stone-200 bg-stone-50 p-4 text-sm md:col-span-2"><strong>Related configuration</strong><p className="mt-1 text-stone-600">Manage the governed model, tools and knowledge without duplicating their existing editors.</p><div className="mt-3 flex flex-wrap gap-3"><Link state={{ from: returnTo }} className="font-semibold text-[#a00028]" to={`/agents/${agent.id}/models`}>Model & routing</Link><Link state={{ from: returnTo }} className="font-semibold text-[#a00028]" to={`/agents/${agent.id}/capabilities`}>Capabilities & tools</Link><Link state={{ from: returnTo }} className="font-semibold text-[#a00028]" to={`/agents/${agent.id}/knowledge`}>Knowledge sources</Link></div></div>
+      {message && <p role="status" className="text-sm text-emerald-700 md:col-span-2">{message}</p>}
+      {saveError && <p role="alert" className="text-sm text-red-700 md:col-span-2">{saveError}</p>}
+      {editable && <div className="flex flex-wrap gap-2 md:col-span-2"><button disabled={saving || !dirty} className="rounded-xl bg-[#a00028] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button><button type="button" disabled={saving || !dirty} onClick={() => { setForm(original); setErrors({}); }} className="rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-semibold disabled:opacity-50">Reset</button><Link to={returnTo} onClick={(event) => { if (dirty && !window.confirm("Discard unsaved Agent changes?")) event.preventDefault(); }} className="rounded-xl px-4 py-2 text-sm font-semibold text-stone-600">Cancel</Link></div>}
+    </form>
+  </Panel>;
+}
+
+function Field({ label, error, className = "", children }) { return <label className={`text-sm font-semibold ${className}`}>{label}{children}{error && <span className="mt-1 block text-xs text-red-700">{error}</span>}</label>; }
 
 function Assignments({ agent, kind }) { const query = useQuery({ queryKey: ["agent", agent.id, kind], queryFn: () => getAssignments(agent.id, kind) }); const options = useQuery({ queryKey: ["agent-options"], queryFn: getAgentOptions }); const [selected, setSelected] = useState([]); const [message, setMessage] = useState(""); useEffect(() => { if (query.data) setSelected(query.data); }, [query.data]); if (query.isLoading || options.isLoading) return <p>Loading {kind}…</p>; const editable = agent.lifecycle_status === "draft"; const available = kind === "tools" ? options.data.tools : options.data.knowledge; const key = kind === "tools" ? "tool_name" : "knowledge_source_id"; function add(value) { if (!value || selected.some((item) => String(item[key]) === String(value))) return; const item = kind === "tools" ? { tool_name: value, version_restriction: "active", assignment_action: "execute", enabled: true, risk_mode: options.data.tools.find((tool) => tool.name === value)?.risk || "read", approval_required: false } : { knowledge_source_id: Number(value), access_mode: "retrieve", readiness_required: true, enabled: true }; setSelected([...selected, item]); } async function save() { await saveAssignments(agent.id, kind, selected.map((item) => { const copy = { ...item }; ["id", "created_at", "added_by", "agent_version", "source_type"].forEach((fieldName) => delete copy[fieldName]); return copy; })); setMessage("Assignments saved."); query.refetch(); } return <Panel title={kind === "tools" ? "Capabilities and tools" : "Knowledge and context"} subtitle={editable ? "Assignments apply to this draft only." : "Published assignments are read-only."}><select disabled={!editable} className={input} defaultValue="" onChange={(event) => { add(event.target.value); event.target.value = ""; }}><option value="">Add {kind === "tools" ? "approved tool" : "approved knowledge source"}…</option>{available.map((item) => <option key={item.name || item.id} value={item.name || item.id}>{item.display_name || item.name} · {item.risk || item.readiness}</option>)}</select><div className="mt-4 grid gap-3 md:grid-cols-2">{selected.map((item) => <div key={item[key]} className="rounded-xl border border-stone-200 bg-stone-50 p-4"><div className="flex justify-between"><strong>{kind === "tools" ? item.tool_name : available.find((source) => source.id === item.knowledge_source_id)?.name || item.knowledge_source_id}</strong>{editable && <button onClick={() => setSelected(selected.filter((entry) => entry[key] !== item[key]))} className="text-sm text-[#a00028]">Remove</button>}</div><p className="mt-2 text-xs text-stone-500">{kind === "tools" ? `${item.risk_mode} · ${item.approval_required ? "Approval required" : "Governance evaluated at runtime"}` : `${item.access_mode} · ${item.readiness_required ? "Readiness required" : "Optional readiness"}`}</p></div>)}</div>{editable && <button onClick={save} className="mt-4 rounded-xl bg-[#a00028] px-4 py-2 text-sm font-semibold text-white">Save assignments</button>}{message && <p className="mt-3 text-sm text-stone-600">{message}</p>}</Panel>; }
 

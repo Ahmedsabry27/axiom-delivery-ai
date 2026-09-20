@@ -23,6 +23,11 @@ from app.database.models.agent_assignment import (
     AgentKnowledgeAssignment,
     AgentToolAssignment,
 )
+from app.database.models.agent_execution import AgentExecution
+from app.database.models.delivery import ProposedAction
+from app.database.models.governance import EvaluationRun
+from app.database.models.governance_workflow import ApprovalRequest
+from app.database.models.integration import IntegrationAgentAssignment
 from app.database.models.knowledge_source import KnowledgeSource
 from app.database.models.tool import ToolDefinition
 from app.database.models.workflow import Workflow
@@ -33,7 +38,7 @@ LIFECYCLE_TRANSITIONS = {
     "publish": {"draft", "published", "disabled"},
     "enable": {"published", "disabled"},
     "disable": {"enabled"},
-    "archive": {"draft", "published", "disabled"},
+    "archive": {"draft", "published", "enabled", "disabled", "error"},
     "restore": {"archived"},
 }
 
@@ -448,7 +453,7 @@ class AgentApplicationService:
             )
         prior = json.loads(row.configuration or "{}")
         snapshot = self._snapshot({**prior, **data})
-        for field in ("name", "description", "model_configuration_ref"):
+        for field in ("name", "description", "model_configuration_ref", "owner_id"):
             if field in data:
                 setattr(row, field, data[field])
         if "slug" in data:
@@ -477,6 +482,30 @@ class AgentApplicationService:
         row.configuration = json.dumps(snapshot)
         row.planner_configuration = snapshot["planner_configuration"]
         row.memory_configuration = snapshot["memory_configuration"]
+        limits = snapshot["execution_limits"]
+        row.max_execution_steps = limits.get("max_steps", row.max_execution_steps)
+        row.execution_timeout_seconds = limits.get(
+            "timeout_seconds", row.execution_timeout_seconds
+        )
+        row.cost_limit = limits.get("cost_limit", row.cost_limit)
+        row.risk_limit = limits.get("risk_limit", row.risk_limit)
+        row.environment_restrictions = limits.get(
+            "environments", row.environment_restrictions
+        )
+        row.tool_discovery_mode = snapshot["tool_discovery_configuration"].get(
+            "mode", row.tool_discovery_mode
+        )
+        execution_setting = (
+            db.query(AgentExecutionSetting)
+            .filter_by(agent_id=row.id, tenant_id=row.tenant_id)
+            .first()
+        )
+        if execution_setting:
+            execution_setting.max_steps = row.max_execution_steps
+            execution_setting.timeout_seconds = row.execution_timeout_seconds
+            execution_setting.cost_limit = row.cost_limit
+            execution_setting.risk_limit = row.risk_limit
+            execution_setting.updated_by = identity.actor_id
         row.updated_by = identity.actor_id
         row.updated_at = datetime.now(UTC)
         db.add(
@@ -496,6 +525,199 @@ class AgentApplicationService:
         db.refresh(row)
         self.invalidate(row.tenant_id, row.uuid)
         return row
+
+    def deletion_impact(
+        self, db: Session, identity: AgentIdentity, public_id: str
+    ) -> dict[str, Any]:
+        row = self.get(db, identity, public_id)
+        return self._deletion_impact(db, identity, row)
+
+    def _deletion_impact(
+        self, db: Session, identity: AgentIdentity, row: Agent
+    ) -> dict[str, Any]:
+        identifiers = [row.uuid, row.slug, row.name]
+        execution_count = (
+            db.query(AgentExecution)
+            .filter_by(agent_id=row.id, tenant_id=row.tenant_id)
+            .count()
+        )
+        active_execution_count = (
+            db.query(AgentExecution)
+            .filter(
+                AgentExecution.agent_id == row.id,
+                AgentExecution.tenant_id == row.tenant_id,
+                AgentExecution.status.in_(
+                    [
+                        "queued",
+                        "running",
+                        "waiting_for_input",
+                        "waiting_for_clarification",
+                        "waiting_for_approval",
+                    ]
+                ),
+            )
+            .count()
+        )
+        runtime_execution_query = db.query(RuntimeExecution).filter(
+            RuntimeExecution.tenant_id == row.tenant_id,
+            or_(
+                RuntimeExecution.selected_agent_id == row.uuid,
+                RuntimeExecution.agent.in_(identifiers),
+            ),
+        )
+        runtime_execution_count = runtime_execution_query.count()
+        active_runtime_count = runtime_execution_query.filter(
+            RuntimeExecution.status.in_(
+                [
+                    "PENDING",
+                    "RUNNING",
+                    "WAITING_FOR_INPUT",
+                    "WAITING_FOR_CLARIFICATION",
+                    "WAITING_FOR_APPROVAL",
+                    "pending",
+                    "running",
+                ]
+            )
+        ).count()
+        workflow_count = (
+            db.query(Workflow)
+            .filter(
+                Workflow.tenant_id == row.tenant_id,
+                Workflow.assigned_agent.in_(identifiers),
+            )
+            .count()
+        )
+        action_count = (
+            db.query(ProposedAction)
+            .filter(
+                ProposedAction.tenant_id == row.tenant_id,
+                ProposedAction.agent_id.in_(identifiers),
+            )
+            .count()
+        )
+        approval_count = (
+            db.query(ApprovalRequest)
+            .filter(
+                ApprovalRequest.tenant_id == row.tenant_id,
+                ApprovalRequest.requester_agent_id.in_(identifiers),
+            )
+            .count()
+        )
+        integration_count = (
+            db.query(IntegrationAgentAssignment)
+            .filter_by(agent_id=row.id, tenant_id=row.tenant_id)
+            .count()
+        )
+        evaluation_count = (
+            db.query(EvaluationRun)
+            .filter(
+                EvaluationRun.tenant_id == row.tenant_id,
+                EvaluationRun.agent_id.in_(identifiers),
+            )
+            .count()
+        )
+        published_version_count = (
+            db.query(AgentVersion)
+            .filter_by(agent_id=row.id, tenant_id=row.tenant_id, published=True)
+            .count()
+        )
+        activity_count = (
+            db.query(AgentActivityEvent)
+            .filter_by(agent_id=row.id, tenant_id=row.tenant_id)
+            .count()
+        )
+        all_execution_count = execution_count + runtime_execution_count
+        all_active_execution_count = active_execution_count + active_runtime_count
+        reference_count = (
+            workflow_count
+            + action_count
+            + approval_count
+            + integration_count
+            + evaluation_count
+        )
+        eligible = (
+            row.lifecycle_status == "draft"
+            and row.published_version is None
+            and published_version_count == 0
+            and all_execution_count == 0
+            and reference_count == 0
+        )
+        reasons: list[str] = []
+        if row.lifecycle_status != "draft":
+            reasons.append("Agent is not an unused draft")
+        if row.published_version is not None or published_version_count:
+            reasons.append("Agent has published version history")
+        if all_execution_count:
+            reasons.append("Agent has execution history")
+        if workflow_count:
+            reasons.append("Agent is referenced by workflows")
+        if action_count or approval_count:
+            reasons.append("Agent is referenced by actions or approvals")
+        if integration_count:
+            reasons.append("Agent is assigned to an integration")
+        if evaluation_count:
+            reasons.append("Agent has evaluation history")
+        return {
+            "agent_id": row.uuid,
+            "eligible_for_permanent_deletion": eligible,
+            "recommended_action": (
+                "delete" if eligible else "archive"
+            ),
+            "published_version_count": published_version_count,
+            "execution_count": all_execution_count,
+            "active_execution_count": all_active_execution_count,
+            "workflow_reference_count": workflow_count,
+            "action_reference_count": action_count,
+            "approval_reference_count": approval_count,
+            "integration_reference_count": integration_count,
+            "evaluation_count": evaluation_count,
+            "audit_event_count": activity_count,
+            "audit_history_preserved": True,
+            "reasons": reasons,
+            "permissions": {
+                "delete": identity.allows("agents.delete"),
+                "archive": identity.allows("agents.archive"),
+                "disable": identity.allows("agents.disable"),
+            },
+        }
+
+    def delete(
+        self, db: Session, identity: AgentIdentity, public_id: str
+    ) -> None:
+        self._require(identity, "agents.delete")
+        row = self._visible(db, identity, public_id)
+        impact = self._deletion_impact(db, identity, row)
+        if not impact["eligible_for_permanent_deletion"]:
+            raise HTTPException(
+                409,
+                {
+                    "code": "AGENT_DELETE_REQUIRES_ARCHIVE",
+                    "message": (
+                        "This agent has lifecycle or reference history and must be "
+                        "archived instead"
+                    ),
+                    "impact": impact,
+                },
+            )
+        now = datetime.now(UTC)
+        row.deleted_at = now
+        row.deleted_by = identity.actor_id
+        row.updated_at = now
+        row.updated_by = identity.actor_id
+        row.lock_version += 1
+        db.add(
+            self._event(
+                row,
+                identity.actor_id,
+                "agent.deleted",
+                {
+                    "deletion_mode": "soft_permanent",
+                    "audit_history_preserved": True,
+                },
+            )
+        )
+        db.commit()
+        self.invalidate(row.tenant_id, row.uuid)
 
     @staticmethod
     def _check_lock(row: Agent, expected_version: int) -> None:
@@ -614,22 +836,6 @@ class AgentApplicationService:
                     {
                         "code": "CONFIRMATION_REQUIRED",
                         "message": "Archiving requires explicit confirmation",
-                    },
-                )
-            dependencies = (
-                db.query(RuntimeExecution)
-                .filter(RuntimeExecution.agent.in_([row.uuid, row.slug, row.name]))
-                .count()
-                + db.query(Workflow)
-                .filter(Workflow.assigned_agent.in_([row.uuid, row.slug, row.name]))
-                .count()
-            )
-            if dependencies:
-                raise HTTPException(
-                    409,
-                    {
-                        "code": "AGENT_HAS_DEPENDENCIES",
-                        "message": "Agent is referenced and cannot be archived",
                     },
                 )
             row.lifecycle_status = "archived"

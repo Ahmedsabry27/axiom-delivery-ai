@@ -506,7 +506,7 @@ resource "aws_lb_target_group" "api" {
   vpc_id      = aws_vpc.main.id
   target_type = "ip"
   health_check {
-    path    = "/health"
+    path    = "/ready"
     matcher = "200"
   }
 }

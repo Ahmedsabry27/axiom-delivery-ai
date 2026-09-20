@@ -45,6 +45,18 @@ def identity(user: dict[str, Any]) -> AgentIdentity:
     return AgentIdentity.from_claims(user)
 
 
+def _environment_breakdown_query(db: Session, filters: list[Any]):
+    # Reuse the same JSON expression in SELECT and GROUP BY. Creating it twice
+    # gives PostgreSQL two bind parameters for the key (for example $1 and $2),
+    # so PostgreSQL no longer considers the expressions equivalent.
+    environment = AgentExecution.runtime_metadata["environment"].as_string()
+    return (
+        db.query(environment, func.count(AgentExecution.id))
+        .filter(*filters)
+        .group_by(environment)
+    )
+
+
 @agent_router.post("/{agent_id}/execute")
 async def execute_agent(
     agent_id: str,
@@ -249,13 +261,7 @@ def agent_analytics(
     ]
     environments = [
         {"environment": item_environment or "unknown", "executions": count}
-        for item_environment, count in db.query(
-            AgentExecution.runtime_metadata["environment"].as_string(),
-            func.count(AgentExecution.id),
-        )
-        .filter(*filters)
-        .group_by(AgentExecution.runtime_metadata["environment"].as_string())
-        .all()
+        for item_environment, count in _environment_breakdown_query(db, filters).all()
     ]
     return {
         "total_executions": total,

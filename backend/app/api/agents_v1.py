@@ -207,6 +207,7 @@ class AgentUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=2, max_length=120)
     slug: str | None = Field(default=None, max_length=120)
     description: str | None = Field(default=None, max_length=4000)
+    owner_id: str | None = Field(default=None, min_length=1, max_length=160)
     instructions: str | None = Field(default=None, max_length=50000)
     model_configuration_ref: str | None = Field(default=None, max_length=200)
     model_configuration: dict[str, Any] | None = None
@@ -397,19 +398,36 @@ def list_agents(
                     "last_execution_at": last_at,
                 }
             )
-    permission_flags = {
-        "create": identity(user).allows("agents.create"),
-        "admin": identity(user).allows("agents.admin"),
-    }
+    ctx = identity(user)
     return {
         "items": [
-            serialize(row, {**metrics[row.id], "permissions": permission_flags})
+            serialize(
+                row,
+                {
+                    **metrics[row.id],
+                    "permissions": {
+                        "view": True,
+                        "create": ctx.allows("agents.create"),
+                        "edit": row.lifecycle_status != "archived"
+                        and (
+                            ctx.allows("agents.update")
+                            or row.owner_id == ctx.actor_id
+                        ),
+                        "enable": ctx.allows("agents.enable"),
+                        "disable": ctx.allows("agents.disable"),
+                        "archive": ctx.allows("agents.archive"),
+                        "delete": ctx.allows("agents.delete"),
+                        "admin": ctx.allows("agents.admin"),
+                    },
+                },
+            )
             for row in rows
         ],
         "page": page,
         "page_size": page_size,
         "total": total,
         "pages": max(1, (total + page_size - 1) // page_size),
+        "permissions": {"create": ctx.allows("agents.create")},
     }
 
 
@@ -529,6 +547,7 @@ def get_agent(
             "enable": identity(user).allows("agents.enable"),
             "disable": identity(user).allows("agents.disable"),
             "archive": identity(user).allows("agents.archive"),
+            "delete": identity(user).allows("agents.delete"),
             "restore": identity(user).allows("agents.restore"),
             "manage_tools": identity(user).allows("agents.tools.manage"),
             "manage_knowledge": identity(user).allows("agents.knowledge.manage"),
@@ -642,6 +661,24 @@ def restore_agent(
     user: dict = Depends(get_current_user),  # noqa: B008
 ):
     return lifecycle_response("restore", agent_id, payload, if_match, db, user)
+
+
+@router.get("/{agent_id}/deletion-impact")
+def get_deletion_impact(
+    agent_id: str,
+    db: Session = Depends(get_db),  # noqa: B008
+    user: dict = Depends(get_current_user),  # noqa: B008
+):
+    return agent_application_service.deletion_impact(db, identity(user), agent_id)
+
+
+@router.delete("/{agent_id}", status_code=204)
+def delete_agent(
+    agent_id: str,
+    db: Session = Depends(get_db),  # noqa: B008
+    user: dict = Depends(get_current_user),  # noqa: B008
+):
+    agent_application_service.delete(db, identity(user), agent_id)
 
 
 @router.get("/{agent_id}/versions")

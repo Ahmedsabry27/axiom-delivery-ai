@@ -1,13 +1,19 @@
 from __future__ import annotations
 
+from uuid import uuid4
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from app.agents.application_service import AgentIdentity, agent_application_service
 from app.api.agents_v1 import router
 from app.auth.dependencies import get_current_user
 from app.database.dependencies import get_db
+from app.database.models.agent import Agent, AgentActivityEvent
 from app.database.models.knowledge_source import KnowledgeSource
 from app.database.models.tool import ToolDefinition
+from app.database.models.workflow import Workflow
+from app.models.runtime_execution import RuntimeExecution
 
 
 def make_client(db_session, claims: dict) -> TestClient:
@@ -38,6 +44,7 @@ def admin_claims(tenant: str = "tenant-a") -> dict:
             "agents.enable",
             "agents.disable",
             "agents.archive",
+            "agents.delete",
             "agents.restore",
             "agents.tools.manage",
             "agents.knowledge.manage",
@@ -204,3 +211,184 @@ def test_lifecycle_versions_assignments_and_activity_contract(db_session):
     assert enabled.json()["lifecycle_status"] == "enabled"
     assert client.get(f"/api/v1/agents/{public_id}/versions").json()[0]["published"]
     assert client.get(f"/api/v1/agents/{public_id}/activity").status_code == 200
+
+
+def test_edit_persists_owner_environment_and_rejects_unauthorized_access(db_session):
+    client = make_client(db_session, admin_claims())
+    public_id = client.post(
+        "/api/v1/agents", json={"name": "Editable Agent"}
+    ).json()["id"]
+
+    updated = client.patch(
+        f"/api/v1/agents/{public_id}",
+        headers={"If-Match": "1"},
+        json={
+            "name": "Edited Agent",
+            "owner_id": "new-owner",
+            "execution_limits": {
+                "max_steps": 12,
+                "timeout_seconds": 90,
+                "environments": ["staging"],
+            },
+        },
+    )
+    assert updated.status_code == 200
+    assert updated.json()["owner_id"] == "new-owner"
+    assert updated.json()["environment_restrictions"] == ["staging"]
+
+    denied = make_client(
+        db_session,
+        {
+            "sub": "reader",
+            "custom:tenant_id": "tenant-a",
+            "permissions": ["agents.list", "agents.read"],
+        },
+    )
+    assert (
+        denied.patch(
+            f"/api/v1/agents/{public_id}",
+            headers={"If-Match": "2"},
+            json={"name": "Denied Edit"},
+        ).status_code
+        == 403
+    )
+    cross_tenant = make_client(db_session, admin_claims("tenant-b"))
+    assert (
+        cross_tenant.patch(
+            f"/api/v1/agents/{public_id}",
+            headers={"If-Match": "2"},
+            json={"name": "Hidden Edit"},
+        ).status_code
+        == 404
+    )
+
+
+def test_delete_unused_draft_preserves_audit_and_enforces_permissions(db_session):
+    client = make_client(db_session, admin_claims())
+    public_id = client.post(
+        "/api/v1/agents", json={"name": "Disposable Draft"}
+    ).json()["id"]
+
+    impact = client.get(f"/api/v1/agents/{public_id}/deletion-impact")
+    assert impact.status_code == 200
+    assert impact.json()["eligible_for_permanent_deletion"] is True
+
+    denied = make_client(
+        db_session,
+        {
+            "sub": "reader",
+            "custom:tenant_id": "tenant-a",
+            "permissions": ["agents.list", "agents.read"],
+        },
+    )
+    assert denied.delete(f"/api/v1/agents/{public_id}").status_code == 403
+    assert client.delete(f"/api/v1/agents/{public_id}").status_code == 204
+    assert client.get(f"/api/v1/agents/{public_id}").status_code == 404
+
+    row = db_session.query(Agent).filter_by(uuid=public_id).one()
+    assert row.deleted_at is not None
+    assert (
+        db_session.query(AgentActivityEvent)
+        .filter_by(agent_id=row.id, event_type="agent.deleted")
+        .count()
+        == 1
+    )
+
+
+def test_delete_rejects_published_and_executed_agents(db_session):
+    client = make_client(db_session, admin_claims())
+    published_id = client.post(
+        "/api/v1/agents",
+        json={
+            "name": "Published Agent",
+            "instructions": "Use governed evidence.",
+            "model_configuration": {
+                "provider": "openai",
+                "model": "gpt-4.1-mini",
+            },
+        },
+    ).json()["id"]
+    assert (
+        client.post(
+            f"/api/v1/agents/{published_id}/publish",
+            headers={"If-Match": "1"},
+            json={},
+        ).status_code
+        == 200
+    )
+    response = client.delete(f"/api/v1/agents/{published_id}")
+    assert response.status_code == 409
+    assert response.json()["detail"]["code"] == "AGENT_DELETE_REQUIRES_ARCHIVE"
+
+    executed_id = client.post(
+        "/api/v1/agents", json={"name": "Executed Agent"}
+    ).json()["id"]
+    db_session.add(
+        RuntimeExecution(
+            conversation_id=uuid4(),
+            workflow_id=uuid4(),
+            user_id="admin-user",
+            tenant_id="tenant-a",
+            agent=executed_id,
+            selected_agent_id=executed_id,
+            status="SUCCEEDED",
+        )
+    )
+    db_session.commit()
+    impact = client.get(f"/api/v1/agents/{executed_id}/deletion-impact").json()
+    assert impact["execution_count"] > 0
+    assert client.delete(f"/api/v1/agents/{executed_id}").status_code == 409
+
+
+def test_workflow_reference_requires_archive_and_archived_agent_cannot_route(
+    db_session,
+):
+    client = make_client(db_session, admin_claims())
+    public_id = client.post(
+        "/api/v1/agents", json={"name": "Referenced Agent"}
+    ).json()["id"]
+    db_session.add(
+        Workflow(
+            tenant_id="tenant-a",
+            goal="Use referenced agent",
+            assigned_agent=public_id,
+            created_by="admin-user",
+        )
+    )
+    db_session.commit()
+
+    impact = client.get(f"/api/v1/agents/{public_id}/deletion-impact").json()
+    assert impact["workflow_reference_count"] == 1
+    assert impact["recommended_action"] == "archive"
+    assert client.delete(f"/api/v1/agents/{public_id}").status_code == 409
+    archived = client.post(
+        f"/api/v1/agents/{public_id}/archive",
+        headers={"If-Match": "1"},
+        json={"confirmed": True},
+    )
+    assert archived.status_code == 200
+    assert archived.json()["lifecycle_status"] == "archived"
+
+    runtime_identity = AgentIdentity(
+        actor_id="admin-user",
+        tenant_id="tenant-a",
+        permissions=frozenset({"agents.execute"}),
+        groups=frozenset(),
+    )
+    try:
+        agent_application_service.resolve_runtime(
+            db_session, runtime_identity, public_id
+        )
+    except Exception as error:  # FastAPI raises the governed HTTP error directly.
+        assert getattr(error, "status_code", None) == 409
+    else:
+        raise AssertionError("Archived agent unexpectedly resolved for runtime")
+
+
+def test_cross_tenant_delete_is_non_enumerating(db_session):
+    tenant_a = make_client(db_session, admin_claims("tenant-a"))
+    public_id = tenant_a.post(
+        "/api/v1/agents", json={"name": "Tenant A Delete"}
+    ).json()["id"]
+    tenant_b = make_client(db_session, admin_claims("tenant-b"))
+    assert tenant_b.delete(f"/api/v1/agents/{public_id}").status_code == 404

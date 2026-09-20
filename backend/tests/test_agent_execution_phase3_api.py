@@ -1,8 +1,13 @@
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from sqlalchemy.dialects import postgresql
 
 from app.agents.application_service import AgentApplicationService, AgentIdentity
-from app.api.agent_executions import agent_router, execution_router
+from app.api.agent_executions import (
+    _environment_breakdown_query,
+    agent_router,
+    execution_router,
+)
 from app.auth.dependencies import get_current_user
 from app.database.dependencies import get_db
 from app.database.models.agent_execution import AgentExecution
@@ -205,3 +210,14 @@ def test_execution_filters_and_analytics_are_server_backed(db_session):
         .status_code
         == 404
     )
+
+
+def test_environment_breakdown_reuses_postgresql_json_key_bind(db_session):
+    compiled = _environment_breakdown_query(db_session, []).statement.compile(
+        dialect=postgresql.dialect()
+    )
+
+    environment_binds = [
+        value for value in compiled.params.values() if value == "environment"
+    ]
+    assert environment_binds == ["environment"]

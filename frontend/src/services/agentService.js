@@ -7,7 +7,8 @@ export const getAgentOptions=()=>api.get(`${base}/capabilities/options`).then(({
 export const createAgent=(payload)=>api.post(base,payload).then(({data})=>data);
 export const updateAgent=(id,payload,lockVersion)=>api.patch(`${base}/${id}`,payload,{headers:{"If-Match":String(lockVersion)}}).then(({data})=>data);
 export const lifecycleAgent=(id,action,lockVersion,payload={})=>api.post(`${base}/${id}/${action}`,payload,{headers:{"If-Match":String(lockVersion)}}).then(({data})=>data);
-export const deleteAgent=(id)=>lifecycleAgent(id,"archive",1,{confirmed:true});
+export const getAgentDeletionImpact=(id)=>api.get(`${base}/${id}/deletion-impact`).then(({data})=>data);
+export const deleteAgent=(id)=>api.delete(`${base}/${id}`);
 export const getAssignments=(id,kind)=>api.get(`${base}/${id}/${kind}`).then(({data})=>data);
 export const getEffectiveAccess=(id,action="view")=>api.get(`${base}/${id}/effective-access`,{params:{action}}).then(({data})=>data);
 export const saveAssignments=(id,kind,assignments)=>api.put(`${base}/${id}/${kind}`,{assignments}).then(({data})=>data);
